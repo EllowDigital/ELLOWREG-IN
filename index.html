@@ -77,8 +77,13 @@
             font-weight: 600;
         }
 
-        .modal-header {
+        .modal-header-error {
             background-color: var(--danger-color);
+            color: white;
+        }
+
+        .modal-header-info {
+            background-color: var(--primary-color);
             color: white;
         }
 
@@ -95,24 +100,8 @@
             font-weight: 600;
         }
 
-        /* --- FINAL ID Card Styles --- */
-        #id-card-section {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        #id-card {
+        #id-card,
+        #duplicate-user-card {
             background-color: #fff;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -124,10 +113,10 @@
             overflow: hidden;
         }
 
-        /* New banner header for the ID card */
         .id-card-banner-header {
             background-color: #000;
             padding: 0.75rem;
+            text-align: center;
         }
 
         .id-card-banner-header img {
@@ -140,7 +129,7 @@
             text-align: center;
         }
 
-        #id-card-photo {
+        .id-card-photo {
             width: 140px;
             height: 140px;
             border-radius: 50%;
@@ -152,7 +141,7 @@
             position: relative;
         }
 
-        #id-card-name {
+        .id-card-name {
             font-weight: 700;
             color: var(--text-color);
             font-size: 1.75rem;
@@ -185,7 +174,7 @@
             margin-bottom: 0.25rem;
         }
 
-        #id-card-enrollment {
+        .id-card-enrollment {
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             font-size: 1.75rem;
@@ -205,27 +194,21 @@
                             onerror="this.onerror=null;this.src='https://placehold.co/800x250/000000/FFFFFF?text=Event+Banner';">
                     </div>
                     <div class="card-body p-4 p-md-5">
-
-                        <!-- *** FINAL: ID Card Display Area with Banner *** -->
                         <div id="id-card-section" class="d-none text-center">
                             <h2 class="h4 mb-3 fw-bold">Registration Successful!</h2>
                             <p class="lead mb-4">Your Digital ID Card is ready.</p>
                             <div id="id-card">
-                                <div class="id-card-banner-header">
-                                    <img src="assets/unnamed.jpg" alt="Expo Banner"
-                                        onerror="this.onerror=null;this.src='https://placehold.co/800x250/000000/FFFFFF?text=Event+Banner';">
-                                </div>
+                                <div class="id-card-banner-header"><img src="assets/unnamed.jpg" alt="Expo Banner"
+                                        crossorigin="anonymous"></div>
                                 <div class="id-card-body">
-                                    <img id="id-card-photo" src="https://placehold.co/150x150" alt="Profile Photo"
-                                        crossorigin="anonymous">
-                                    <h4 id="id-card-name">Registrant Name</h4>
+                                    <img id="id-card-photo" class="id-card-photo" src="https://placehold.co/150x150"
+                                        alt="Profile Photo" crossorigin="anonymous">
+                                    <h4 id="id-card-name" class="id-card-name"></h4>
                                     <p id="id-card-firm" class="id-card-detail"><i
-                                            class="fas fa-building me-2"></i><span>Firm Name</span></p>
-                                    <p id="id-card-phone" class="id-card-detail"><i
-                                            class="fas fa-phone me-2"></i><span>+91 00000 00000</span></p>
+                                            class="fas fa-building me-2"></i><span></span></p>
                                     <div class="id-card-footer">
                                         <small>ENROLLMENT NO.</small>
-                                        <div id="id-card-enrollment">TDEXPOUP-0000</div>
+                                        <div id="id-card-enrollment" class="id-card-enrollment"></div>
                                     </div>
                                 </div>
                             </div>
@@ -236,63 +219,48 @@
                                 for event entry.</p>
                         </div>
 
-                        <!-- Form Container -->
                         <div id="form-container">
-                            <h1 class="text-center mb-4">Event Registration 🎪</h1>
+                            <h1 class="text-center mb-4">Registration Form</h1>
                             <form class="row g-3 needs-validation" id="registrationForm" novalidate>
                                 <div class="col-12">
                                     <label for="profileImage" class="form-label fw-semibold">Upload Your Profile
                                         Photo<span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" id="profileImage" name="profileImage"
                                         accept="image/png, image/jpeg" required>
-                                    <div class="invalid-feedback">Please upload a profile photo (JPG or PNG).</div>
                                 </div>
-                                <div class="col-md-6 form-floating">
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Full Name" required>
-                                    <label for="name"><i class="fas fa-user me-2 opacity-75"></i>Full Name</label>
+                                <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name"
+                                        name="name" placeholder="Full Name" required><label for="name"><i
+                                            class="fas fa-user me-2 opacity-75"></i>Full Name</label></div>
+                                <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone"
+                                        name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label
+                                        for="phone"><i class="fas fa-phone me-2 opacity-75"></i>Phone Number</label>
                                 </div>
-                                <div class="col-md-6 form-floating">
-                                    <input type="tel" class="form-control" id="phone" name="phone"
-                                        placeholder="Phone Number" required pattern="^[6-9]\d{9}$">
-                                    <label for="phone"><i class="fas fa-phone me-2 opacity-75"></i>Phone Number</label>
-                                </div>
-                                <div class="col-12 form-floating">
-                                    <input type="text" class="form-control" id="firmName" name="firmName"
-                                        placeholder="Firm Name" required>
-                                    <label for="firmName"><i class="fas fa-building me-2 opacity-75"></i>Firm
-                                        Name</label>
-                                </div>
-                                <div class="col-12 form-floating">
-                                    <textarea class="form-control" placeholder="Full Address" id="address"
-                                        name="address" style="height: 100px" required></textarea>
-                                    <label for="address"><i class="fas fa-map-marker-alt me-2 opacity-75"></i>Full
-                                        Address</label>
-                                </div>
-                                <div class="col-md-6 form-floating">
-                                    <input type="text" class="form-control" id="district" name="district"
-                                        placeholder="District" required>
-                                    <label for="district"><i class="fas fa-city me-2 opacity-75"></i>District</label>
-                                </div>
-                                <div class="col-md-6 form-floating">
-                                    <input type="text" class="form-control" id="state" name="state" placeholder="State"
-                                        required>
-                                    <label for="state"><i class="fas fa-globe-asia me-2 opacity-75"></i>State</label>
-                                </div>
+                                <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName"
+                                        name="firmName" placeholder="Firm Name" required><label for="firmName"><i
+                                            class="fas fa-building me-2 opacity-75"></i>Firm Name</label></div>
+                                <div class="col-12 form-floating"><textarea class="form-control"
+                                        placeholder="Full Address" id="address" name="address" style="height: 100px"
+                                        required></textarea><label for="address"><i
+                                            class="fas fa-map-marker-alt me-2 opacity-75"></i>Full Address</label></div>
+                                <div class="col-md-6 form-floating"><input type="text" class="form-control"
+                                        id="district" name="district" placeholder="District" required><label
+                                        for="district"><i class="fas fa-city me-2 opacity-75"></i>District</label></div>
+                                <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state"
+                                        name="state" placeholder="State" required><label for="state"><i
+                                            class="fas fa-globe-asia me-2 opacity-75"></i>State</label></div>
                                 <div class="col-12 mt-3">
                                     <label class="form-label fw-semibold">Attending Days:<span
                                             class="text-danger">*</span></label>
-                                    <div class="d-flex flex-wrap justify-content-around bg-light p-2 rounded-3"
-                                        style="background-color: var(--light-gray) !important;">
-                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
-                                                type="checkbox" name="attendance" value="Day 1" id="day1"><label
-                                                class="form-check-label" for="day1">Day 1</label></div>
-                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
-                                                type="checkbox" name="attendance" value="Day 2" id="day2"><label
-                                                class="form-check-label" for="day2">Day 2</label></div>
-                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
-                                                type="checkbox" name="attendance" value="Day 3" id="day3"><label
-                                                class="form-check-label" for="day3">Day 3</label></div>
+                                    <div class="d-flex flex-wrap justify-content-around bg-light p-2 rounded-3">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                name="attendance" value="Day 1" id="day1"><label for="day1">Day
+                                                1</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                name="attendance" value="Day 2" id="day2"><label for="day2">Day
+                                                2</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                name="attendance" value="Day 3" id="day3"><label for="day3">Day
+                                                3</label></div>
                                     </div>
                                     <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
                                         Please select at least one day.</div>
@@ -302,23 +270,21 @@
                                         style="background-color: var(--light-gray); border: 1px solid var(--border-color);">
                                         <h4 class="fw-bold text-center">Payment Details</h4>
                                         <p class="text-center mb-2" style="color: var(--text-light);">Registration Fee:
-                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong></p>
-                                        <div class="text-center">
-                                            <img src="assets/qr-code.png" alt="Payment QR Code" class="img-fluid"
-                                                style="max-width: 180px; border-radius: 0.5rem;"
+                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong>
+                                        </p>
+                                        <div class="text-center"><img src="assets/qr-code.png" alt="QR Code"
+                                                class="img-fluid" style="max-width: 180px; border-radius: 0.5rem;"
                                                 onerror="this.onerror=null;this.src='https://placehold.co/200x200/ffffff/000000?text=QR+Code';">
-                                            <p class="mt-3 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
+                                            <p class="mt-3 mb-1">Payee: <strong>TENT DECOR EXPO UP 2025</strong></p>
                                             <p class="mb-2 small" style="color: var(--text-light);">Scan QR or copy UPI
                                                 ID:</p>
-                                            <div class="input-group mb-3 mx-auto" style="max-width:350px;">
-                                                <span class="p-2 flex-grow-1 text-center"
+                                            <div class="input-group mx-auto" style="max-width:350px;"><span
+                                                    class="p-2 flex-grow-1 text-center"
                                                     style="background-color: #e9ecef; border-radius: 0.375rem 0 0 0.375rem; font-family: monospace; font-size: 1rem;"
-                                                    id="upiId">7905881922@ybl</span>
-                                                <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="Copy to clipboard"><i
-                                                        class="fa-regular fa-copy"></i></button>
-                                            </div>
+                                                    id="upiId">wl0502260a0022197@unionbank</span><button
+                                                    class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
+                                                    data-bs-toggle="tooltip" title="Copy"><i
+                                                        class="fa-regular fa-copy"></i></button></div>
                                         </div>
                                     </div>
                                 </div>
@@ -327,15 +293,11 @@
                                         Screenshot<span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" id="paymentScreenshot"
                                         name="paymentScreenshot" accept="image/png, image/jpeg" required>
-                                    <div class="invalid-feedback">Please upload a screenshot of your payment.</div>
                                 </div>
-                                <div class="col-12 mt-4">
-                                    <button class="btn btn-primary w-100 py-3 fs-5" type="submit" id="submitBtn">
-                                        <span class="button-text">Submit Registration</span>
-                                        <span class="spinner-border spinner-border-sm d-none" role="status"
-                                            aria-hidden="true"></span>
-                                    </button>
-                                </div>
+                                <div class="col-12 mt-4"><button class="btn btn-primary w-100 py-3 fs-5" type="submit"
+                                        id="submitBtn"><span class="button-text">Submit Registration</span><span
+                                            class="spinner-border spinner-border-sm d-none"
+                                            role="status"></span></button></div>
                             </form>
                         </div>
                     </div>
@@ -343,25 +305,42 @@
             </div>
         </div>
     </main>
-
     <footer class="footer">
         <p>Crafted with <i class="fas fa-heart" style="color: var(--danger-color);"></i> by <a
                 href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
-
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Registration Error</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header" id="infoModalHeader">
+                    <h5 class="modal-title" id="infoModalTitle"></h5><button type="button"
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="errorModalBody"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-body" id="infoModalBody"></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden template for the duplicate user card -->
+    <div id="duplicate-user-template" class="d-none">
+        <p class="mb-3">This mobile number has already been registered with the following details:</p>
+        <div id="duplicate-user-card">
+            <div class="id-card-banner-header"><img src="assets/unnamed.jpg" alt="Expo Banner" crossorigin="anonymous">
+            </div>
+            <div class="id-card-body">
+                <img id="duplicate-user-photo" class="id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
+                <h4 id="duplicate-user-name" class="id-card-name"></h4>
+                <p id="duplicate-user-firm" class="id-card-detail"><i class="fas fa-building me-2"></i><span></span></p>
+                <div class="id-card-footer">
+                    <small>ENROLLMENT NO.</small>
+                    <div id="duplicate-user-enrollment" class="id-card-enrollment"></div>
                 </div>
             </div>
         </div>
+        <button id="download-duplicate-id-btn" class="btn btn-primary w-100 mt-3 py-2"><i
+                class="fas fa-download me-2"></i>Download Original ID Card</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -372,20 +351,37 @@
         const buttonSpinner = submitBtn.querySelector('.spinner-border');
         const formContainer = document.getElementById('form-container');
         const idCardSection = document.getElementById('id-card-section');
-        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-        const errorModalBody = document.getElementById('errorModalBody');
+        const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+        const infoModalHeader = document.getElementById('infoModalHeader');
+        const infoModalTitle = document.getElementById('infoModalTitle');
+        const infoModalBody = document.getElementById('infoModalBody');
         const copyUpiBtn = document.getElementById('copyUpiBtn');
         const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
 
-        function showError(message) {
-            errorModalBody.innerHTML = message;
-            errorModal.show();
+        function showInfo(title, message, isError = true) {
+            infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
+            infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+            infoModalBody.innerHTML = message;
+            infoModal.show();
         }
 
         function setButtonLoading(isLoading, text = 'Submit Registration') {
             submitBtn.disabled = isLoading;
             buttonText.textContent = text;
             isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
+        }
+
+        function triggerIdCardDownload(cardElementId) {
+            const idCardElement = document.getElementById(cardElementId);
+            const name = idCardElement.querySelector('.id-card-name').textContent.trim().replace(/ /g, '_');
+            const enrollment = idCardElement.querySelector('.id-card-enrollment').textContent.trim();
+
+            html2canvas(idCardElement, { scale: 2, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `ID-CARD_${name}_${enrollment}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
         form.addEventListener('submit', async (event) => {
@@ -410,11 +406,26 @@
                 const result = await response.json();
 
                 if (!response.ok) {
-                    let errorMessage = result.error || 'An unexpected server error occurred.';
                     if (response.status === 409 && result.details) {
-                        errorMessage = `This mobile number has already been registered to:<br><strong style="color: var(--primary-color);">${result.details.name}</strong><br>with Enrollment ID:<br><strong style="color: var(--primary-color);">${result.details.enrollmentId}</strong><br><br>Please use a different number or contact support.`;
+                        const template = document.getElementById('duplicate-user-template').cloneNode(true);
+                        template.id = '';
+                        template.classList.remove('d-none');
+
+                        const duplicateCard = template.querySelector('#duplicate-user-card');
+                        duplicateCard.querySelector('#duplicate-user-photo').src = result.details.profileImageUrl;
+                        duplicateCard.querySelector('#duplicate-user-name').textContent = result.details.name;
+                        duplicateCard.querySelector('#duplicate-user-firm span').textContent = result.details.firmName;
+                        duplicateCard.querySelector('#duplicate-user-enrollment').textContent = result.details.enrollmentId;
+
+                        template.querySelector('#download-duplicate-id-btn').addEventListener('click', () => {
+                            triggerIdCardDownload(duplicateCard.id);
+                        });
+
+                        showInfo('Already Registered', template.innerHTML, false);
+                    } else {
+                        showInfo('Registration Error', result.error || 'An unexpected server error occurred.');
                     }
-                    throw new Error(errorMessage);
+                    throw new Error('Server returned an error.');
                 }
 
                 setButtonLoading(true, 'Generating ID Card...');
@@ -422,30 +433,18 @@
                 document.getElementById('id-card-photo').src = result.profileImageUrl;
                 document.getElementById('id-card-name').textContent = result.name;
                 document.getElementById('id-card-firm').querySelector('span').textContent = result.firmName;
-                document.getElementById('id-card-phone').querySelector('span').textContent = `+91 ${result.phone}`;
                 document.getElementById('id-card-enrollment').textContent = result.enrollmentId;
 
                 formContainer.classList.add('d-none');
                 idCardSection.classList.remove('d-none');
 
             } catch (error) {
-                showError(error.message);
+                console.log('Caught submission error:', error.message);
                 setButtonLoading(false);
             }
         });
 
-        document.getElementById('download-id-btn').addEventListener('click', () => {
-            const idCardElement = document.getElementById('id-card');
-            const name = document.getElementById('id-card-name').textContent.trim().replace(/ /g, '_');
-            const enrollment = document.getElementById('id-card-enrollment').textContent.trim();
-
-            html2canvas(idCardElement, { scale: 2, useCORS: true }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `ID-CARD_${name}_${enrollment}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        });
+        document.getElementById('download-id-btn').addEventListener('click', () => triggerIdCardDownload('id-card'));
 
         copyUpiBtn.addEventListener('click', () => {
             const upiId = document.getElementById('upiId').textContent;
