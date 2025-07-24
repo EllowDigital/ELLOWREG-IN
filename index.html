@@ -442,172 +442,171 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('registrationForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const buttonText = submitBtn.querySelector('.button-text');
-            const buttonSpinner = submitBtn.querySelector('.spinner-border');
-            const formContainer = document.getElementById('form-container');
-            const idCardSection = document.getElementById('id-card-section');
-            const idCardWrapper = document.getElementById('id-card-wrapper');
-            const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
-            const infoModalHeader = document.getElementById('infoModalHeader');
-            const infoModalTitle = document.getElementById('infoModalTitle');
-            const infoModalBody = document.getElementById('infoModalBody');
-            const copyUpiBtn = document.getElementById('copyUpiBtn');
-            const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
-            const attendanceErrorEl = document.getElementById('attendance-error');
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const buttonText = submitBtn.querySelector('.button-text');
+        const buttonSpinner = submitBtn.querySelector('.spinner-border');
+        const formContainer = document.getElementById('form-container');
+        const idCardSection = document.getElementById('id-card-section');
+        const idCardWrapper = document.getElementById('id-card-wrapper');
+        const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+        const infoModalHeader = document.getElementById('infoModalHeader');
+        const infoModalTitle = document.getElementById('infoModalTitle');
+        const infoModalBody = document.getElementById('infoModalBody');
+        const copyUpiBtn = document.getElementById('copyUpiBtn');
+        const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
+        const attendanceErrorEl = document.getElementById('attendance-error');
 
-            function showInfo(title, content, isError = true) {
-                infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
-                infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
-                infoModalBody.innerHTML = '';
-                infoModalBody.append(content);
-                infoModal.show();
+        function showInfo(title, content, isError = true) {
+            infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
+            infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+            infoModalBody.innerHTML = '';
+            infoModalBody.append(content);
+            infoModal.show();
+        }
+
+        function setButtonLoading(isLoading, text = 'Submit Registration') {
+            submitBtn.disabled = isLoading;
+            buttonText.textContent = text;
+            isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
+        }
+
+        function adjustFontSize(element) {
+            element.style.fontSize = '';
+            const container = element.parentElement;
+            let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
+            while (element.scrollWidth > container.clientWidth && fontSize > 10) {
+                fontSize -= 0.5;
+                element.style.fontSize = `${fontSize}px`;
+            }
+        }
+
+        function triggerIdCardDownload(cardElement) {
+            const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
+            const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
+            html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `ID-CARD_${name}_${regNumber}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function populateAndShowIdCard(container, details, isDuplicate = false) {
+            const template = document.getElementById('id-card-template').cloneNode(true);
+            const card = template.querySelector('#id-card');
+            card.querySelector('.id-card-photo').src = details.profileImageUrl;
+            const nameEl = card.querySelector('.id-card-name');
+            nameEl.textContent = details.name;
+            const firmEl = card.querySelector('.id-card-firm');
+            firmEl.textContent = details.firmName;
+            card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
+            card.querySelector('.id-card-reg-number').textContent = details.registrationId;
+
+            requestAnimationFrame(() => {
+                adjustFontSize(nameEl);
+                adjustFontSize(firmEl);
+            });
+
+            container.innerHTML = '';
+            container.append(card);
+
+            if (isDuplicate) {
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
+                downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original ID Card';
+                downloadBtn.onclick = () => triggerIdCardDownload(card);
+                container.append(downloadBtn);
+            }
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
+            attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
+
+            if (!form.checkValidity() || !isChecked) {
+                form.classList.add('was-validated');
+                return;
             }
 
-            function setButtonLoading(isLoading, text = 'Submit Registration') {
-                submitBtn.disabled = isLoading;
-                buttonText.textContent = text;
-                isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
-            }
+            setButtonLoading(true, 'Validating...');
+            const formData = new FormData(form);
+            const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value).join(', ');
+            formData.set('attendance', selectedDays);
 
-            function adjustFontSize(element) {
-                element.style.fontSize = '';
-                const container = element.parentElement;
-                let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
-                while (element.scrollWidth > container.clientWidth && fontSize > 10) {
-                    fontSize -= 0.5;
-                    element.style.fontSize = `${fontSize}px`;
-                }
-            }
+            try {
+                setButtonLoading(true, 'Uploading, please wait...');
+                const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
+                const result = await response.json();
 
-            function triggerIdCardDownload(cardElement) {
-                const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
-                const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `ID-CARD_${name}_${regNumber}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
-            }
-
-            function populateAndShowIdCard(container, details, isDuplicate = false) {
-                const template = document.getElementById('id-card-template').cloneNode(true);
-                const card = template.querySelector('#id-card');
-                card.querySelector('.id-card-photo').src = details.profileImageUrl;
-                const nameEl = card.querySelector('.id-card-name');
-                nameEl.textContent = details.name;
-                const firmEl = card.querySelector('.id-card-firm');
-                firmEl.textContent = details.firmName;
-                card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
-                card.querySelector('.id-card-reg-number').textContent = details.registrationId;
-
-                requestAnimationFrame(() => {
-                    adjustFontSize(nameEl);
-                    adjustFontSize(firmEl);
-                });
-
-                container.innerHTML = '';
-                container.append(card);
-
-                if (isDuplicate) {
-                    const downloadBtn = document.createElement('button');
-                    downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
-                    downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original ID Card';
-                    downloadBtn.onclick = () => triggerIdCardDownload(card);
-                    container.append(downloadBtn);
-                }
-            }
-
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
-                attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
-
-                if (!form.checkValidity() || !isChecked) {
-                    form.classList.add('was-validated');
-                    return;
-                }
-
-                setButtonLoading(true, 'Validating...');
-                const formData = new FormData(form);
-                const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value).join(', ');
-                formData.set('attendance', selectedDays);
-
-                try {
-                    setButtonLoading(true, 'Uploading, please wait...');
-                    const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        if (response.status === 409 && result.details) {
-                            const content = document.createElement('div');
-                            const message = document.createElement('p');
-                            message.textContent = 'This mobile number has already been registered with the following details:';
-                            content.append(message);
-                            const cardContainer = document.createElement('div');
-                            cardContainer.className = 'mt-3';
-                            populateAndShowIdCard(cardContainer, result.details, true);
-                            content.append(cardContainer);
-                            showInfo('Already Registered', content, false);
-                        } else {
-                            const message = document.createElement('p');
-                            message.textContent = result.error || 'An unexpected server error occurred.';
-                            showInfo('Registration Error', message);
-                        }
-                        throw new Error('Server returned an error.');
+                if (!response.ok) {
+                    if (response.status === 409 && result.details) {
+                        const content = document.createElement('div');
+                        const message = document.createElement('p');
+                        message.textContent = 'This mobile number has already been registered with the following details:';
+                        content.append(message);
+                        const cardContainer = document.createElement('div');
+                        cardContainer.className = 'mt-3';
+                        populateAndShowIdCard(cardContainer, result.details, true);
+                        content.append(cardContainer);
+                        showInfo('Already Registered', content, false);
+                    } else {
+                        const message = document.createElement('p');
+                        message.textContent = result.error || 'An unexpected server error occurred.';
+                        showInfo('Registration Error', message);
                     }
-
-                    setButtonLoading(true, 'Generating ID Card...');
-                    populateAndShowIdCard(idCardWrapper, result);
-
-                    formContainer.classList.add('d-none');
-                    idCardSection.classList.remove('d-none');
-
-                } catch (error) {
-                    console.log('Caught submission error:', error.message);
-                    setButtonLoading(false);
+                    throw new Error('Server returned an error.');
                 }
-            });
 
-            document.getElementById('download-id-btn').addEventListener('click', () => {
-                const cardElement = idCardWrapper.querySelector('#id-card');
-                if (cardElement) triggerIdCardDownload(cardElement);
-            });
+                setButtonLoading(true, 'Generating ID Card...');
+                populateAndShowIdCard(idCardWrapper, result);
 
-            copyUpiBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(document.getElementById('upiId').textContent).then(() => {
-                    const originalTitle = copyUpiBtn.getAttribute('data-bs-original-title');
-                    copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
-                    copyTooltip.show();
-                    copyUpiBtn.querySelector('i').classList.replace('fa-copy', 'fa-check');
-                    setTimeout(() => {
-                        copyUpiBtn.setAttribute('data-bs-original-title', originalTitle);
-                        copyTooltip.hide();
-                        copyUpiBtn.querySelector('i').classList.replace('fa-check', 'fa-copy');
-                    }, 2000);
-                });
-            });
+                formContainer.classList.add('d-none');
+                idCardSection.classList.remove('d-none');
 
-            form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;
-                    attendanceErrorEl.style.display = isAnyChecked ? 'none' : 'block';
-                });
-            });
+            } catch (error) {
+                console.log('Caught submission error:', error.message);
+                setButtonLoading(false);
+            }
+        });
 
-            document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
-                    const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
-                    if (labelSpan) { labelSpan.textContent = fileName; }
-                });
+        document.getElementById('download-id-btn').addEventListener('click', () => {
+            const cardElement = idCardWrapper.querySelector('#id-card');
+            if (cardElement) triggerIdCardDownload(cardElement);
+        });
+
+        copyUpiBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('upiId').textContent).then(() => {
+                const originalTitle = copyUpiBtn.getAttribute('data-bs-original-title');
+                copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
+                copyTooltip.show();
+                copyUpiBtn.querySelector('i').classList.replace('fa-copy', 'fa-check');
+                setTimeout(() => {
+                    copyUpiBtn.setAttribute('data-bs-original-title', originalTitle);
+                    copyTooltip.hide();
+                    copyUpiBtn.querySelector('i').classList.replace('fa-check', 'fa-copy');
+                }, 2000);
             });
         });
+
+        form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;
+                attendanceErrorEl.style.display = isAnyChecked ? 'none' : 'block';
+            });
+        });
+
+        document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
+                const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
+                if (labelSpan) { labelSpan.textContent = fileName; }
+            });
+        });
+    });
     </script>
 </body>
 
