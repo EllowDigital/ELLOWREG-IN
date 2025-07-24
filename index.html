@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Professional Registration</title>
+    <link rel="icon" type="image/x-icon" href="assets/unnamed.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -209,7 +210,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="errorModalBody">
-                    <!-- Error message will be inserted here -->
+                    <!-- Error message will be inserted here by JavaScript -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -237,7 +238,7 @@
         const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
 
         function showError(message) {
-            errorModalBody.textContent = message;
+            errorModalBody.innerHTML = message; // Use innerHTML to render styled messages
             errorModal.show();
         }
 
@@ -275,7 +276,12 @@
                 const result = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(result.error || `A server error occurred.`);
+                    // *** NEW: Handle detailed duplicate error ***
+                    let errorMessage = result.error || 'An unexpected server error occurred.';
+                    if (response.status === 409 && result.details) {
+                        errorMessage = `This mobile number has already been registered to:<br><strong class="text-primary">${result.details.name}</strong><br>with Enrollment ID:<br><strong class="text-primary">${result.details.enrollmentId}</strong><br><br>Please use a different number or contact support.`;
+                    }
+                    throw new Error(errorMessage);
                 }
 
                 setButtonLoading(true, 'Saving...');
@@ -285,7 +291,7 @@
                     formContainer.classList.add('d-none');
                     successMessage.classList.remove('d-none');
                 } else {
-                    throw new Error('Enrollment ID not returned.');
+                    throw new Error('Enrollment ID not returned from server.');
                 }
             } catch (error) {
                 showError(error.message);

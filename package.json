@@ -1,10 +1,16 @@
 {
   "name": "expo-registration-form",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form.",
+  "private": true,
+  "author": "Sarwan Yadav",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
-    "googleapis": "^105.0.0",
-    "cloudinary": "^1.37.0",
-    "busboy": "^1.6.0"
+    "googleapis": "105.0.0",
+    "cloudinary": "1.37.0",
+    "busboy": "1.6.0"
   }
 }
