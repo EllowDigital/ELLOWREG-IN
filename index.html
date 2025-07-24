@@ -11,170 +11,317 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --primary-color: #007bff;
-            --accent-color: #198754;
-            --text-color: #343a40;
+            /* A more modern and professional color palette */
+            --primary-color: #4A47A3;
+            /* Deep Indigo */
+            --primary-light: #6C63FF;
+            /* Lighter Indigo for gradients */
+            --accent-color: #2ECC71;
+            /* Vibrant Green for success */
+            --text-color: #34495e;
+            /* Dark Slate Blue - softer than black */
+            --text-light: #7f8c8d;
+            /* Light text for muted info */
             --card-bg: #ffffff;
+            --light-gray: #f7f9fc;
+            /* Cleaner, lighter gray */
+            --border-color: #e0e0e0;
+            --danger-color: #e74c3c;
+            /* Red for warnings/errors */
+            --brand-color: #F39C12;
+            /* Richer Gold */
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f7f6;
+            color: var(--text-color);
+            background-color: #EBEDEE;
+            /* Fallback */
+            background-image: linear-gradient(135deg, #FDFBFB 0%, #EBEDEE 100%);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
             padding: 2rem 1rem;
             min-height: 100vh;
         }
 
+        main {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .registration-card {
             background: var(--card-bg);
-            border-radius: 1rem;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            /* Important for the pseudo-element */
+        }
+
+        /* Subtle gradient top border for a premium feel */
+        .registration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-image: linear-gradient(to right, var(--primary-light), var(--primary-color));
+        }
+
+        .registration-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-banner-wrapper {
+            background-color: #000;
+            /* Dark background for the banner image */
         }
 
         .card-banner {
             max-height: 250px;
+            width: 100%;
             object-fit: contain;
         }
 
+        #registrationForm h1 {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(74, 71, 163, 0.25);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(74, 71, 163, 0.25);
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(45deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(74, 71, 163, 0.3);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px 0 rgba(74, 71, 163, 0.4);
+        }
+
         #success-message {
-            background-color: #e8f5e9;
+            background-color: rgba(46, 204, 113, 0.1);
+            /* Light green background */
             color: var(--text-color);
             border-radius: 0.75rem;
-            border: 2px solid var(--accent-color);
+            border-left: 5px solid var(--accent-color);
+            /* Prominent success indicator */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #success-message .fa-check-circle {
+            color: var(--accent-color);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         #enrollment-number {
-            background-color: white;
-            color: var(--text-color);
+            background-color: var(--light-gray);
+            color: var(--primary-color);
             font-weight: 700;
-            font-family: monospace;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 1.5rem;
             cursor: pointer;
-            border: 2px dashed var(--primary-color);
+            border: 2px dashed var(--primary-light);
+            transition: background-color 0.2s, color 0.2s;
         }
 
-        .warning-text {
-            font-size: 0.9rem;
-            color: #dc3545;
-            font-weight: 500;
+        #enrollment-number:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .modal-header {
-            background-color: #dc3545;
+            background-color: var(--danger-color);
             color: white;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 1.5rem 0 0 0;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .footer .fa-heart {
+            color: var(--danger-color);
+            margin: 0 0.25rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        .footer a {
+            color: var(--brand-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
         }
     </style>
 </head>
 
 <body>
     <main class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center w-100">
             <div class="col-lg-10 col-xl-9">
                 <div class="card registration-card">
-                    <div class="text-center bg-dark">
-                        <img src="assets/unnamed.jpg" class="card-img-top card-banner" alt="Event Banner"
+                    <div class="card-banner-wrapper">
+                        <img src="assets/unnamed.jpg" class="card-banner" alt="Event Banner"
                             onerror="this.onerror=null;this.src='https://placehold.co/800x250/000000/FFFFFF?text=Event+Banner';">
                     </div>
                     <div class="card-body p-4 p-md-5">
 
                         <div id="success-message" class="p-4 text-center mb-4 d-none">
-                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
                             <h2 class="h4 mb-2">Thank You For Registering!</h2>
-                            <p class="lead">Most Welcome to the TENT DECOR EXPO 2025.</p>
+                            <p class="lead" style="color: var(--text-color);">Most Welcome to the TENT DECOR EXPO 2025.
+                            </p>
                             <hr class="my-3">
                             <p class="mb-2">Your unique Enrollment Number is:</p>
                             <div id="enrollment-number" class="p-2 d-inline-block" title="Click to copy"></div>
-                            <p id="copy-feedback" class="small mt-2 mb-2" style="height: 1.2em;"></p>
-                            <p class="warning-text mt-3"><i class="fas fa-exclamation-triangle me-1"></i>Please save
-                                this number. Organizers are not responsible for lost enrollment numbers.</p>
+                            <p id="copy-feedback" class="small mt-2 mb-2"
+                                style="height: 1.2em; color: var(--accent-color);"></p>
+                            <p class="warning-text mt-3 small"><i class="fas fa-exclamation-triangle me-1"></i>Please
+                                save this number. Organizers are not responsible for lost enrollment numbers.</p>
                         </div>
 
                         <div id="form-container">
-                            <h1 class="text-center mb-3">Event Registration</h1>
+                            <h1 class="text-center mb-4">Event Registration 🎪</h1>
                             <form class="row g-3 needs-validation" id="registrationForm" novalidate>
-                                <!-- Personal Information -->
                                 <div class="col-md-6 form-floating">
                                     <input type="text" class="form-control" id="name" name="name"
                                         placeholder="Full Name" required>
-                                    <label for="name">Full Name</label>
+                                    <label for="name"><i class="fas fa-user me-2 opacity-75"></i>Full Name</label>
                                 </div>
                                 <div class="col-md-6 form-floating">
                                     <input type="tel" class="form-control" id="phone" name="phone"
                                         placeholder="Phone Number" required pattern="^[6-9]\d{9}$">
-                                    <label for="phone">Phone Number</label>
-                                    <div class="invalid-feedback">Please enter a valid 10-digit number.</div>
+                                    <label for="phone"><i class="fas fa-phone me-2 opacity-75"></i>Phone Number</label>
+                                    <div class="invalid-feedback">Please enter a valid 10-digit Indian mobile number.
+                                    </div>
                                 </div>
                                 <div class="col-12 form-floating">
                                     <input type="text" class="form-control" id="firmName" name="firmName"
                                         placeholder="Firm Name" required>
-                                    <label for="firmName">Firm Name</label>
+                                    <label for="firmName"><i class="fas fa-building me-2 opacity-75"></i>Firm
+                                        Name</label>
                                 </div>
                                 <div class="col-12 form-floating">
                                     <textarea class="form-control" placeholder="Full Address" id="address"
                                         name="address" style="height: 100px" required></textarea>
-                                    <label for="address">Full Address</label>
+                                    <label for="address"><i class="fas fa-map-marker-alt me-2 opacity-75"></i>Full
+                                        Address</label>
                                 </div>
                                 <div class="col-md-6 form-floating">
                                     <input type="text" class="form-control" id="district" name="district"
                                         placeholder="District" required>
-                                    <label for="district">District</label>
+                                    <label for="district"><i class="fas fa-city me-2 opacity-75"></i>District</label>
                                 </div>
                                 <div class="col-md-6 form-floating">
                                     <input type="text" class="form-control" id="state" name="state" placeholder="State"
                                         required>
-                                    <label for="state">State</label>
+                                    <label for="state"><i class="fas fa-globe-asia me-2 opacity-75"></i>State</label>
                                 </div>
 
-                                <!-- Attendance Days -->
                                 <div class="col-12 mt-3">
                                     <label class="form-label fw-semibold">Attending Days:<span
                                             class="text-danger">*</span></label>
-                                    <div id="attendance-group">
-                                        <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 1" id="day1"><label
+                                    <div id="attendance-group"
+                                        class="d-flex flex-wrap justify-content-around bg-light p-3 rounded-3"
+                                        style="background-color: var(--light-gray) !important;">
+                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
+                                                type="checkbox" name="attendance" value="Day 1" id="day1"><label
                                                 class="form-check-label" for="day1">Day 1</label></div>
-                                        <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 2" id="day2"><label
+                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
+                                                type="checkbox" name="attendance" value="Day 2" id="day2"><label
                                                 class="form-check-label" for="day2">Day 2</label></div>
-                                        <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 3" id="day3"><label
-                                                class="form-check-label" for="day3">Day 3</label>
-                                            <div class="invalid-feedback d-block" id="attendance-error"
-                                                style="display: none!important;">Please select at least one day.</div>
-                                        </div>
+                                        <div class="form-check form-check-inline m-1"><input class="form-check-input"
+                                                type="checkbox" name="attendance" value="Day 3" id="day3"><label
+                                                class="form-check-label" for="day3">Day 3</label></div>
                                     </div>
+                                    <div class="invalid-feedback d-block" id="attendance-error"
+                                        style="display: none!important;">Please select at least one day.</div>
                                 </div>
 
-                                <!-- Payment Details -->
                                 <div class="col-12 mt-4">
-                                    <div class="p-4"
-                                        style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 0.75rem;">
+                                    <div class="p-4 rounded-3"
+                                        style="background-color: var(--light-gray); border: 1px solid var(--border-color);">
                                         <h4 class="fw-bold text-center">Payment Details</h4>
-                                        <p class="text-center text-muted mb-2">Registration Fee: <strong class="fs-5"
-                                                style="color: var(--accent-color);">₹500</strong></p>
+                                        <p class="text-center mb-2" style="color: var(--text-light);">Registration Fee:
+                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong></p>
                                         <div class="text-center">
                                             <img src="assets/qr-code.png" alt="Payment QR Code" class="img-fluid"
-                                                style="max-width: 180px; border-radius: 0.5rem; border: 1px solid #ddd;"
+                                                style="max-width: 180px; border-radius: 0.5rem; border: 1px solid var(--border-color);"
                                                 onerror="this.onerror=null;this.src='https://placehold.co/200x200/ffffff/000000?text=QR+Code';">
                                             <p class="mt-3 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
-                                            <p class="mb-2 small text-muted">Scan the QR or use the UPI ID below:</p>
+                                            <p class="mb-2 small" style="color: var(--text-light);">Scan QR or copy UPI
+                                                ID:</p>
                                             <div class="input-group mb-3 mx-auto" style="max-width:350px;">
                                                 <span class="p-2 flex-grow-1 text-center"
-                                                    style="background-color: #e9ecef; border-radius: 0.375rem; font-family: monospace; font-size: 1rem;"
+                                                    style="background-color: #e9ecef; border-radius: 0.375rem 0 0 0.375rem; font-family: monospace; font-size: 1rem;"
                                                     id="upiId">7905881922@ybl</span>
                                                 <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="Copy to clipboard">
-                                                    <i class="fa-regular fa-copy"></i>
-                                                </button>
+                                                    title="Copy to clipboard"><i
+                                                        class="fa-regular fa-copy"></i></button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Screenshot Upload -->
                                 <div class="col-12 mt-4">
                                     <label for="paymentScreenshot" class="form-label fw-semibold">Upload Payment
                                         Screenshot<span class="text-danger">*</span></label>
@@ -183,9 +330,8 @@
                                     <div class="invalid-feedback">Please upload a screenshot of your payment.</div>
                                 </div>
 
-                                <!-- Submit Button -->
                                 <div class="col-12 mt-4">
-                                    <button class="btn btn-primary w-100 py-2 fs-5" type="submit" id="submitBtn">
+                                    <button class="btn btn-primary w-100 py-3 fs-5" type="submit" id="submitBtn">
                                         <span class="button-text">Submit Registration</span>
                                         <span class="spinner-border spinner-border-sm d-none" role="status"
                                             aria-hidden="true"></span>
@@ -199,7 +345,11 @@
         </div>
     </main>
 
-    <!-- Bootstrap Modal for Error Popups -->
+    <footer class="footer">
+        <p>Crafted with <i class="fas fa-heart"></i> by <a href="https://ellowdigital.netlify.app" target="_blank"
+                rel="noopener noreferrer">EllowDigital</a></p>
+    </footer>
+
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -209,9 +359,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="errorModalBody">
-                    <!-- Error message will be inserted here by JavaScript -->
-                </div>
+                <div class="modal-body" id="errorModalBody" style="color: var(--text-color);"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -221,6 +369,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // --- NO LOGIC CHANGES MADE TO THE SCRIPT ---
         const form = document.getElementById('registrationForm');
         const submitBtn = document.getElementById('submitBtn');
         const buttonText = submitBtn.querySelector('.button-text');
@@ -234,11 +383,10 @@
         const errorModal = new bootstrap.Modal(errorModalEl);
         const copyUpiBtn = document.getElementById('copyUpiBtn');
 
-        // Initialize Bootstrap Tooltip
         const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
 
         function showError(message) {
-            errorModalBody.innerHTML = message; // Use innerHTML to render styled messages
+            errorModalBody.innerHTML = message;
             errorModal.show();
         }
 
@@ -272,14 +420,12 @@
             try {
                 setButtonLoading(true, 'Uploading screenshot...');
                 const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
-
                 const result = await response.json();
 
                 if (!response.ok) {
-                    // *** NEW: Handle detailed duplicate error ***
                     let errorMessage = result.error || 'An unexpected server error occurred.';
                     if (response.status === 409 && result.details) {
-                        errorMessage = `This mobile number has already been registered to:<br><strong class="text-primary">${result.details.name}</strong><br>with Enrollment ID:<br><strong class="text-primary">${result.details.enrollmentId}</strong><br><br>Please use a different number or contact support.`;
+                        errorMessage = `This mobile number has already been registered to:<br><strong style="color: var(--primary-color);">${result.details.name}</strong><br>with Enrollment ID:<br><strong style="color: var(--primary-color);">${result.details.enrollmentId}</strong><br><br>Please use a different number or contact support.`;
                     }
                     throw new Error(errorMessage);
                 }
@@ -295,7 +441,7 @@
                 }
             } catch (error) {
                 showError(error.message);
-                setButtonLoading(false); // Reset button on error
+                setButtonLoading(false);
             }
         });
 
