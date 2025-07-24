@@ -101,7 +101,7 @@
         }
 
         #id-card,
-        #duplicate-user-card {
+        .duplicate-user-card-template {
             background-color: #fff;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -125,8 +125,18 @@
         }
 
         .id-card-body {
-            padding: 1.5rem;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
             text-align: center;
+            position: relative;
+        }
+
+        .id-card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
         }
 
         .id-card-photo {
@@ -136,9 +146,10 @@
             object-fit: cover;
             border: 5px solid var(--card-bg);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            margin-top: -80px;
+            margin-top: -85px;
             margin-bottom: 1rem;
             position: relative;
+            z-index: 2;
         }
 
         .id-card-name {
@@ -181,6 +192,15 @@
             color: var(--primary-color);
             letter-spacing: 1px;
         }
+
+        .id-card-warning {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--danger-color);
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
     </style>
 </head>
 
@@ -203,6 +223,7 @@
                                 <div class="id-card-body">
                                     <img id="id-card-photo" class="id-card-photo" src="https://placehold.co/150x150"
                                         alt="Profile Photo" crossorigin="anonymous">
+                                    <div class="id-card-title">Digital ID Card</div>
                                     <h4 id="id-card-name" class="id-card-name"></h4>
                                     <p id="id-card-firm" class="id-card-detail"><i
                                             class="fas fa-building me-2"></i><span></span></p>
@@ -210,17 +231,18 @@
                                         <small>ENROLLMENT NO.</small>
                                         <div id="id-card-enrollment" class="id-card-enrollment"></div>
                                     </div>
+                                    <div class="id-card-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>Ensure to keep this card safe
+                                        for entry into the event.
+                                    </div>
                                 </div>
                             </div>
                             <button id="download-id-btn" class="btn btn-primary w-100 mt-4 py-3 fs-5"><i
                                     class="fas fa-download me-2"></i>Download ID Card</button>
-                            <p class="small mt-3 text-danger fw-semibold"><i
-                                    class="fas fa-exclamation-triangle me-1"></i>Please download and save your ID card
-                                for event entry.</p>
                         </div>
 
                         <div id="form-container">
-                            <h1 class="text-center mb-4">Registration Form</h1>
+                            <h1 class="text-center mb-4">Event Registration 🎪</h1>
                             <form class="row g-3 needs-validation" id="registrationForm" novalidate>
                                 <div class="col-12">
                                     <label for="profileImage" class="form-label fw-semibold">Upload Your Profile
@@ -270,18 +292,17 @@
                                         style="background-color: var(--light-gray); border: 1px solid var(--border-color);">
                                         <h4 class="fw-bold text-center">Payment Details</h4>
                                         <p class="text-center mb-2" style="color: var(--text-light);">Registration Fee:
-                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong>
-                                        </p>
+                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong></p>
                                         <div class="text-center"><img src="assets/qr-code.png" alt="QR Code"
                                                 class="img-fluid" style="max-width: 180px; border-radius: 0.5rem;"
                                                 onerror="this.onerror=null;this.src='https://placehold.co/200x200/ffffff/000000?text=QR+Code';">
-                                            <p class="mt-3 mb-1">Payee: <strong>TENT DECOR EXPO UP 2025</strong></p>
+                                            <p class="mt-3 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
                                             <p class="mb-2 small" style="color: var(--text-light);">Scan QR or copy UPI
                                                 ID:</p>
                                             <div class="input-group mx-auto" style="max-width:350px;"><span
                                                     class="p-2 flex-grow-1 text-center"
                                                     style="background-color: #e9ecef; border-radius: 0.375rem 0 0 0.375rem; font-family: monospace; font-size: 1rem;"
-                                                    id="upiId">wl0502260a0022197@unionbank</span><button
+                                                    id="upiId">7905881922@ybl</span><button
                                                     class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
                                                     data-bs-toggle="tooltip" title="Copy"><i
                                                         class="fa-regular fa-copy"></i></button></div>
@@ -326,20 +347,25 @@
     <!-- Hidden template for the duplicate user card -->
     <div id="duplicate-user-template" class="d-none">
         <p class="mb-3">This mobile number has already been registered with the following details:</p>
-        <div id="duplicate-user-card">
+        <div class="duplicate-user-card-template">
             <div class="id-card-banner-header"><img src="assets/unnamed.jpg" alt="Expo Banner" crossorigin="anonymous">
             </div>
             <div class="id-card-body">
-                <img id="duplicate-user-photo" class="id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
-                <h4 id="duplicate-user-name" class="id-card-name"></h4>
-                <p id="duplicate-user-firm" class="id-card-detail"><i class="fas fa-building me-2"></i><span></span></p>
+                <img class="duplicate-user-photo id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
+                <div class="id-card-title">Digital ID Card</div>
+                <h4 class="duplicate-user-name id-card-name"></h4>
+                <p class="duplicate-user-firm id-card-detail"><i class="fas fa-building me-2"></i><span></span></p>
                 <div class="id-card-footer">
                     <small>ENROLLMENT NO.</small>
-                    <div id="duplicate-user-enrollment" class="id-card-enrollment"></div>
+                    <div class="duplicate-user-enrollment id-card-enrollment"></div>
+                </div>
+                <div class="id-card-warning">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Ensure to keep this card safe for entry into the
+                    event.
                 </div>
             </div>
         </div>
-        <button id="download-duplicate-id-btn" class="btn btn-primary w-100 mt-3 py-2"><i
+        <button class="download-duplicate-id-btn btn btn-primary w-100 mt-3 py-2"><i
                 class="fas fa-download me-2"></i>Download Original ID Card</button>
     </div>
 
@@ -371,12 +397,11 @@
             isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
         }
 
-        function triggerIdCardDownload(cardElementId) {
-            const idCardElement = document.getElementById(cardElementId);
-            const name = idCardElement.querySelector('.id-card-name').textContent.trim().replace(/ /g, '_');
-            const enrollment = idCardElement.querySelector('.id-card-enrollment').textContent.trim();
+        function triggerIdCardDownload(cardElement) {
+            const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/ /g, '_');
+            const enrollment = cardElement.querySelector('.id-card-enrollment').textContent.trim();
 
-            html2canvas(idCardElement, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(cardElement, { scale: 2, useCORS: true }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `ID-CARD_${name}_${enrollment}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -411,14 +436,14 @@
                         template.id = '';
                         template.classList.remove('d-none');
 
-                        const duplicateCard = template.querySelector('#duplicate-user-card');
-                        duplicateCard.querySelector('#duplicate-user-photo').src = result.details.profileImageUrl;
-                        duplicateCard.querySelector('#duplicate-user-name').textContent = result.details.name;
-                        duplicateCard.querySelector('#duplicate-user-firm span').textContent = result.details.firmName;
-                        duplicateCard.querySelector('#duplicate-user-enrollment').textContent = result.details.enrollmentId;
+                        const duplicateCard = template.querySelector('.duplicate-user-card-template');
+                        duplicateCard.querySelector('.duplicate-user-photo').src = result.details.profileImageUrl;
+                        duplicateCard.querySelector('.duplicate-user-name').textContent = result.details.name;
+                        duplicateCard.querySelector('.duplicate-user-firm span').textContent = result.details.firmName;
+                        duplicateCard.querySelector('.duplicate-user-enrollment').textContent = result.details.enrollmentId;
 
-                        template.querySelector('#download-duplicate-id-btn').addEventListener('click', () => {
-                            triggerIdCardDownload(duplicateCard.id);
+                        template.querySelector('.download-duplicate-id-btn').addEventListener('click', () => {
+                            triggerIdCardDownload(duplicateCard);
                         });
 
                         showInfo('Already Registered', template.innerHTML, false);
@@ -444,7 +469,10 @@
             }
         });
 
-        document.getElementById('download-id-btn').addEventListener('click', () => triggerIdCardDownload('id-card'));
+        document.getElementById('download-id-btn').addEventListener('click', () => {
+            const idCardElement = document.getElementById('id-card');
+            triggerIdCardDownload(idCardElement);
+        });
 
         copyUpiBtn.addEventListener('click', () => {
             const upiId = document.getElementById('upiId').textContent;

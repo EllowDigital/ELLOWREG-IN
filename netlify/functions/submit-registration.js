@@ -88,21 +88,22 @@ exports.handler = async (event) => {
     // 2. Check for Duplicate Phone Number and Get Row Count
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      // Fetch all columns needed for the duplicate user card (B to K)
       range: 'Registrations!B:K',
     });
 
     const rows = sheetData.data.values || [];
-    const nextId = rows.length + 1; // Start from 1, not 0
+    const nextId = rows.length + 1; // The next ID is the current number of rows + 1
 
     for (const row of rows) {
-      // Index mapping based on the range B:K -> B=0, C=1, D=2, E=3, ..., K=9
-      const existingPhone = row[2];
+      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, ..., K=9
+      const existingPhone = row[2]; // Column D is the phone number
 
       if (existingPhone === phone) {
-        const existingEnrollmentId = row[0];
-        const existingName = row[1];
-        const existingFirmName = row[3];
-        const existingProfileImageUrl = row[9];
+        const existingEnrollmentId = row[0]; // Column B
+        const existingName = row[1];         // Column C
+        const existingFirmName = row[3];     // Column E
+        const existingProfileImageUrl = row[9]; // Column K
 
         // If a duplicate is found, return a 409 Conflict status with all details.
         return {
@@ -123,7 +124,7 @@ exports.handler = async (event) => {
     // 3. Generate the new, sequential Enrollment Number
     const enrollmentId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
-    // 4. Upload both images to Cloudinary in parallel
+    // 4. Upload both images to Cloudinary in parallel for efficiency
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")
@@ -132,25 +133,34 @@ exports.handler = async (event) => {
     // 5. Append all data to the Google Sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'Registrations',
+      range: 'Registrations', // Append to the first empty row of the sheet
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [[
-          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-          enrollmentId, name, phone, firmName,
-          address, district, state, attendance,
-          uploadPaymentResponse.secure_url,
-          uploadProfileResponse.secure_url,
+          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // A
+          enrollmentId, // B
+          name,         // C
+          phone,        // D
+          firmName,     // E
+          address,      // F
+          district,     // G
+          state,        // H
+          attendance,   // I
+          uploadPaymentResponse.secure_url, // J
+          uploadProfileResponse.secure_url,  // K
         ]],
       },
     });
 
-    // 6. Return a successful response for the new ID card
+    // 6. Return a successful response with all data needed for the new ID card
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        enrollmentId, name, phone, firmName,
+        enrollmentId,
+        name,
+        phone,
+        firmName,
         profileImageUrl: uploadProfileResponse.secure_url,
       }),
     };
