@@ -7,74 +7,280 @@
     <title>TENT DECOR EXPO UP 2025 - Professional Registration</title>
     <link rel="icon" type="image/x-icon" href="assets/unnamed.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --primary-color: #4A47A3;
-            --primary-light: #6C63FF;
-            --accent-color: #2ECC71;
-            --text-color: #34495e;
-            --text-light: #7f8c8d;
+            --primary-color: #0A2540;
+            --primary-light: #3c6e9e;
+            --accent-color: #FDB813;
+            --text-color: #1a1f36;
+            --text-light: #6c757d;
             --card-bg: #ffffff;
-            --light-gray: #f7f9fc;
-            --border-color: #e0e0e0;
+            --body-bg: #f8f9fa;
+            --border-color: #dee2e6;
             --danger-color: #e74c3c;
+            --success-color: #20c997;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
-            background-image: linear-gradient(135deg, #FDFBFB 0%, #EBEDEE 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1rem;
-            min-height: 100vh;
+            background-color: var(--body-bg);
         }
 
-        main {
-            width: 100%;
+        .registration-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
 
         .registration-card {
             background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border-color);
-            position: relative;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            border: none;
             overflow: hidden;
         }
 
-        .registration-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background-image: linear-gradient(to right, var(--primary-light), var(--primary-color));
+        .info-panel {
+            background: linear-gradient(rgba(10, 37, 64, 0.85), rgba(10, 37, 64, 0.95)), url('https://placehold.co/600x800/0A2540/FFF?text=Expo+Vibes') no-repeat center center;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .card-banner {
-            max-height: 250px;
-            width: 100%;
-            object-fit: contain;
+        .info-panel h1 {
+            font-family: 'Lora', serif;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .info-panel .event-details {
+            list-style: none;
+            padding-left: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .info-panel .event-details i {
+            width: 25px;
+            text-align: center;
+            color: var(--accent-color);
+            margin-right: 0.5rem;
+        }
+
+        .form-panel .form-heading {
+            font-family: 'Lora', serif;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.75rem, 4vw, 2rem);
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+        }
+
+        .form-floating>.form-control {
+            height: calc(3.5rem + 2px);
+            padding: 1rem .75rem;
+        }
+
+        .form-floating>label {
+            padding: 1rem .75rem;
         }
 
         .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(74, 71, 163, 0.25);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(10, 37, 64, 0.2);
         }
 
         .btn-primary {
-            background-image: linear-gradient(45deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            background-image: linear-gradient(45deg, var(--primary-color) 0%, var(--primary-light) 100%);
             border: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px 0 rgba(74, 71, 163, 0.3);
+            box-shadow: 0 4px 15px rgba(10, 37, 64, 0.2);
             font-weight: 600;
+            padding: 0.9rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(10, 37, 64, 0.3);
+        }
+
+        .custom-file-input {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .custom-file-input:hover {
+            border-color: var(--primary-light);
+        }
+
+        .custom-file-input input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            height: 100%;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .custom-file-input .file-input-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-file-input .file-input-label i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .attendance-options .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .payment-section {
+            background-color: var(--body-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        #upiId {
+            background-color: #e9ecef;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        #id-card-wrapper {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        #id-card,
+        .duplicate-user-card-template {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .id-card-header {
+            background-color: var(--primary-color);
+            padding: 1.5rem;
+            padding-bottom: 4rem;
+        }
+
+        .id-card-header .header-text {
+            color: #fff;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .id-card-body {
+            position: relative;
+            padding: 1rem;
+        }
+
+        .id-card-photo {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid var(--card-bg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin-top: -75px;
+            background: #fff;
+        }
+
+        .id-card-name {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: clamp(1.5rem, 4vw, 1.9rem);
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .id-card-firm {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .id-card-details {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .id-card-detail {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .id-card-detail i {
+            color: var(--primary-light);
+            margin-right: 0.3rem;
+        }
+
+        .id-card-footer {
+            background-color: var(--body-bg);
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .id-card-footer small {
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .id-card-reg-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: clamp(1.2rem, 4vw, 1.6rem);
+            color: var(--primary-color);
+            word-break: break-all;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
         }
 
         .modal-header-error {
@@ -86,236 +292,107 @@
             background-color: var(--primary-color);
             color: white;
         }
-
-        .footer {
-            text-align: center;
-            padding-top: 2rem;
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        .footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        #id-card,
-        .duplicate-user-card-template {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border: 1px solid var(--border-color);
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .id-card-banner-header {
-            background-color: #000;
-            padding: 0.75rem;
-            text-align: center;
-        }
-
-        .id-card-banner-header img {
-            max-height: 50px;
-            width: auto;
-        }
-
-        .id-card-body {
-            padding: 1rem 1.5rem 1.5rem 1.5rem;
-            text-align: center;
-            position: relative;
-        }
-
-        .id-card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1.5rem;
-        }
-
-        .id-card-photo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--card-bg);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            margin-top: -85px;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .id-card-name {
-            font-weight: 700;
-            color: var(--text-color);
-            font-size: 1.75rem;
-            line-height: 1.2;
-        }
-
-        .id-card-detail {
-            font-size: 1.1rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .id-card-detail i {
-            color: var(--primary-light);
-            width: 20px;
-            text-align: center;
-        }
-
-        .id-card-footer {
-            background-color: var(--light-gray);
-            padding: 1rem;
-            margin-top: 1.5rem;
-            text-align: center;
-        }
-
-        .id-card-footer small {
-            font-weight: 600;
-            color: var(--text-light);
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .id-card-enrollment {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            font-size: 1.75rem;
-            color: var(--primary-color);
-            letter-spacing: 1px;
-        }
-
-        .id-card-warning {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--danger-color);
-            margin-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1rem;
-        }
     </style>
 </head>
 
 <body>
-    <main class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-9">
-                <div class="card registration-card">
-                    <div class="bg-dark">
-                        <img src="assets/unnamed.jpg" class="card-banner" alt="Event Banner"
-                            onerror="this.onerror=null;this.src='https://placehold.co/800x250/000000/FFFFFF?text=Event+Banner';">
+    <main class="registration-container">
+        <div class="col-xl-10 col-xxl-9">
+            <div class="card registration-card">
+                <div class="row g-0">
+                    <div class="col-md-5 info-panel p-4 p-lg-5">
+                        <h1 class="mb-4">TENT DECOR EXPO UP 2025</h1>
+                        <p class="lead mb-4">Join industry leaders and innovators at the premier expo for tent,
+                            catering, and decor professionals.</p>
+                        <ul class="event-details">
+                            <li><i class="fas fa-calendar-alt fa-fw"></i><strong>Dates:</strong> Sep 12–14, 2025</li>
+                            <li><i class="fas fa-map-marker-alt fa-fw"></i><strong>Venue:</strong> Indira Gandhi
+                                Pratishthan, Lucknow</li>
+                            <li><i class="fas fa-phone-alt fa-fw"></i><strong>Contact:</strong> 7905881922, 9953903330
+                            </li>
+                        </ul>
                     </div>
-                    <div class="card-body p-4 p-md-5">
+
+                    <div class="col-md-7 form-panel p-4 p-lg-5">
                         <div id="id-card-section" class="d-none text-center">
-                            <h2 class="h4 mb-3 fw-bold">Registration Successful!</h2>
-                            <p class="lead mb-4">Your Digital ID Card is ready.</p>
-                            <div id="id-card">
-                                <div class="id-card-banner-header"><img src="assets/unnamed.jpg" alt="Expo Banner"
-                                        crossorigin="anonymous"></div>
-                                <div class="id-card-body">
-                                    <img id="id-card-photo" class="id-card-photo" src="https://placehold.co/150x150"
-                                        alt="Profile Photo" crossorigin="anonymous">
-                                    <div class="id-card-title">Digital ID Card</div>
-                                    <h4 id="id-card-name" class="id-card-name"></h4>
-                                    <p id="id-card-firm" class="id-card-detail"><i
-                                            class="fas fa-building me-2"></i><span></span></p>
-                                    <div class="id-card-footer">
-                                        <small>ENROLLMENT NO.</small>
-                                        <div id="id-card-enrollment" class="id-card-enrollment"></div>
-                                    </div>
-                                    <div class="id-card-warning">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>Ensure to keep this card safe
-                                        for entry into the event.
-                                    </div>
-                                </div>
-                            </div>
-                            <button id="download-id-btn" class="btn btn-primary w-100 mt-4 py-3 fs-5"><i
+                            <h2 class="h3 mb-2 fw-bold">Registration Successful! ✨</h2>
+                            <p class="lead mb-4 text-secondary">Your Digital ID Card is ready for download.</p>
+                            <div id="id-card-wrapper"></div>
+                            <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i
                                     class="fas fa-download me-2"></i>Download ID Card</button>
                         </div>
 
                         <div id="form-container">
-                            <h1 class="text-center mb-4">Event Registration 🎪</h1>
+                            <h2 class="form-heading">Get Your Entry Pass</h2>
                             <form class="row g-3 needs-validation" id="registrationForm" novalidate>
-                                <div class="col-12">
-                                    <label for="profileImage" class="form-label fw-semibold">Upload Your Profile
-                                        Photo<span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control" id="profileImage" name="profileImage"
-                                        accept="image/png, image/jpeg" required>
+                                <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span
+                                            class="text-danger">*</span></label>
+                                    <div class="custom-file-input"><input type="file" id="profileImage"
+                                            name="profileImage" accept="image/png, image/jpeg" required><label
+                                            class="file-input-label" for="profileImage"><i
+                                                class="fas fa-upload"></i><span>Choose a file...</span></label></div>
                                 </div>
                                 <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name"
-                                        name="name" placeholder="Full Name" required><label for="name"><i
-                                            class="fas fa-user me-2 opacity-75"></i>Full Name</label></div>
+                                        name="name" placeholder="Full Name" required><label for="name">Full Name</label>
+                                </div>
                                 <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone"
                                         name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label
-                                        for="phone"><i class="fas fa-phone me-2 opacity-75"></i>Phone Number</label>
-                                </div>
+                                        for="phone">Phone Number</label></div>
                                 <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName"
-                                        name="firmName" placeholder="Firm Name" required><label for="firmName"><i
-                                            class="fas fa-building me-2 opacity-75"></i>Firm Name</label></div>
+                                        name="firmName" placeholder="Firm Name" required><label for="firmName">Firm
+                                        Name</label></div>
                                 <div class="col-12 form-floating"><textarea class="form-control"
                                         placeholder="Full Address" id="address" name="address" style="height: 100px"
-                                        required></textarea><label for="address"><i
-                                            class="fas fa-map-marker-alt me-2 opacity-75"></i>Full Address</label></div>
+                                        required></textarea><label for="address">Full Address</label></div>
                                 <div class="col-md-6 form-floating"><input type="text" class="form-control"
                                         id="district" name="district" placeholder="District" required><label
-                                        for="district"><i class="fas fa-city me-2 opacity-75"></i>District</label></div>
+                                        for="district">District</label></div>
                                 <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state"
-                                        name="state" placeholder="State" required><label for="state"><i
-                                            class="fas fa-globe-asia me-2 opacity-75"></i>State</label></div>
-                                <div class="col-12 mt-3">
-                                    <label class="form-label fw-semibold">Attending Days:<span
+                                        name="state" placeholder="State" required><label for="state">State</label></div>
+                                <div class="col-12"><label class="form-label fw-semibold">Attending Days:<span
                                             class="text-danger">*</span></label>
-                                    <div class="d-flex flex-wrap justify-content-around bg-light p-2 rounded-3">
+                                    <div class="attendance-options">
                                         <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 1" id="day1"><label for="day1">Day
-                                                1</label></div>
+                                                name="attendance" value="Day 1" id="day1"><label
+                                                class="form-check-label" for="day1">Day 1</label></div>
                                         <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 2" id="day2"><label for="day2">Day
-                                                2</label></div>
+                                                name="attendance" value="Day 2" id="day2"><label
+                                                class="form-check-label" for="day2">Day 2</label></div>
                                         <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                name="attendance" value="Day 3" id="day3"><label for="day3">Day
-                                                3</label></div>
+                                                name="attendance" value="Day 3" id="day3"><label
+                                                class="form-check-label" for="day3">Day 3</label></div>
                                     </div>
                                     <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
                                         Please select at least one day.</div>
                                 </div>
-                                <div class="col-12 mt-4">
-                                    <div class="p-4 rounded-3"
-                                        style="background-color: var(--light-gray); border: 1px solid var(--border-color);">
+                                <div class="col-12">
+                                    <div class="p-3 p-md-4 rounded-3 payment-section">
                                         <h4 class="fw-bold text-center">Payment Details</h4>
-                                        <p class="text-center mb-2" style="color: var(--text-light);">Registration Fee:
-                                            <strong class="fs-5" style="color: var(--accent-color);">₹500</strong></p>
+                                        <p class="text-center mb-2 text-secondary">Registration Fee: <strong
+                                                class="fs-5" style="color: var(--success-color);">₹500</strong></p>
                                         <div class="text-center"><img src="assets/qr-code.png" alt="QR Code"
-                                                class="img-fluid" style="max-width: 180px; border-radius: 0.5rem;"
-                                                onerror="this.onerror=null;this.src='https://placehold.co/200x200/ffffff/000000?text=QR+Code';">
-                                            <p class="mt-3 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
-                                            <p class="mb-2 small" style="color: var(--text-light);">Scan QR or copy UPI
-                                                ID:</p>
-                                            <div class="input-group mx-auto" style="max-width:350px;"><span
+                                                class="img-fluid" style="max-width: 150px; border-radius: 0.5rem;"
+                                                onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=QR+Code';">
+                                            <p class="mt-2 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
+                                            <p class="mb-2 small text-secondary">Scan QR or copy UPI ID:</p>
+                                            <div class="input-group mx-auto" style="max-width:320px;"><span
                                                     class="p-2 flex-grow-1 text-center"
-                                                    style="background-color: #e9ecef; border-radius: 0.375rem 0 0 0.375rem; font-family: monospace; font-size: 1rem;"
-                                                    id="upiId">7905881922@ybl</span><button
+                                                    id="upiId">wl0502260a0022197@unionbank</span><button
                                                     class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
                                                     data-bs-toggle="tooltip" title="Copy"><i
                                                         class="fa-regular fa-copy"></i></button></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 mt-4">
-                                    <label for="paymentScreenshot" class="form-label fw-semibold">Upload Payment
-                                        Screenshot<span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control" id="paymentScreenshot"
-                                        name="paymentScreenshot" accept="image/png, image/jpeg" required>
+                                <div class="col-12"><label for="paymentScreenshot" class="form-label fw-semibold">Upload
+                                        Payment Screenshot<span class="text-danger">*</span></label>
+                                    <div class="custom-file-input"><input type="file" class="form-control"
+                                            id="paymentScreenshot" name="paymentScreenshot"
+                                            accept="image/png, image/jpeg" required><label class="file-input-label"
+                                            for="paymentScreenshot"><i class="fas fa-receipt"></i><span>Choose a
+                                                file...</span></label></div>
                                 </div>
-                                <div class="col-12 mt-4"><button class="btn btn-primary w-100 py-3 fs-5" type="submit"
+                                <div class="col-12 mt-4"><button class="btn btn-primary w-100" type="submit"
                                         id="submitBtn"><span class="button-text">Submit Registration</span><span
                                             class="spinner-border spinner-border-sm d-none"
                                             role="status"></span></button></div>
@@ -326,10 +403,12 @@
             </div>
         </div>
     </main>
+
     <footer class="footer">
         <p>Crafted with <i class="fas fa-heart" style="color: var(--danger-color);"></i> by <a
                 href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
+
     <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -344,148 +423,189 @@
         </div>
     </div>
 
-    <!-- Hidden template for the duplicate user card -->
-    <div id="duplicate-user-template" class="d-none">
-        <p class="mb-3">This mobile number has already been registered with the following details:</p>
-        <div class="duplicate-user-card-template">
-            <div class="id-card-banner-header"><img src="assets/unnamed.jpg" alt="Expo Banner" crossorigin="anonymous">
+    <div id="id-card-template" class="d-none">
+        <div id="id-card">
+            <div class="id-card-header">
+                <div class="header-text">TENT DECOR EXPO 2025</div>
             </div>
             <div class="id-card-body">
-                <img class="duplicate-user-photo id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
-                <div class="id-card-title">Digital ID Card</div>
-                <h4 class="duplicate-user-name id-card-name"></h4>
-                <p class="duplicate-user-firm id-card-detail"><i class="fas fa-building me-2"></i><span></span></p>
-                <div class="id-card-footer">
-                    <small>ENROLLMENT NO.</small>
-                    <div class="duplicate-user-enrollment id-card-enrollment"></div>
-                </div>
-                <div class="id-card-warning">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Ensure to keep this card safe for entry into the
-                    event.
-                </div>
+                <img class="id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
+                <h4 class="id-card-name"></h4>
+                <p class="id-card-firm"></p>
+                <div class="id-card-details"><span class="id-card-phone id-card-detail"><i
+                            class="fas fa-phone"></i><span></span></span></div>
+            </div>
+            <div class="id-card-footer"><small>REGISTRATION NO.</small>
+                <div class="id-card-reg-number"></div>
             </div>
         </div>
-        <button class="download-duplicate-id-btn btn btn-primary w-100 mt-3 py-2"><i
-                class="fas fa-download me-2"></i>Download Original ID Card</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const form = document.getElementById('registrationForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const buttonText = submitBtn.querySelector('.button-text');
-        const buttonSpinner = submitBtn.querySelector('.spinner-border');
-        const formContainer = document.getElementById('form-container');
-        const idCardSection = document.getElementById('id-card-section');
-        const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
-        const infoModalHeader = document.getElementById('infoModalHeader');
-        const infoModalTitle = document.getElementById('infoModalTitle');
-        const infoModalBody = document.getElementById('infoModalBody');
-        const copyUpiBtn = document.getElementById('copyUpiBtn');
-        const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('registrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const buttonText = submitBtn.querySelector('.button-text');
+            const buttonSpinner = submitBtn.querySelector('.spinner-border');
+            const formContainer = document.getElementById('form-container');
+            const idCardSection = document.getElementById('id-card-section');
+            const idCardWrapper = document.getElementById('id-card-wrapper');
+            const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+            const infoModalHeader = document.getElementById('infoModalHeader');
+            const infoModalTitle = document.getElementById('infoModalTitle');
+            const infoModalBody = document.getElementById('infoModalBody');
+            const copyUpiBtn = document.getElementById('copyUpiBtn');
+            const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
+            const attendanceErrorEl = document.getElementById('attendance-error');
 
-        function showInfo(title, message, isError = true) {
-            infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
-            infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
-            infoModalBody.innerHTML = message;
-            infoModal.show();
-        }
-
-        function setButtonLoading(isLoading, text = 'Submit Registration') {
-            submitBtn.disabled = isLoading;
-            buttonText.textContent = text;
-            isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
-        }
-
-        function triggerIdCardDownload(cardElement) {
-            const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/ /g, '_');
-            const enrollment = cardElement.querySelector('.id-card-enrollment').textContent.trim();
-
-            html2canvas(cardElement, { scale: 2, useCORS: true }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `ID-CARD_${name}_${enrollment}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        }
-
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const attendanceError = document.getElementById('attendance-error');
-            const isChecked = Array.from(form.querySelectorAll('input[name="attendance"]')).some(cb => cb.checked);
-            attendanceError.style.display = isChecked ? 'none' : 'block';
-
-            if (!form.checkValidity() || !isChecked) {
-                form.classList.add('was-validated');
-                return;
+            function showInfo(title, content, isError = true) {
+                infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
+                infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+                infoModalBody.innerHTML = '';
+                infoModalBody.append(content);
+                infoModal.show();
             }
 
-            setButtonLoading(true, 'Validating...');
-            const formData = new FormData(form);
-            const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]')).filter(cb => cb.checked).map(cb => cb.value).join(', ');
-            formData.set('attendance', selectedDays);
+            function setButtonLoading(isLoading, text = 'Submit Registration') {
+                submitBtn.disabled = isLoading;
+                buttonText.textContent = text;
+                isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
+            }
 
-            try {
-                setButtonLoading(true, 'Uploading, please wait...');
-                const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
-                const result = await response.json();
+            function adjustFontSize(element) {
+                element.style.fontSize = '';
+                const container = element.parentElement;
+                let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
+                while (element.scrollWidth > container.clientWidth && fontSize > 10) {
+                    fontSize -= 0.5;
+                    element.style.fontSize = `${fontSize}px`;
+                }
+            }
 
-                if (!response.ok) {
-                    if (response.status === 409 && result.details) {
-                        const template = document.getElementById('duplicate-user-template').cloneNode(true);
-                        template.id = '';
-                        template.classList.remove('d-none');
+            function triggerIdCardDownload(cardElement) {
+                const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
+                const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
+                html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `ID-CARD_${name}_${regNumber}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
 
-                        const duplicateCard = template.querySelector('.duplicate-user-card-template');
-                        duplicateCard.querySelector('.duplicate-user-photo').src = result.details.profileImageUrl;
-                        duplicateCard.querySelector('.duplicate-user-name').textContent = result.details.name;
-                        duplicateCard.querySelector('.duplicate-user-firm span').textContent = result.details.firmName;
-                        duplicateCard.querySelector('.duplicate-user-enrollment').textContent = result.details.enrollmentId;
+            function populateAndShowIdCard(container, details, isDuplicate = false) {
+                const template = document.getElementById('id-card-template').cloneNode(true);
+                const card = template.querySelector('#id-card');
+                card.querySelector('.id-card-photo').src = details.profileImageUrl;
+                const nameEl = card.querySelector('.id-card-name');
+                nameEl.textContent = details.name;
+                const firmEl = card.querySelector('.id-card-firm');
+                firmEl.textContent = details.firmName;
+                card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
+                card.querySelector('.id-card-reg-number').textContent = details.registrationId;
 
-                        template.querySelector('.download-duplicate-id-btn').addEventListener('click', () => {
-                            triggerIdCardDownload(duplicateCard);
-                        });
+                requestAnimationFrame(() => {
+                    adjustFontSize(nameEl);
+                    adjustFontSize(firmEl);
+                });
 
-                        showInfo('Already Registered', template.innerHTML, false);
-                    } else {
-                        showInfo('Registration Error', result.error || 'An unexpected server error occurred.');
-                    }
-                    throw new Error('Server returned an error.');
+                container.innerHTML = '';
+                container.append(card);
+
+                if (isDuplicate) {
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
+                    downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original ID Card';
+                    downloadBtn.onclick = () => triggerIdCardDownload(card);
+                    container.append(downloadBtn);
+                }
+            }
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
+                attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
+
+                if (!form.checkValidity() || !isChecked) {
+                    form.classList.add('was-validated');
+                    return;
                 }
 
-                setButtonLoading(true, 'Generating ID Card...');
+                setButtonLoading(true, 'Validating...');
+                const formData = new FormData(form);
+                const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value).join(', ');
+                formData.set('attendance', selectedDays);
 
-                document.getElementById('id-card-photo').src = result.profileImageUrl;
-                document.getElementById('id-card-name').textContent = result.name;
-                document.getElementById('id-card-firm').querySelector('span').textContent = result.firmName;
-                document.getElementById('id-card-enrollment').textContent = result.enrollmentId;
+                try {
+                    setButtonLoading(true, 'Uploading, please wait...');
+                    const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
+                    const result = await response.json();
 
-                formContainer.classList.add('d-none');
-                idCardSection.classList.remove('d-none');
+                    if (!response.ok) {
+                        if (response.status === 409 && result.details) {
+                            const content = document.createElement('div');
+                            const message = document.createElement('p');
+                            message.textContent = 'This mobile number has already been registered with the following details:';
+                            content.append(message);
+                            const cardContainer = document.createElement('div');
+                            cardContainer.className = 'mt-3';
+                            populateAndShowIdCard(cardContainer, result.details, true);
+                            content.append(cardContainer);
+                            showInfo('Already Registered', content, false);
+                        } else {
+                            const message = document.createElement('p');
+                            message.textContent = result.error || 'An unexpected server error occurred.';
+                            showInfo('Registration Error', message);
+                        }
+                        throw new Error('Server returned an error.');
+                    }
 
-            } catch (error) {
-                console.log('Caught submission error:', error.message);
-                setButtonLoading(false);
-            }
-        });
+                    setButtonLoading(true, 'Generating ID Card...');
+                    populateAndShowIdCard(idCardWrapper, result);
 
-        document.getElementById('download-id-btn').addEventListener('click', () => {
-            const idCardElement = document.getElementById('id-card');
-            triggerIdCardDownload(idCardElement);
-        });
+                    formContainer.classList.add('d-none');
+                    idCardSection.classList.remove('d-none');
 
-        copyUpiBtn.addEventListener('click', () => {
-            const upiId = document.getElementById('upiId').textContent;
-            navigator.clipboard.writeText(upiId).then(() => {
-                const originalTitle = copyUpiBtn.getAttribute('data-bs-original-title');
-                copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
-                copyTooltip.show();
-                copyUpiBtn.querySelector('i').classList.replace('fa-copy', 'fa-check');
-                setTimeout(() => {
-                    copyUpiBtn.setAttribute('data-bs-original-title', originalTitle);
-                    copyTooltip.hide();
-                    copyUpiBtn.querySelector('i').classList.replace('fa-check', 'fa-copy');
-                }, 2000);
+                } catch (error) {
+                    console.log('Caught submission error:', error.message);
+                    setButtonLoading(false);
+                }
+            });
+
+            document.getElementById('download-id-btn').addEventListener('click', () => {
+                const cardElement = idCardWrapper.querySelector('#id-card');
+                if (cardElement) triggerIdCardDownload(cardElement);
+            });
+
+            copyUpiBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(document.getElementById('upiId').textContent).then(() => {
+                    const originalTitle = copyUpiBtn.getAttribute('data-bs-original-title');
+                    copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
+                    copyTooltip.show();
+                    copyUpiBtn.querySelector('i').classList.replace('fa-copy', 'fa-check');
+                    setTimeout(() => {
+                        copyUpiBtn.setAttribute('data-bs-original-title', originalTitle);
+                        copyTooltip.hide();
+                        copyUpiBtn.querySelector('i').classList.replace('fa-check', 'fa-copy');
+                    }, 2000);
+                });
+            });
+
+            form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;
+                    attendanceErrorEl.style.display = isAnyChecked ? 'none' : 'block';
+                });
+            });
+
+            document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
+                    const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
+                    if (labelSpan) { labelSpan.textContent = fileName; }
+                });
             });
         });
     </script>
