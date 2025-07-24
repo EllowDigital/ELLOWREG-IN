@@ -9,23 +9,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- html2canvas library for downloading the ID card -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-color: #4A47A3;
-            /* Deep Indigo */
             --primary-light: #6C63FF;
-            /* Lighter Indigo */
             --accent-color: #2ECC71;
-            /* Vibrant Green */
             --text-color: #34495e;
-            /* Dark Slate Blue */
             --text-light: #7f8c8d;
-            /* Light text */
             --card-bg: #ffffff;
             --light-gray: #f7f9fc;
             --border-color: #e0e0e0;
             --danger-color: #e74c3c;
-            /* Red for warnings */
         }
 
         body {
@@ -92,31 +88,6 @@
             box-shadow: 0 7px 20px 0 rgba(74, 71, 163, 0.4);
         }
 
-        #success-message {
-            background-color: rgba(46, 204, 113, 0.1);
-            border-left: 5px solid var(--accent-color);
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        #enrollment-number {
-            background-color: var(--light-gray);
-            color: var(--primary-color);
-            font-family: 'Courier New', Courier, monospace;
-            border: 2px dashed var(--primary-light);
-        }
-
         .modal-header {
             background-color: var(--danger-color);
             color: white;
@@ -134,6 +105,67 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        /* --- ID Card Styles --- */
+        #id-card-section {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #id-card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+        }
+
+        #id-card-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        #id-card-name {
+            font-weight: 700;
+            color: var(--text-color);
+            font-size: 1.75rem;
+        }
+
+        #id-card-phone {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        #id-card-enrollment {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #fff;
+            background-color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -148,24 +180,35 @@
                     </div>
                     <div class="card-body p-4 p-md-5">
 
-                        <div id="success-message" class="p-4 text-center d-none">
-                            <i class="fas fa-check-circle fa-3x" style="color: var(--accent-color);"></i>
-                            <h2 class="h4 mt-3 mb-2">Thank You For Registering!</h2>
-                            <p class="lead">Most Welcome to the TENT DECOR EXPO 2025.</p>
-                            <hr class="my-3">
-                            <p class="mb-2">Your unique Enrollment Number is:</p>
-                            <div id="enrollment-number" class="p-2 d-inline-block rounded-3" title="Click to copy">
+                        <!-- *** NEW: ID Card Display Area (Initially Hidden) *** -->
+                        <div id="id-card-section" class="d-none text-center">
+                            <h2 class="h4 mb-3 fw-bold">Registration Successful!</h2>
+                            <p class="lead mb-4">Your Digital ID Card is ready.</p>
+                            <div id="id-card">
+                                <img id="id-card-photo" src="https://placehold.co/150x150" alt="Profile Photo">
+                                <h4 id="id-card-name">Registrant Name</h4>
+                                <p id="id-card-phone">+91 00000 00000</p>
+                                <div id="id-card-enrollment">TDEXPOUP-0000</div>
                             </div>
-                            <p id="copy-feedback" class="small mt-2 mb-2"
-                                style="height: 1.2em; color: var(--accent-color); font-weight: 600;"></p>
+                            <button id="download-id-btn" class="btn btn-primary w-100 mt-4 py-3 fs-5"><i
+                                    class="fas fa-download me-2"></i>Download ID Card</button>
                             <p class="small mt-3 text-danger fw-semibold"><i
-                                    class="fas fa-exclamation-triangle me-1"></i>Please save this number. Organizers are
-                                not responsible for lost enrollment numbers.</p>
+                                    class="fas fa-exclamation-triangle me-1"></i>Please download and save your ID card
+                                for event entry.</p>
                         </div>
 
+                        <!-- Form Container -->
                         <div id="form-container">
-                            <h1 class="text-center mb-4">Event Registration 🎪</h1>
+                            <h1 class="text-center mb-4">Register Yourself 🎪</h1>
                             <form class="row g-3 needs-validation" id="registrationForm" novalidate>
+                                <!-- *** UPDATED: Profile Photo Upload Field is now first *** -->
+                                <div class="col-12">
+                                    <label for="profileImage" class="form-label fw-semibold">Upload Your Profile
+                                        Photo<span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="profileImage" name="profileImage"
+                                        accept="image/png, image/jpeg" required>
+                                    <div class="invalid-feedback">Please upload a profile photo (JPG or PNG).</div>
+                                </div>
                                 <div class="col-md-6 form-floating">
                                     <input type="text" class="form-control" id="name" name="name"
                                         placeholder="Full Name" required>
@@ -175,8 +218,6 @@
                                     <input type="tel" class="form-control" id="phone" name="phone"
                                         placeholder="Phone Number" required pattern="^[6-9]\d{9}$">
                                     <label for="phone"><i class="fas fa-phone me-2 opacity-75"></i>Phone Number</label>
-                                    <div class="invalid-feedback">Please enter a valid 10-digit Indian mobile number.
-                                    </div>
                                 </div>
                                 <div class="col-12 form-floating">
                                     <input type="text" class="form-control" id="firmName" name="firmName"
@@ -216,7 +257,6 @@
                                                 type="checkbox" name="attendance" value="Day 3" id="day3"><label
                                                 class="form-check-label" for="day3">Day 3</label></div>
                                     </div>
-                                    <!-- *** CORRECTED CODE: Removed !important from the style attribute *** -->
                                     <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
                                         Please select at least one day.</div>
                                 </div>
@@ -230,13 +270,13 @@
                                             <img src="assets/qr-code.png" alt="Payment QR Code" class="img-fluid"
                                                 style="max-width: 180px; border-radius: 0.5rem; border: 1px solid var(--border-color);"
                                                 onerror="this.onerror=null;this.src='https://placehold.co/200x200/ffffff/000000?text=QR+Code';">
-                                            <p class="mt-3 mb-1">Payee: <strong>SAURABH KUMAR SINGH</strong></p>
+                                            <p class="mt-3 mb-1">Payee: <strong>TENT CATERERS AND DECOR</strong></p>
                                             <p class="mb-2 small" style="color: var(--text-light);">Scan QR or copy UPI
                                                 ID:</p>
                                             <div class="input-group mb-3 mx-auto" style="max-width:350px;">
                                                 <span class="p-2 flex-grow-1 text-center"
                                                     style="background-color: #e9ecef; border-radius: 0.375rem 0 0 0.375rem; font-family: monospace; font-size: 1rem;"
-                                                    id="upiId">7905881922@ybl</span>
+                                                    id="upiId">wl0502260a0022197@unionbank</span>
                                                 <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="Copy to clipboard"><i
@@ -249,7 +289,7 @@
                                     <label for="paymentScreenshot" class="form-label fw-semibold">Upload Payment
                                         Screenshot<span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" id="paymentScreenshot"
-                                        name="paymentScreenshot" accept="image/*" required>
+                                        name="paymentScreenshot" accept="image/png, image/jpeg" required>
                                     <div class="invalid-feedback">Please upload a screenshot of your payment.</div>
                                 </div>
                                 <div class="col-12 mt-4">
@@ -297,12 +337,9 @@
         const buttonText = submitBtn.querySelector('.button-text');
         const buttonSpinner = submitBtn.querySelector('.spinner-border');
         const formContainer = document.getElementById('form-container');
-        const successMessage = document.getElementById('success-message');
-        const enrollmentNumberEl = document.getElementById('enrollment-number');
-        const copyFeedbackEl = document.getElementById('copy-feedback');
-        const errorModalEl = document.getElementById('errorModal');
+        const idCardSection = document.getElementById('id-card-section');
+        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
         const errorModalBody = document.getElementById('errorModalBody');
-        const errorModal = new bootstrap.Modal(errorModalEl);
         const copyUpiBtn = document.getElementById('copyUpiBtn');
         const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
 
@@ -346,24 +383,34 @@
                     throw new Error(errorMessage);
                 }
 
-                setButtonLoading(true, 'Saving...');
-                if (result.enrollmentId) {
-                    enrollmentNumberEl.textContent = result.enrollmentId;
-                    formContainer.classList.add('d-none');
-                    successMessage.classList.remove('d-none');
-                } else {
-                    throw new Error('Enrollment ID not returned from server.');
-                }
+                setButtonLoading(true, 'Generating ID Card...');
+
+                // Populate and show the ID card
+                document.getElementById('id-card-photo').src = result.profileImageUrl;
+                document.getElementById('id-card-name').textContent = result.name;
+                document.getElementById('id-card-phone').textContent = result.phone;
+                document.getElementById('id-card-enrollment').textContent = result.enrollmentId;
+
+                formContainer.classList.add('d-none');
+                idCardSection.classList.remove('d-none');
+
             } catch (error) {
                 showError(error.message);
                 setButtonLoading(false);
             }
         });
 
-        enrollmentNumberEl.addEventListener('click', () => {
-            navigator.clipboard.writeText(enrollmentNumberEl.textContent).then(() => {
-                copyFeedbackEl.textContent = 'Copied to clipboard!';
-                setTimeout(() => { copyFeedbackEl.textContent = ''; }, 2000);
+        // Download ID Card button logic
+        document.getElementById('download-id-btn').addEventListener('click', () => {
+            const idCardElement = document.getElementById('id-card');
+            const name = document.getElementById('id-card-name').textContent.trim().replace(/ /g, '_');
+            const enrollment = document.getElementById('id-card-enrollment').textContent.trim();
+
+            html2canvas(idCardElement, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `ID-CARD_${name}_${enrollment}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
         });
 
