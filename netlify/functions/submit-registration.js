@@ -94,10 +94,10 @@ exports.handler = async (event) => {
     });
 
     const rows = sheetData.data.values || [];
-    const rowCount = rows.length; // Includes header row
+    const rowCount = rows.length;
 
     for (const row of rows) {
-      const existingPhone = row[2]; // Phone number is in the 3rd column of the B:D range
+      const existingPhone = row[2];
       if (existingPhone === phone) {
         return {
           statusCode: 409,
@@ -110,7 +110,7 @@ exports.handler = async (event) => {
     }
 
     // 3. Generate Sequential Enrollment Number
-    const nextId = rowCount; // First registration will be 1 (since header is row 0)
+    const nextId = rowCount + 1;
     const enrollmentId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
     // 4. Upload Images to Cloudinary
@@ -136,7 +136,7 @@ exports.handler = async (event) => {
           state,
           attendance,
           uploadPaymentResponse.secure_url,
-          uploadProfileResponse.secure_url, // New profile photo URL
+          uploadProfileResponse.secure_url,
         ]],
       },
     });
@@ -149,6 +149,7 @@ exports.handler = async (event) => {
         enrollmentId,
         name,
         phone,
+        firmName, // *** ADDED firmName TO RESPONSE ***
         profileImageUrl: uploadProfileResponse.secure_url,
       }),
     };
