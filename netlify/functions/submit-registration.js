@@ -100,7 +100,7 @@ exports.handler = async (event) => {
       const existingPhone = row[2]; // Column D is the phone number
 
       if (existingPhone === phone) {
-        const existingEnrollmentId = row[0]; // Column B
+        const existingRegistrationId = row[0]; // Column B
         const existingName = row[1];         // Column C
         const existingFirmName = row[3];     // Column E
         const existingProfileImageUrl = row[9]; // Column K
@@ -111,8 +111,9 @@ exports.handler = async (event) => {
           body: JSON.stringify({
             error: 'This mobile number has already been registered.',
             details: {
-              enrollmentId: existingEnrollmentId,
+              registrationId: existingRegistrationId,
               name: existingName,
+              phone: existingPhone,
               firmName: existingFirmName,
               profileImageUrl: existingProfileImageUrl
             }
@@ -121,8 +122,8 @@ exports.handler = async (event) => {
       }
     }
 
-    // 3. Generate the new, sequential Enrollment Number
-    const enrollmentId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
+    // 3. Generate the new, sequential Registration Number
+    const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
     // 4. Upload both images to Cloudinary in parallel for efficiency
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
@@ -138,7 +139,7 @@ exports.handler = async (event) => {
       resource: {
         values: [[
           new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // A
-          enrollmentId, // B
+          registrationId, // B
           name,         // C
           phone,        // D
           firmName,     // E
@@ -157,7 +158,7 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        enrollmentId,
+        registrationId,
         name,
         phone,
         firmName,
