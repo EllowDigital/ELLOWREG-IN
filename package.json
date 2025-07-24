@@ -1,0 +1,11 @@
+
+{
+  "name": "expo-registration-form",
+  "version": "1.0.0",
+  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form.",
+  "dependencies": {
+    "googleapis": "^105.0.0",
+    "cloudinary": "^1.37.0",
+    "busboy": "^1.6.0"
+  }
+}
