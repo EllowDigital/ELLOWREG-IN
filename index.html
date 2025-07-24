@@ -11,32 +11,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            /* A more modern and professional color palette */
             --primary-color: #4A47A3;
             /* Deep Indigo */
             --primary-light: #6C63FF;
-            /* Lighter Indigo for gradients */
+            /* Lighter Indigo */
             --accent-color: #2ECC71;
-            /* Vibrant Green for success */
+            /* Vibrant Green */
             --text-color: #34495e;
-            /* Dark Slate Blue - softer than black */
+            /* Dark Slate Blue */
             --text-light: #7f8c8d;
-            /* Light text for muted info */
+            /* Light text */
             --card-bg: #ffffff;
             --light-gray: #f7f9fc;
-            /* Cleaner, lighter gray */
             --border-color: #e0e0e0;
             --danger-color: #e74c3c;
-            /* Red for warnings/errors */
-            --brand-color: #F39C12;
-            /* Richer Gold */
+            /* Red for warnings */
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
-            background-color: #EBEDEE;
-            /* Fallback */
             background-image: linear-gradient(135deg, #FDFBFB 0%, #EBEDEE 100%);
             display: flex;
             flex-direction: column;
@@ -47,11 +41,7 @@
         }
 
         main {
-            flex-grow: 1;
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .registration-card {
@@ -59,13 +49,10 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             position: relative;
             overflow: hidden;
-            /* Important for the pseudo-element */
         }
 
-        /* Subtle gradient top border for a premium feel */
         .registration-card::before {
             content: '';
             position: absolute;
@@ -76,29 +63,10 @@
             background-image: linear-gradient(to right, var(--primary-light), var(--primary-color));
         }
 
-        .registration-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-banner-wrapper {
-            background-color: #000;
-            /* Dark background for the banner image */
-        }
-
         .card-banner {
             max-height: 250px;
             width: 100%;
             object-fit: contain;
-        }
-
-        #registrationForm h1 {
-            font-weight: 700;
-            color: var(--text-color);
-        }
-
-        .form-control {
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .form-control:focus {
@@ -109,10 +77,6 @@
         .form-check-input:checked {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
-        }
-
-        .form-check-input:focus {
-            box-shadow: 0 0 0 0.25rem rgba(74, 71, 163, 0.25);
         }
 
         .btn-primary {
@@ -130,16 +94,8 @@
 
         #success-message {
             background-color: rgba(46, 204, 113, 0.1);
-            /* Light green background */
-            color: var(--text-color);
-            border-radius: 0.75rem;
             border-left: 5px solid var(--accent-color);
-            /* Prominent success indicator */
             animation: fadeIn 0.5s ease-in-out;
-        }
-
-        #success-message .fa-check-circle {
-            color: var(--accent-color);
         }
 
         @keyframes fadeIn {
@@ -157,17 +113,8 @@
         #enrollment-number {
             background-color: var(--light-gray);
             color: var(--primary-color);
-            font-weight: 700;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5rem;
-            cursor: pointer;
             border: 2px dashed var(--primary-light);
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        #enrollment-number:hover {
-            background-color: var(--primary-color);
-            color: white;
         }
 
         .modal-header {
@@ -175,67 +122,45 @@
             color: white;
         }
 
-        /* Footer Styles */
         .footer {
             text-align: center;
-            padding: 1.5rem 0 0 0;
-            font-size: 0.95rem;
+            padding-top: 2rem;
+            font-size: 0.9rem;
             color: var(--text-light);
         }
 
-        .footer .fa-heart {
-            color: var(--danger-color);
-            margin: 0 0.25rem;
-            animation: pulse 1.5s infinite;
-        }
-
         .footer a {
-            color: var(--brand-color);
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.15);
-            }
         }
     </style>
 </head>
 
 <body>
     <main class="container">
-        <div class="row justify-content-center w-100">
+        <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-9">
                 <div class="card registration-card">
-                    <div class="card-banner-wrapper">
+                    <div class="bg-dark">
                         <img src="assets/unnamed.jpg" class="card-banner" alt="Event Banner"
                             onerror="this.onerror=null;this.src='https://placehold.co/800x250/000000/FFFFFF?text=Event+Banner';">
                     </div>
                     <div class="card-body p-4 p-md-5">
 
-                        <div id="success-message" class="p-4 text-center mb-4 d-none">
-                            <i class="fas fa-check-circle fa-3x mb-3"></i>
-                            <h2 class="h4 mb-2">Thank You For Registering!</h2>
-                            <p class="lead" style="color: var(--text-color);">Most Welcome to the TENT DECOR EXPO 2025.
-                            </p>
+                        <div id="success-message" class="p-4 text-center d-none">
+                            <i class="fas fa-check-circle fa-3x" style="color: var(--accent-color);"></i>
+                            <h2 class="h4 mt-3 mb-2">Thank You For Registering!</h2>
+                            <p class="lead">Most Welcome to the TENT DECOR EXPO 2025.</p>
                             <hr class="my-3">
                             <p class="mb-2">Your unique Enrollment Number is:</p>
-                            <div id="enrollment-number" class="p-2 d-inline-block" title="Click to copy"></div>
+                            <div id="enrollment-number" class="p-2 d-inline-block rounded-3" title="Click to copy">
+                            </div>
                             <p id="copy-feedback" class="small mt-2 mb-2"
-                                style="height: 1.2em; color: var(--accent-color);"></p>
-                            <p class="warning-text mt-3 small"><i class="fas fa-exclamation-triangle me-1"></i>Please
-                                save this number. Organizers are not responsible for lost enrollment numbers.</p>
+                                style="height: 1.2em; color: var(--accent-color); font-weight: 600;"></p>
+                            <p class="small mt-3 text-danger fw-semibold"><i
+                                    class="fas fa-exclamation-triangle me-1"></i>Please save this number. Organizers are
+                                not responsible for lost enrollment numbers.</p>
                         </div>
 
                         <div id="form-container">
@@ -275,12 +200,11 @@
                                         required>
                                     <label for="state"><i class="fas fa-globe-asia me-2 opacity-75"></i>State</label>
                                 </div>
-
                                 <div class="col-12 mt-3">
                                     <label class="form-label fw-semibold">Attending Days:<span
                                             class="text-danger">*</span></label>
                                     <div id="attendance-group"
-                                        class="d-flex flex-wrap justify-content-around bg-light p-3 rounded-3"
+                                        class="d-flex flex-wrap justify-content-around bg-light p-2 rounded-3"
                                         style="background-color: var(--light-gray) !important;">
                                         <div class="form-check form-check-inline m-1"><input class="form-check-input"
                                                 type="checkbox" name="attendance" value="Day 1" id="day1"><label
@@ -292,10 +216,10 @@
                                                 type="checkbox" name="attendance" value="Day 3" id="day3"><label
                                                 class="form-check-label" for="day3">Day 3</label></div>
                                     </div>
-                                    <div class="invalid-feedback d-block" id="attendance-error"
-                                        style="display: none!important;">Please select at least one day.</div>
+                                    <!-- *** CORRECTED CODE: Removed !important from the style attribute *** -->
+                                    <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
+                                        Please select at least one day.</div>
                                 </div>
-
                                 <div class="col-12 mt-4">
                                     <div class="p-4 rounded-3"
                                         style="background-color: var(--light-gray); border: 1px solid var(--border-color);">
@@ -321,7 +245,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-12 mt-4">
                                     <label for="paymentScreenshot" class="form-label fw-semibold">Upload Payment
                                         Screenshot<span class="text-danger">*</span></label>
@@ -329,7 +252,6 @@
                                         name="paymentScreenshot" accept="image/*" required>
                                     <div class="invalid-feedback">Please upload a screenshot of your payment.</div>
                                 </div>
-
                                 <div class="col-12 mt-4">
                                     <button class="btn btn-primary w-100 py-3 fs-5" type="submit" id="submitBtn">
                                         <span class="button-text">Submit Registration</span>
@@ -346,8 +268,9 @@
     </main>
 
     <footer class="footer">
-        <p>Crafted with <i class="fas fa-heart"></i> by <a href="https://ellowdigital.netlify.app" target="_blank"
-                rel="noopener noreferrer">EllowDigital</a></p>
+        <p>Crafted with <i class="fas fa-heart" style="color: var(--danger-color);"></i> by <a
+                href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer"
+                style="color: var(--primary-color);">EllowDigital</a></p>
     </footer>
 
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -369,7 +292,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- NO LOGIC CHANGES MADE TO THE SCRIPT ---
         const form = document.getElementById('registrationForm');
         const submitBtn = document.getElementById('submitBtn');
         const buttonText = submitBtn.querySelector('.button-text');
@@ -382,7 +304,6 @@
         const errorModalBody = document.getElementById('errorModalBody');
         const errorModal = new bootstrap.Modal(errorModalEl);
         const copyUpiBtn = document.getElementById('copyUpiBtn');
-
         const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
 
         function showError(message) {
@@ -393,11 +314,7 @@
         function setButtonLoading(isLoading, text = 'Submit Registration') {
             submitBtn.disabled = isLoading;
             buttonText.textContent = text;
-            if (isLoading) {
-                buttonSpinner.classList.remove('d-none');
-            } else {
-                buttonSpinner.classList.add('d-none');
-            }
+            isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
         }
 
         form.addEventListener('submit', async (event) => {
@@ -412,13 +329,12 @@
             }
 
             setButtonLoading(true, 'Validating...');
-
             const formData = new FormData(form);
             const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]')).filter(cb => cb.checked).map(cb => cb.value).join(', ');
             formData.set('attendance', selectedDays);
 
             try {
-                setButtonLoading(true, 'Uploading screenshot...');
+                setButtonLoading(true, 'Uploading, please wait...');
                 const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
                 const result = await response.json();
 
@@ -431,7 +347,6 @@
                 }
 
                 setButtonLoading(true, 'Saving...');
-
                 if (result.enrollmentId) {
                     enrollmentNumberEl.textContent = result.enrollmentId;
                     formContainer.classList.add('d-none');
