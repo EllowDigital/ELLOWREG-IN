@@ -5,7 +5,7 @@
   command = "node create-creds.js"
   
   # This tells Netlify where your functions are located.
-  functions = "functions/"
+   functions = "netlify/functions/" 
 
 # This section defines environment variables that are ONLY available
 # to the `command` above. They will NOT be included in the final
