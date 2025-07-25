@@ -5,7 +5,7 @@ const crypto = require("crypto");
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
-const PHONE_COLUMN_INDEX = 4;  // Column E = Phone
+const PHONE_COLUMN_INDEX = 4; // Column E = Phone
 const REG_ID_COLUMN_LETTER = "B"; // Column B = Reg. ID
 
 cloudinary.config({
@@ -27,48 +27,81 @@ const retryWithBackoff = async (operation, retries = 3, delay = 500) => {
     try {
       return await operation();
     } catch (err) {
-      if (i < retries - 1) await new Promise(res => setTimeout(res, delay * (2 ** i)));
+      if (i < retries - 1)
+        await new Promise((res) => setTimeout(res, delay * 2 ** i));
       else throw err;
     }
   }
 };
 
-const parseMultipartForm = (event) => new Promise((resolve, reject) => {
-  const contentType = event.headers["content-type"] || event.headers["Content-Type"];
-  if (!contentType) return reject(new Error('Missing "Content-Type" header.'));
-  const bb = busboy({ headers: { "content-type": contentType }, limits: { fileSize: 5 * 1024 * 1024 } });
-  const fields = {}, files = {};
-  bb.on("file", (name, file, info) => {
-    const chunks = [];
-    file.on("data", chunk => chunks.push(chunk));
-    file.on("limit", () => reject(new Error(`File "${info.filename}" exceeds 5MB.`)));
-    file.on("end", () => {
-      files[name] = { filename: info.filename, content: Buffer.concat(chunks), contentType: info.mimeType };
+const parseMultipartForm = (event) =>
+  new Promise((resolve, reject) => {
+    const contentType =
+      event.headers["content-type"] || event.headers["Content-Type"];
+    if (!contentType)
+      return reject(new Error('Missing "Content-Type" header.'));
+    const bb = busboy({
+      headers: { "content-type": contentType },
+      limits: { fileSize: 5 * 1024 * 1024 },
     });
+    const fields = {},
+      files = {};
+    bb.on("file", (name, file, info) => {
+      const chunks = [];
+      file.on("data", (chunk) => chunks.push(chunk));
+      file.on("limit", () =>
+        reject(new Error(`File "${info.filename}" exceeds 5MB.`))
+      );
+      file.on("end", () => {
+        files[name] = {
+          filename: info.filename,
+          content: Buffer.concat(chunks),
+          contentType: info.mimeType,
+        };
+      });
+    });
+    bb.on("field", (name, val) => {
+      fields[name] = val;
+    });
+    bb.on("close", () => resolve({ fields, files }));
+    bb.on("error", (err) => reject(new Error(`Form parse error: ${err}`)));
+    bb.end(
+      Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary")
+    );
   });
-  bb.on("field", (name, val) => { fields[name] = val; });
-  bb.on("close", () => resolve({ fields, files }));
-  bb.on("error", err => reject(new Error(`Form parse error: ${err}`)));
-  bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
-});
 
-const uploadToCloudinary = (buffer, folder) => new Promise((resolve, reject) => {
-  cloudinary.uploader.upload_stream({ folder, resource_type: "auto" }, (err, result) => {
-    if (err) return reject(new Error(`Cloudinary upload failed: ${err.message}`));
-    resolve(result);
-  }).end(buffer);
-});
+const uploadToCloudinary = (buffer, folder) =>
+  new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ folder, resource_type: "auto" }, (err, result) => {
+        if (err)
+          return reject(new Error(`Cloudinary upload failed: ${err.message}`));
+        resolve(result);
+      })
+      .end(buffer);
+  });
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
   }
 
   try {
     const { fields, files } = await parseMultipartForm(event);
     const {
-      name, phone, firmName, address, district, state, attendance,
-      razorpay_order_id, razorpay_payment_id, razorpay_signature
+      name,
+      phone,
+      firmName,
+      address,
+      district,
+      state,
+      attendance,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
     } = fields;
     const { profileImage } = files;
 
@@ -82,29 +115,52 @@ exports.handler = async (event) => {
     if (expectedSignature !== razorpay_signature) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ status: "error", error: "Invalid Razorpay signature. Payment not verified." }),
+        body: JSON.stringify({
+          status: "error",
+          error: "Invalid Razorpay signature. Payment not verified.",
+        }),
       };
     }
 
     // 2. Validate Required Fields
-    const required = { name, phone, firmName, address, district, state, attendance };
+    const required = {
+      name,
+      phone,
+      firmName,
+      address,
+      district,
+      state,
+      attendance,
+    };
     for (const [key, val] of Object.entries(required)) {
       if (!val || val.trim() === "") {
-        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing: ${key}` }) };
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ status: "error", error: `Missing: ${key}` }),
+        };
       }
     }
     if (!profileImage) {
-      return { statusCode: 400, body: JSON.stringify({ status: "error", error: "Profile photo required." }) };
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          status: "error",
+          error: "Profile photo required.",
+        }),
+      };
     }
 
     // 3. Fetch all rows to check for duplicates and get row count
     const sheetData = await retryWithBackoff(() =>
-      sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A1:K1000` })
+      sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEET_NAME}!A1:K1000`,
+      })
     );
     const rows = sheetData.data.values || [];
 
     // 4. Check for duplicate phone number
-    const existing = rows.find(row => row[PHONE_COLUMN_INDEX] === phone);
+    const existing = rows.find((row) => row[PHONE_COLUMN_INDEX] === phone);
     if (existing) {
       return {
         statusCode: 200,
@@ -141,20 +197,22 @@ exports.handler = async (event) => {
         range: SHEET_NAME,
         valueInputOption: "USER_ENTERED",
         resource: {
-          values: [[
-            new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-            registrationId,
-            name,
-            firmName,
-            phone,
-            address,
-            district,
-            state,
-            attendance,
-            razorpay_payment_id,
-            uploadRes.secure_url
-          ]]
-        }
+          values: [
+            [
+              new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+              registrationId,
+              name,
+              firmName,
+              phone,
+              address,
+              district,
+              state,
+              attendance,
+              razorpay_payment_id,
+              uploadRes.secure_url,
+            ],
+          ],
+        },
       })
     );
 
@@ -171,10 +229,9 @@ exports.handler = async (event) => {
           firmName,
           attendance,
           profileImageUrl: uploadRes.secure_url,
-        }
+        },
       }),
     };
-
   } catch (err) {
     console.error("REGISTRATION_ERROR", err);
     return {
