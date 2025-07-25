@@ -312,6 +312,7 @@
             color: white;
         }
 
+        /* === NEW STYLES FOR UPDATED ENTRY PASS === */
         .id-card-event-details {
             border-top: 1px dashed var(--border-color);
             margin-top: 1rem;
@@ -493,8 +494,7 @@
                 <small>REGISTRATION NO.</small>
                 <div class="id-card-reg-number"></div>
                 <div class="id-card-event-details">
-                    <p class="id-card-dynamic-date"><i class="fas fa-calendar-alt fa-fw"></i> <span>Sep 12-14,
-                            2025</span></p>
+                    <p><i class="fas fa-calendar-alt fa-fw"></i> Sep 12-14, 2025</p>
                     <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Pratishthan, Lucknow</p>
                 </div>
             </div>
@@ -568,28 +568,6 @@
                 firmEl.textContent = details.firmName;
                 card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = details.registrationId;
-
-                // --- NEW LOGIC FOR DYNAMIC DATES ---
-                const dateMap = {
-                    'Day 1': '12',
-                    'Day 2': '13',
-                    'Day 3': '14'
-                };
-
-                // This logic requires the backend to return 'details.attendance'
-                if (details.attendance) {
-                    const selectedDays = details.attendance.split(', ');
-                    const selectedDates = selectedDays.map(day => dateMap[day]).filter(Boolean);
-
-                    if (selectedDates.length > 0) {
-                        const dateText = selectedDates.join(', '); // e.g., "12, 14"
-                        const dateElement = card.querySelector('.id-card-dynamic-date span');
-                        if (dateElement) {
-                            dateElement.textContent = `Sep ${dateText}, 2025`;
-                        }
-                    }
-                }
-                // --- END NEW LOGIC ---
 
                 container.innerHTML = '';
                 container.append(card);
