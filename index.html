@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TENT DECOR EXPO UP 2025 - Professional Registration</title>
+    <title>TENT DECOR EXPO UP 2025 - Registration</title>
     <link rel="icon" type="image/x-icon" href="https://placehold.co/32x32/0A2540/FFF?text=TD">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
@@ -311,6 +311,34 @@
             background-color: var(--primary-color);
             color: white;
         }
+
+        /* === NEW STYLES FOR UPDATED ENTRY PASS === */
+        .id-card-event-details {
+            border-top: 1px dashed var(--border-color);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-color);
+        }
+
+        .id-card-event-details p {
+            margin-bottom: 0.25rem;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .id-card-event-details i {
+            color: var(--primary-light);
+            margin-right: 0.5rem;
+        }
+
+        .id-card-notice {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -318,22 +346,18 @@
     <main class="registration-container">
         <div class="card registration-card">
             <div class="row g-0">
-                <!-- Info Panel: Stays on the left for medium screens and up -->
+                <!-- Info Panel -->
                 <div class="col-lg-5 info-panel">
-                    <!-- Banner image displayed directly -->
                     <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner"
                         class="info-panel-banner img-fluid">
-
                     <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for tent,
                         catering, sound & SFX products.</p>
-
                     <div class="text-center my-4">
                         <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
                         <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025</p>
                         <p class="fs-5" style="line-height: 1.5;"><i class="fas fa-map-marker-alt fa-fw me-2"></i>Indira
                             Gandhi Prathishthan, Gomati Nagar, Lucknow - 226010</p>
                     </div>
-
                     <div class="text-center mt-auto">
                         <h5 class="fw-bold mb-2" style="color: var(--accent-color);">For Enquiries</h5>
                         <p class="mb-1 fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i>7905881922</p>
@@ -341,11 +365,11 @@
                     </div>
                 </div>
 
-                <!-- Form Panel: Takes full width on small screens, right side on large -->
+                <!-- Form Panel -->
                 <div class="col-lg-7 form-panel">
                     <div id="id-card-section" class="d-none text-center">
                         <h2 class="h3 mb-2 fw-bold">Registration Confirmed</h2>
-                        <p class="lead mb-4 text-secondary">Your professional entry pass is now available.</p>
+                        <p class="lead mb-4 text-secondary">Your entry pass is now available.</p>
                         <div id="id-card-wrapper"></div>
                         <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i
                                 class="fas fa-download me-2"></i>Download Entry Pass</button>
@@ -453,21 +477,29 @@
         </div>
     </div>
 
-    <!-- Hidden Template for ID Card Generation -->
+    <!-- Hidden Template for Entry Pass Generation -->
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
-                <div class="header-text">TENT DECOR EXPO 2025</div>
+                <div class="header-text">EVENT ENTRY PASS</div>
             </div>
             <div class="id-card-body">
-                <img class="id-card-photo" src="" alt="Profile Photo" crossorigin="anonymous">
+                <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
                 <h4 class="id-card-name"></h4>
                 <p class="id-card-firm"></p>
                 <div class="id-card-details"><span class="id-card-phone id-card-detail"><i
                             class="fas fa-phone"></i><span></span></span></div>
             </div>
-            <div class="id-card-footer"><small>REGISTRATION NO.</small>
+            <div class="id-card-footer">
+                <small>REGISTRATION NO.</small>
                 <div class="id-card-reg-number"></div>
+                <div class="id-card-event-details">
+                    <p><i class="fas fa-calendar-alt fa-fw"></i> Sep 12-14, 2025</p>
+                    <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Pratishthan, Lucknow</p>
+                </div>
+            </div>
+            <div class="id-card-notice">
+                Please keep this pass safe. You are responsible if it is lost.
             </div>
         </div>
     </div>
