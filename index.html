@@ -526,13 +526,6 @@
             const UPI_ID = 'wl0502260a0022197@unionbank';
 
             // --- Helper Functions ---
-
-            /**
-             * Displays a modal with a title and message.
-             * @param {string} title The title of the modal.
-             * @param {string|HTMLElement} content The body content.
-             * @param {boolean} [isError=true] Toggles between error and info styling.
-             */
             function showInfo(title, content, isError = true) {
                 const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
@@ -549,11 +542,6 @@
                 infoModal.show();
             }
 
-            /**
-             * Sets the loading state of the submit button.
-             * @param {boolean} isLoading True to show loading state, false to hide.
-             * @param {string} [text] Optional text to display while loading.
-             */
             function setButtonLoading(isLoading, text = 'Submit Registration') {
                 const buttonText = submitBtn.querySelector('.button-text');
                 const buttonSpinner = submitBtn.querySelector('.spinner-border');
@@ -562,13 +550,6 @@
                 isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
             }
 
-            /**
-             * Validates a file based on type and size.
-             * @param {File} file The file to validate.
-             * @param {string[]} allowedTypes Allowed MIME types.
-             * @param {number} maxSizeInMB Maximum size in megabytes.
-             * @returns {string|null} An error message string or null if valid.
-             */
             function validateFile(file, allowedTypes, maxSizeInMB) {
                 if (!file) return "This field is required.";
                 if (!allowedTypes.includes(file.type)) {
@@ -580,35 +561,24 @@
                 return null;
             }
 
-            /**
-             * Creates and displays the entry pass.
-             * @param {HTMLElement} container The element to inject the card into.
-             * @param {object} details The registration data.
-             */
             function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
-
                 card.querySelector('.id-card-photo').src = details.profileImageUrl;
                 card.querySelector('.id-card-name').textContent = details.name;
                 card.querySelector('.id-card-firm').textContent = details.firmName;
                 card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = details.registrationId;
-
                 container.innerHTML = '';
                 container.append(card);
             }
 
-            /**
-             * Triggers a download of the generated entry pass.
-             * @param {HTMLElement} cardElement The #id-card element to capture.
-             */
-            function triggerIdCardDownload(cardElement) {
+            function triggerIdCardDownload(cardElement, button) {
                 const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
                 const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                const downloadButton = document.getElementById('download-id-btn');
-                downloadButton.disabled = true;
-                downloadButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+                const originalButtonHtml = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
 
                 html2canvas(cardElement, {
                     scale: 3,
@@ -623,33 +593,25 @@
                     console.error('Error generating canvas:', err);
                     showInfo('Download Error', 'Could not generate the entry pass image. Please try taking a screenshot.', true);
                 }).finally(() => {
-                    downloadButton.disabled = false;
-                    downloadButton.innerHTML = '<i class="fas fa-download me-2"></i>Download Entry Pass';
+                    button.disabled = false;
+                    button.innerHTML = originalButtonHtml;
                 });
             }
 
-
             // --- Event Listeners ---
-
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
-                // Custom validation for checkboxes
                 const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
                 attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
-
                 form.classList.add('was-validated');
-                if (!form.checkValidity() || !isChecked) {
-                    return;
-                }
+                if (!form.checkValidity() || !isChecked) return;
 
-                // Client-side file validation
                 const profileImgFile = form.querySelector('#profileImage').files[0];
                 const screenshotFile = form.querySelector('#paymentScreenshot').files[0];
                 const imgError = validateFile(profileImgFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
                 const screenshotError = validateFile(screenshotFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
-
                 if (imgError || screenshotError) {
                     showInfo('Validation Error', `${imgError ? 'Profile Image: ' + imgError : ''}\n${screenshotError ? 'Screenshot: ' + screenshotError : ''}`);
                     return;
@@ -662,46 +624,50 @@
 
                 try {
                     setButtonLoading(true, 'Uploading, please wait...');
-                    // This assumes you have a Netlify function at this endpoint
                     const response = await fetch('/.netlify/functions/submit-registration', {
                         method: 'POST',
                         body: formData
                     });
 
-                    const result = await response.json().catch(() => { throw new Error("Invalid response from server.") });
+                    const result = await response.json().catch(() => {
+                        throw new Error("Invalid server response. Please try again.");
+                    });
 
-                    if (!response.ok) {
-                        // Handle specific "Already Registered" error
-                        if (response.status === 409 && result.details) {
-                            const content = document.createElement('div');
-                            content.innerHTML = `<p>This mobile number has already been registered. You can download the existing entry pass below.</p>`;
-                            const cardContainer = document.createElement('div');
-                            cardContainer.className = 'mt-3';
-                            populateAndShowIdCard(cardContainer, result.details);
+                    // ===================================================================
+                    // === KEY CHANGES ARE HERE to handle the new backend response ===
+                    // ===================================================================
 
-                            const downloadBtn = document.createElement('button');
-                            downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
-                            downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original Entry Pass';
-                            downloadBtn.onclick = () => triggerIdCardDownload(cardContainer.querySelector('#id-card'));
+                    if (result.status === 'success') {
+                        // --- SUCCESS CASE ---
+                        setButtonLoading(true, 'Generating Entry Pass...');
+                        populateAndShowIdCard(idCardWrapper, result.registrationData);
+                        formContainer.classList.add('d-none');
+                        idCardSection.classList.remove('d-none');
 
-                            content.append(cardContainer, downloadBtn);
-                            showInfo('Already Registered', content, false);
-                        } else {
-                            // Handle other server errors
-                            showInfo('Registration Error', result.error || 'An unexpected server error occurred. Please try again later.');
-                        }
-                        return; // Stop execution on error
+                    } else if (result.status === 'duplicate') {
+                        // --- DUPLICATE CASE ---
+                        const content = document.createElement('div');
+                        content.innerHTML = `<p>${result.message} You can download your existing entry pass below.</p>`;
+                        const cardContainer = document.createElement('div');
+                        cardContainer.className = 'mt-3';
+                        populateAndShowIdCard(cardContainer, result.registrationData);
+
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
+                        downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Existing Pass';
+                        downloadBtn.onclick = (e) => triggerIdCardDownload(cardContainer.querySelector('#id-card'), e.currentTarget);
+
+                        content.append(cardContainer, downloadBtn);
+                        showInfo('Already Registered', content, false);
+
+                    } else {
+                        // --- OTHER ERRORS (from server) ---
+                        throw new Error(result.error || 'An unexpected error occurred.');
                     }
-
-                    // --- Success Case ---
-                    setButtonLoading(true, 'Generating Entry Pass...');
-                    populateAndShowIdCard(idCardWrapper, result);
-                    formContainer.classList.add('d-none');
-                    idCardSection.classList.remove('d-none');
 
                 } catch (error) {
                     console.error('Submission Error:', error);
-                    showInfo('Network Error', 'Could not connect to the server. Please check your internet connection and try again.');
+                    showInfo('Registration Error', error.message, true);
                 } finally {
                     // Reset button state only if the form is still visible
                     if (!formContainer.classList.contains('d-none')) {
@@ -710,13 +676,11 @@
                 }
             });
 
-            // Download button on the success screen
-            document.getElementById('download-id-btn').addEventListener('click', () => {
+            document.getElementById('download-id-btn').addEventListener('click', (e) => {
                 const cardElement = idCardWrapper.querySelector('#id-card');
-                if (cardElement) triggerIdCardDownload(cardElement);
+                if (cardElement) triggerIdCardDownload(cardElement, e.currentTarget);
             });
 
-            // Copy UPI ID button
             copyUpiBtn.addEventListener('click', () => {
                 navigator.clipboard.writeText(UPI_ID).then(() => {
                     const originalIcon = 'fa-copy';
@@ -725,7 +689,6 @@
                     copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
                     copyTooltip.show();
                     icon.classList.replace(originalIcon, successIcon);
-
                     setTimeout(() => {
                         copyUpiBtn.setAttribute('data-bs-original-title', 'Copy UPI ID');
                         copyTooltip.hide();
@@ -737,18 +700,14 @@
                 });
             });
 
-            // Update file input labels on change
             document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
                     const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
-                    if (labelSpan) {
-                        labelSpan.textContent = fileName;
-                    }
+                    if (labelSpan) labelSpan.textContent = fileName;
                 });
             });
 
-            // Real-time validation for attendance checkboxes
             form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
                     const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;

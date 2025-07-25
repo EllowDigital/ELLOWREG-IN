@@ -5,11 +5,10 @@ const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 
 // --- Configuration ---
-// Placed outside the handler to be reused in "warm" function invocations
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations"; // Use a constant for the sheet name
-const PHONE_COLUMN = "D"; // Column D for phone numbers
-const REG_ID_COLUMN = "B"; // Column B for Registration ID
+const SHEET_NAME = "Registrations";
+const PHONE_COLUMN = "D";
+const REG_ID_COLUMN = "B";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -25,8 +24,7 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: "v4", auth });
 
-// --- Helper Functions (No changes needed, they are well-written) ---
-
+// --- Helper Functions ---
 const parseMultipartForm = (event) => {
   return new Promise((resolve, reject) => {
     const contentType = event.headers["content-type"] || event.headers["Content-Type"];
@@ -35,7 +33,7 @@ const parseMultipartForm = (event) => {
     }
     const bb = busboy({
       headers: { "content-type": contentType },
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+      limits: { fileSize: 5 * 1024 * 1024 },
     });
     const fields = {};
     const files = {};
@@ -69,14 +67,12 @@ const uploadToCloudinary = (fileBuffer, folderName) => {
 };
 
 // --- Main Handler Logic ---
-
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
   try {
-    // 1. PARSE AND VALIDATE FORM DATA
     const { fields, files } = await parseMultipartForm(event);
     const { name, phone, firmName, address, district, state, attendance } = fields;
     const { profileImage, paymentScreenshot } = files;
@@ -90,18 +86,17 @@ exports.handler = async (event) => {
     if (!profileImage) return { statusCode: 400, body: JSON.stringify({ error: "Profile photo is required." }) };
     if (!paymentScreenshot) return { statusCode: 400, body: JSON.stringify({ error: "Payment screenshot is required." }) };
 
-    // 2. CHECK FOR DUPLICATE PHONE NUMBER (Optimized)
-    // Fetches only the phone number column for better performance.
     const phoneDataResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!${PHONE_COLUMN}:${PHONE_COLUMN}`,
     });
 
     const phoneNumbers = phoneDataResponse.data.values || [];
-    const duplicateRowIndex = phoneNumbers.findIndex(row => row[0] === phone);
+    const duplicateRowIndex = phoneNumbers.findIndex(row => row && row[0] === phone);
 
+    // --- IMPROVED DUPLICATE HANDLING LOGIC ---
     if (duplicateRowIndex !== -1) {
-      const rowNumber = duplicateRowIndex + 1; // +1 because sheet rows are 1-based
+      const rowNumber = duplicateRowIndex + 1;
       const existingData = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: `${SHEET_NAME}!A${rowNumber}:K${rowNumber}`,
@@ -111,48 +106,46 @@ exports.handler = async (event) => {
       return {
         statusCode: 409, // Conflict
         body: JSON.stringify({
-          error: "This mobile number has already been registered.",
-          details: {
+          // A clear status for the frontend to check
+          status: "duplicate",
+          message: "This mobile number has already been registered.",
+          // All data needed to rebuild the entry pass on the frontend
+          registrationData: {
             registrationId: rowDetails[1], // Col B
             name: rowDetails[2],           // Col C
-            firmName: rowDetails[4],       // Col E
             phone: rowDetails[3],          // Col D
-            profileImageUrl: rowDetails[10], // Col K
+            firmName: rowDetails[4],       // Col E
+            profileImageUrl: rowDetails[10],// Col K
           },
         }),
       };
     }
+    // --- END OF IMPROVEMENT ---
 
-    // 3. UPLOAD IMAGES TO CLOUDINARY
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025"),
     ]);
 
-    // 4. ATOMIC APPEND & UPDATE - THE CORE FIX FOR RACE CONDITIONS
-    // Step 4a: Append the new row with a placeholder for the registration ID.
     const appendResult = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: SHEET_NAME,
       valueInputOption: "USER_ENTERED",
       resource: {
         values: [[
-          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // A: Timestamp
-          "PENDING", // B: Registration ID (Placeholder)
-          name, firmName, phone, address, district, state, attendance, // C-I
-          uploadPaymentResponse.secure_url, // J: Payment URL
-          uploadProfileResponse.secure_url,  // K: Profile URL
+          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+          "PENDING",
+          name, phone, firmName, address, district, state, attendance,
+          uploadPaymentResponse.secure_url,
+          uploadProfileResponse.secure_url,
         ]],
       },
     });
 
-    // Step 4b: Extract the row number from the API response to generate a unique ID.
     const updatedRange = appendResult.data.updates.updatedRange;
-    // Regex to safely extract the row number (e.g., from 'Registrations'!A102:K102)
     const newRowNumber = parseInt(updatedRange.match(/(\d+)$/)[0], 10);
     const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
 
-    // Step 4c: Update the newly created row with the final, unique registration ID.
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!${REG_ID_COLUMN}${newRowNumber}`,
@@ -160,16 +153,18 @@ exports.handler = async (event) => {
       resource: { values: [[registrationId]] },
     });
 
-    // 5. RETURN SUCCESSFUL RESPONSE
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        registrationId,
-        name,
-        phone,
-        firmName,
-        profileImageUrl: uploadProfileResponse.secure_url,
+        status: "success",
+        registrationData: {
+          registrationId,
+          name,
+          phone,
+          firmName,
+          profileImageUrl: uploadProfileResponse.secure_url,
+        }
       }),
     };
 
