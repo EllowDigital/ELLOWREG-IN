@@ -96,14 +96,15 @@ exports.handler = async (event) => {
     const nextId = rows.length + 1; // The next ID is the current number of rows + 1
 
     for (const row of rows) {
-      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, ..., K=9
+      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, F=4, G=5, H=6, I=7, J=8, K=9
       const existingPhone = row[2]; // Column D is the phone number
 
       if (existingPhone === phone) {
         const existingRegistrationId = row[0]; // Column B
-        const existingName = row[1];       // Column C
-        const existingFirmName = row[3];     // Column E
-        const existingProfileImageUrl = row[9]; // Column K
+        const existingName = row[1];           // Column C
+        const existingFirmName = row[3];       // Column E
+        const existingAttendance = row[7];     // Column I <-- Get existing attendance
+        const existingProfileImageUrl = row[9];// Column K
 
         // If a duplicate is found, return a 409 Conflict status with all details.
         return {
@@ -115,7 +116,8 @@ exports.handler = async (event) => {
               name: existingName,
               firmName: existingFirmName,
               phone: existingPhone,
-              profileImageUrl: existingProfileImageUrl
+              profileImageUrl: existingProfileImageUrl,
+              attendance: existingAttendance, // <-- ADD attendance to duplicate response
             }
           }),
         };
@@ -153,7 +155,7 @@ exports.handler = async (event) => {
       },
     });
 
-    // 6. Return a successful response with all data needed for the new ID card
+    // 6. Return a successful response with all data needed for the new entry pass
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -163,6 +165,7 @@ exports.handler = async (event) => {
         phone,
         firmName,
         profileImageUrl: uploadProfileResponse.secure_url,
+        attendance: attendance, // <-- ADD attendance to success response
       }),
     };
 
