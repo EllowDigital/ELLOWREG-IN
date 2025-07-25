@@ -1,17 +1,26 @@
-// This function requires 'busboy' to parse multipart/form-data with file uploads.
+// submit-registration.js
+
 const { google } = require('googleapis');
 const cloudinary = require('cloudinary').v2;
+const busboy = require('busboy');
 
 // Helper function to parse multipart form data with a file size limit
-const parseMultipartForm = async (event) => {
+const parseMultipartForm = (event) => {
   return new Promise((resolve, reject) => {
-    const busboy = require('busboy');
-    const fields = {};
-    const files = {};
+    // Find the 'content-type' header, ignoring case.
+    const contentType = event.headers['content-type'] || event.headers['Content-Type'];
+    if (!contentType) {
+      return reject(new Error('Missing "Content-Type" header.'));
+    }
+
     const bb = busboy({
-      headers: event.headers,
+      // Provide the content-type header in the format busboy expects.
+      headers: { 'content-type': contentType },
       limits: { fileSize: 5 * 1024 * 1024 } // 5MB file size limit per file
     });
+
+    const fields = {};
+    const files = {};
 
     bb.on('file', (name, file, info) => {
       const { filename, mimeType } = info;
@@ -32,8 +41,9 @@ const parseMultipartForm = async (event) => {
     bb.on('field', (name, val) => { fields[name] = val; });
     bb.on('close', () => resolve({ fields, files }));
     bb.on('error', err => reject(new Error(`Error parsing form: ${err}`)));
-    bb.write(event.body, event.isBase64Encoded ? 'base64' : 'binary');
-    bb.end();
+
+    // Write the body buffer to busboy for parsing.
+    bb.end(Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'binary'));
   });
 };
 
@@ -88,16 +98,14 @@ exports.handler = async (event) => {
     // 2. Check for Duplicate Phone Number and Get Row Count
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      // Fetch all columns needed for the duplicate user card (B to K)
       range: 'Registrations!B:K',
     });
 
     const rows = sheetData.data.values || [];
-    const nextId = rows.length + 1; // The next ID is the current number of rows + 1
+    const nextId = rows.length + 1;
 
     for (const row of rows) {
-      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, ..., K=9
-      const existingPhone = row[2]; // Column D is the phone number
+      const existingPhone = row[2]; // Column D
 
       if (existingPhone === phone) {
         const existingRegistrationId = row[0]; // Column B
@@ -105,7 +113,6 @@ exports.handler = async (event) => {
         const existingFirmName = row[3];     // Column E
         const existingProfileImageUrl = row[9]; // Column K
 
-        // If a duplicate is found, return a 409 Conflict status with all details.
         return {
           statusCode: 409,
           body: JSON.stringify({
@@ -125,7 +132,7 @@ exports.handler = async (event) => {
     // 3. Generate the new, sequential Registration Number
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
-    // 4. Upload both images to Cloudinary in parallel for efficiency
+    // 4. Upload both images to Cloudinary in parallel
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")
@@ -134,7 +141,7 @@ exports.handler = async (event) => {
     // 5. Append all data to the Google Sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'Registrations', // Append to the first empty row of the sheet
+      range: 'Registrations',
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [[
@@ -153,7 +160,7 @@ exports.handler = async (event) => {
       },
     });
 
-    // 6. Return a successful response with all data needed for the new ID card
+    // 6. Return a successful response
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
