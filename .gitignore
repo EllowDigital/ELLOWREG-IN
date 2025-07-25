@@ -1,3 +1,6 @@
-# Ignore sensitive credential files
-firebase-credentials.json
-google-credentials.json
+# Node modules
+node_modules/
+
+# Ignore sensitive credential files that are generated during the build
+netlify/functions/submit-registration/firebase-credentials.json
+netlify/functions/submit-registration/google-credentials.json
