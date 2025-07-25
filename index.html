@@ -10,6 +10,7 @@
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
     <!-- External Libraries with Correct Security Attributes -->
+    <!-- FIX: Changed 'xintegrity' to the correct 'integrity' attribute -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
@@ -34,12 +35,14 @@
             --danger-color: #e74c3c;
             --success-color: #20c997;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
             background-color: var(--body-bg);
             line-height: 1.6;
         }
+
         .registration-container {
             min-height: 100vh;
             display: flex;
@@ -47,6 +50,7 @@
             justify-content: center;
             padding: 1.5rem;
         }
+
         .registration-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -56,6 +60,7 @@
             width: 100%;
             max-width: 1200px;
         }
+
         .info-panel {
             background-color: var(--primary-color);
             color: #fff;
@@ -64,14 +69,17 @@
             justify-content: space-between;
             padding: 2rem;
         }
+
         .form-panel {
             padding: 2rem;
         }
+
         @media (min-width: 992px) {
             .form-panel {
                 padding: 3rem 4rem;
             }
         }
+
         .form-panel .form-heading {
             font-family: 'Lora', serif;
             color: var(--primary-color);
@@ -79,14 +87,17 @@
             font-size: clamp(1.75rem, 5vw, 2.25rem);
             font-weight: 600;
         }
+
         .form-floating>.form-control {
             height: calc(3.5rem + 2px);
         }
+
         .form-control:focus,
         .form-check-input:focus {
             border-color: var(--primary-light);
             box-shadow: 0 0 0 0.2rem rgba(10, 37, 64, 0.2);
         }
+
         .btn-primary {
             background-image: linear-gradient(45deg, var(--primary-color) 0%, var(--primary-light) 100%);
             border: none;
@@ -97,10 +108,12 @@
             border-radius: 8px;
             font-size: 1.1rem;
         }
+
         .btn-primary:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 20px rgba(10, 37, 64, 0.3);
         }
+
         .custom-file-input {
             position: relative;
             overflow: hidden;
@@ -111,9 +124,11 @@
             transition: border-color 0.2s ease-in-out;
             background-color: #fff;
         }
+
         .custom-file-input:hover {
             border-color: var(--primary-light);
         }
+
         .custom-file-input input[type="file"] {
             position: absolute;
             left: 0;
@@ -123,6 +138,7 @@
             width: 100%;
             cursor: pointer;
         }
+
         .custom-file-input .file-input-label {
             display: flex;
             align-items: center;
@@ -132,10 +148,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .custom-file-input .file-input-label i {
             margin-right: 0.75rem;
             color: var(--primary-color);
         }
+
         #id-card {
             width: 100%;
             background-color: var(--card-bg);
@@ -146,11 +164,23 @@
             overflow: hidden;
             text-align: center;
         }
+
         .id-card-header {
             background-color: var(--primary-color);
-            padding: 1.5rem;
-            padding-bottom: 4.5rem;
+            padding: 1.5rem 1rem 4.5rem 1rem;
         }
+
+        .id-card-header-text {
+            color: #fff;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .id-card-body {
+            position: relative;
+            padding: 1rem;
+        }
+
         .id-card-photo {
             width: 130px;
             height: 130px;
@@ -161,6 +191,7 @@
             margin-top: -80px;
             background: #fff;
         }
+
         .id-card-name {
             font-weight: 700;
             color: var(--primary-color);
@@ -169,6 +200,7 @@
             line-height: 1.2;
             word-wrap: break-word;
         }
+
         .id-card-firm {
             font-size: clamp(1rem, 4vw, 1.1rem);
             color: var(--text-color);
@@ -176,11 +208,43 @@
             margin-bottom: 1.5rem;
             word-wrap: break-word;
         }
+
+        .id-card-details {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .id-card-details i {
+            color: var(--primary-light);
+            margin-right: 0.3rem;
+        }
+
         .id-card-footer {
             background-color: var(--body-bg);
             padding: 1rem;
             border-top: 1px solid var(--border-color);
         }
+
+        .id-card-footer-label {
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .id-card-reg-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: clamp(1.2rem, 5vw, 1.6rem);
+            color: var(--primary-color);
+            word-break: break-all;
+        }
+
         .id-card-event-details {
             border-top: 1px dashed var(--border-color);
             margin-top: 1rem;
@@ -188,17 +252,20 @@
             font-size: 0.8rem;
             color: var(--text-color);
         }
+
         .id-card-event-details p {
             margin-bottom: 0.25rem;
             text-align: left;
             padding-left: 20px;
         }
+
         .id-card-event-details i {
             width: 20px;
             text-align: center;
             color: var(--primary-light);
             margin-right: 0.5rem;
         }
+
         .id-card-notice {
             background-color: var(--primary-color);
             color: #fff;
@@ -206,10 +273,12 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
+
         .modal-header-error {
             background-color: var(--danger-color);
             color: white;
         }
+
         .modal-header-info {
             background-color: var(--primary-color);
             color: white;
@@ -224,20 +293,24 @@
                 <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner with event visuals"
-                            class="img-fluid rounded-3 mb-4">
-                        <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for tent, catering, sound & SFX products.</p>
+                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908022/unnamed_z7bzx7.jpg"
+                            alt="Tent Decor Expo UP 2025 Banner with event visuals" class="img-fluid rounded-3 mb-4">
+                        <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
+                            tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
                             <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
-                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025</p>
+                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
+                            </p>
                             <p class="fs-5" style="line-height: 1.5;"><i
                                     class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Prathishthan, Lucknow</p>
                         </div>
                     </div>
                     <div class="text-center mt-4">
                         <h5 class="fw-bold mb-2" style="color: var(--accent-color);">For Enquiries</h5>
-                        <p class="mb-1 fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+917905881922" class="text-white text-decoration-none">7905881922</a></p>
-                        <p class="fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+919953903330" class="text-white text-decoration-none">9953903330</a></p>
+                        <p class="mb-1 fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+917905881922"
+                                class="text-white text-decoration-none">7905881922</a></p>
+                        <p class="fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+919953903330"
+                                class="text-white text-decoration-none">9953903330</a></p>
                     </div>
                 </div>
 
@@ -245,56 +318,96 @@
                 <div class="col-lg-7 form-panel d-flex flex-column">
                     <!-- Success View (Initially hidden) -->
                     <div id="id-card-section" class="d-none text-center my-auto">
-                        <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration Confirmed</h2>
+                        <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
+                            Confirmed</h2>
                         <p class="lead mb-4 text-secondary">Your entry pass is now available. Download and save it.</p>
                         <div id="id-card-wrapper"></div>
-                        <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i class="fas fa-download me-2"></i>Download Entry Pass</button>
+                        <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i
+                                class="fas fa-download me-2"></i>Download Entry Pass</button>
                     </div>
 
                     <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading">Get Your Entry Pass</h2>
                         <form class="row g-3 g-lg-4 needs-validation" id="registrationForm" novalidate>
-                            <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span class="text-danger">*</span></label>
-                                <div class="custom-file-input"><input type="file" id="profileImage" name="profileImage" accept="image/png, image/jpeg, image/jpg" required><label class="file-input-label" for="profileImage"><i class="fas fa-upload"></i><span>Choose a file...</span></label></div>
+                            <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-file-input"><input type="file" id="profileImage" name="profileImage"
+                                        accept="image/png, image/jpeg, image/jpg" required><label
+                                        class="file-input-label" for="profileImage"><i
+                                            class="fas fa-upload"></i><span>Choose a file...</span></label></div>
                             </div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required minlength="3"><label for="name">Full Name</label></div>
-                            <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label for="phone">10-Digit Phone Number</label></div>
-                            <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName" name="firmName" placeholder="Firm Name" required minlength="3"><label for="firmName">Firm Name</label></div>
-                            <div class="col-12 form-floating"><textarea class="form-control" placeholder="Full Address" id="address" name="address" style="height: 100px" required minlength="10"></textarea><label for="address">Full Address</label></div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="district" name="district" placeholder="District" required><label for="district">District</label></div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state" name="state" placeholder="State" required><label for="state">State</label></div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name"
+                                    name="name" placeholder="Full Name" required minlength="3"><label for="name">Full
+                                    Name</label></div>
+                            <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone"
+                                    name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label
+                                    for="phone">10-Digit Phone Number</label></div>
+                            <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName"
+                                    name="firmName" placeholder="Firm Name" required minlength="3"><label
+                                    for="firmName">Firm Name</label></div>
+                            <div class="col-12 form-floating"><textarea class="form-control" placeholder="Full Address"
+                                    id="address" name="address" style="height: 100px" required
+                                    minlength="10"></textarea><label for="address">Full Address</label></div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="district"
+                                    name="district" placeholder="District" required><label
+                                    for="district">District</label></div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state"
+                                    name="state" placeholder="State" required><label for="state">State</label></div>
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Attending Days:<span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">Attending Days:<span
+                                        class="text-danger">*</span></label>
                                 <div class="attendance-options">
-                                    <div class="form-check d-inline-block me-3"><input class="form-check-input" type="checkbox" name="attendance" value="Day 1" id="day1"><label class="form-check-label" for="day1">Day 1</label></div>
-                                    <div class="form-check d-inline-block me-3"><input class="form-check-input" type="checkbox" name="attendance" value="Day 2" id="day2"><label class="form-check-label" for="day2">Day 2</label></div>
-                                    <div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" name="attendance" value="Day 3" id="day3"><label class="form-check-label" for="day3">Day 3</label></div>
+                                    <div class="form-check d-inline-block me-3"><input class="form-check-input"
+                                            type="checkbox" name="attendance" value="Day 1" id="day1"><label
+                                            class="form-check-label" for="day1">Day 1</label></div>
+                                    <div class="form-check d-inline-block me-3"><input class="form-check-input"
+                                            type="checkbox" name="attendance" value="Day 2" id="day2"><label
+                                            class="form-check-label" for="day2">Day 2</label></div>
+                                    <div class="form-check d-inline-block"><input class="form-check-input"
+                                            type="checkbox" name="attendance" value="Day 3" id="day3"><label
+                                            class="form-check-label" for="day3">Day 3</label></div>
                                 </div>
-                                <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">Please select at least one day.</div>
+                                <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
+                                    Please select at least one day.</div>
                             </div>
                             <div class="col-12">
-                                <div class="p-3 rounded-3" style="background-color: var(--body-bg); border: 1px solid var(--border-color);">
+                                <div class="p-3 rounded-3"
+                                    style="background-color: var(--body-bg); border: 1px solid var(--border-color);">
                                     <h4 class="fw-bold text-center">Payment Details</h4>
-                                    <p class="text-center mb-2 text-secondary">Registration Fee: <strong class="fs-5" style="color: var(--success-color);">₹500</strong></p>
+                                    <p class="text-center mb-2 text-secondary">Registration Fee: <strong class="fs-5"
+                                            style="color: var(--success-color);">₹500</strong></p>
                                     <div class="text-center">
-                                        <img src="assets/qr-code.png" alt="QR Code for UPI Payment" class="img-fluid" style="max-width: 150px; border-radius: 0.5rem;" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e9ecef/6c757d?text=QR+Unavailable'; this.alt='QR Code is currently unavailable'">
-                                        <p class="mt-2 mb-1">Payee: <strong>TENT CATERERS AND DECORATORS WELFARE ASSOCIATION OF UP</strong></p>
+                                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908022/qr-code_zmsd5s.png"
+                                            alt="QR Code for UPI Payment" class="img-fluid"
+                                            style="max-width: 150px; border-radius: 0.5rem;"
+                                            onerror="this.onerror=null;this.src='https://placehold.co/150x150/e9ecef/6c757d?text=QR+Unavailable'; this.alt='QR Code is currently unavailable'">
+                                        <p class="mt-2 mb-1">Payee: <strong>TENT CATERERS AND DECORATORS WELFARE
+                                                ASSOCIATION OF UP</strong></p>
                                         <p class="mb-2 small text-secondary">Scan QR or copy UPI ID:</p>
                                         <div class="input-group mx-auto" style="max-width:320px;">
-                                            <span class="p-2 flex-grow-1 text-center" style="background-color: #e9ecef; font-family: monospace; font-size: clamp(0.8rem, 3vw, 1rem); word-break: break-all;" >wl0502260a0022197@unionbank</span>
-                                            <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn" data-bs-toggle="tooltip" title="Copy UPI ID"><i class="fa-regular fa-copy"></i></button>
+                                            <span class="p-2 flex-grow-1 text-center"
+                                                style="background-color: #e9ecef; font-family: monospace; font-size: clamp(0.8rem, 3vw, 1rem); word-break: break-all;">wl0502260a0022197@unionbank</span>
+                                            <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
+                                                data-bs-toggle="tooltip" title="Copy UPI ID"><i
+                                                    class="fa-regular fa-copy"></i></button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12"><label for="paymentScreenshot" class="form-label fw-semibold">Upload Payment Screenshot <span class="text-danger">*</span></label>
-                                <div class="custom-file-input"><input type="file" class="form-control" id="paymentScreenshot" name="paymentScreenshot" accept="image/png, image/jpeg, image/jpg" required><label class="file-input-label" for="paymentScreenshot"><i class="fas fa-receipt"></i><span>Choose a file...</span></label></div>
+                            <div class="col-12"><label for="paymentScreenshot" class="form-label fw-semibold">Upload
+                                    Payment Screenshot <span class="text-danger">*</span></label>
+                                <div class="custom-file-input"><input type="file" class="form-control"
+                                        id="paymentScreenshot" name="paymentScreenshot"
+                                        accept="image/png, image/jpeg, image/jpg" required><label
+                                        class="file-input-label" for="paymentScreenshot"><i
+                                            class="fas fa-receipt"></i><span>Choose a file...</span></label></div>
                             </div>
                             <div class="col-12 mt-4">
                                 <button class="btn btn-primary w-100" type="submit" id="submitBtn">
                                     <span class="button-text">Submit Registration</span>
-                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                        aria-hidden="true"></span>
                                 </button>
                             </div>
                         </form>
@@ -315,7 +428,8 @@
             <div class="modal-content">
                 <div class="modal-header" id="infoModalHeader">
                     <h5 class="modal-title" id="infoModalTitle"></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="infoModalBody"></div>
                 <div class="modal-footer">
@@ -329,21 +443,20 @@
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
-                <div class="header-text" style="color: #fff; opacity: 0.8; font-weight: 500;">EVENT ENTRY PASS</div>
+                <div class="id-card-header-text">EVENT ENTRY PASS</div>
             </div>
-            <div class="id-card-body" style="position: relative; padding: 1rem;">
+            <div class="id-card-body">
                 <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
                 <h4 class="id-card-name"></h4>
                 <p class="id-card-firm"></p>
-                <div class="id-card-details" style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem;">
-                    <span style="font-size: 0.9rem; color: var(--text-light);"><i class="fas fa-phone" style="color: var(--primary-light); margin-right: 0.3rem;"></i><span class="id-card-phone"></span></span>
+                <div class="id-card-details">
+                    <span><i class="fas fa-phone"></i><span class="id-card-phone"></span></span>
                 </div>
             </div>
             <div class="id-card-footer">
-                <small style="font-weight: 600; color: var(--text-light); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px;">REGISTRATION NO.</small>
-                <div class="id-card-reg-number" style="font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: clamp(1.2rem, 5vw, 1.6rem); color: var(--primary-color); word-break: break-all;"></div>
+                <small class="id-card-footer-label">REGISTRATION NO.</small>
+                <div class="id-card-reg-number"></div>
                 <div class="id-card-event-details">
-                    <!-- This paragraph is now dynamically populated by JavaScript -->
                     <p class="id-card-attendance-date"><i class="fas fa-calendar-alt fa-fw"></i> <span></span></p>
                     <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Prathishthan, Lucknow</p>
                 </div>
@@ -373,6 +486,12 @@
 
             // --- Helper Functions ---
 
+            /**
+             * Displays a modal with a title and message.
+             * @param {string} title The title for the modal.
+             * @param {string|HTMLElement} content The body content for the modal.
+             * @param {boolean} [isError=true] Toggles between error and info styling.
+             */
             function showInfo(title, content, isError = true) {
                 const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
@@ -389,6 +508,11 @@
                 infoModal.show();
             }
 
+            /**
+             * Sets the loading state of the submit button.
+             * @param {boolean} isLoading True to show loading state, false otherwise.
+             * @param {string} [text] Optional text to display while loading.
+             */
             function setButtonLoading(isLoading, text = 'Submit Registration') {
                 const buttonText = submitBtn.querySelector('.button-text');
                 const buttonSpinner = submitBtn.querySelector('.spinner-border');
@@ -397,6 +521,13 @@
                 isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
             }
 
+            /**
+             * Validates a file based on type and size.
+             * @param {File} file The file to validate.
+             * @param {string[]} allowedTypes An array of allowed MIME types.
+             * @param {number} maxSizeInMB Maximum file size in megabytes.
+             * @returns {string|null} An error message string or null if the file is valid.
+             */
             function validateFile(file, allowedTypes, maxSizeInMB) {
                 if (!file) return "This field is required.";
                 if (!allowedTypes.includes(file.type)) {
@@ -408,12 +539,17 @@
                 return null;
             }
 
+            /**
+             * Converts an attendance string like "Day 1, Day 3" to a formatted date string.
+             * @param {string} attendanceString The comma-separated string of days.
+             * @returns {string} A formatted date string (e.g., "Sep 12 & 14, 2025").
+             */
             function formatAttendanceDates(attendanceString) {
                 if (!attendanceString || typeof attendanceString !== 'string') return 'N/A';
                 const selectedDays = attendanceString.split(',').map(s => s.trim());
                 const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
                 const dates = selectedDays.map(day => dateMap[day]).filter(Boolean).sort((a, b) => a - b);
-                
+
                 if (dates.length === 0) return 'N/A';
                 if (dates.length === 3) return 'Sep 12-14, 2025';
 
@@ -422,20 +558,44 @@
 
                 return `Sep ${dates.join(', ')} & ${lastDate}, 2025`;
             }
-            
+
+            /**
+             * Creates and displays the entry pass.
+             * @param {HTMLElement} container The element to inject the card into.
+             * @param {object} details The registration data from the backend.
+             */
             function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
-                card.querySelector('.id-card-photo').src = details.profileImageUrl;
-                card.querySelector('.id-card-name').textContent = details.name;
-                card.querySelector('.id-card-firm').textContent = details.firmName;
-                card.querySelector('.id-card-phone').textContent = `+91-${details.phone}`;
-                card.querySelector('.id-card-reg-number').textContent = details.registrationId;
-                card.querySelector('.id-card-attendance-date span').textContent = formatAttendanceDates(details.attendance);
+
+                // Safely find and update elements to prevent crashes
+                const photoEl = card.querySelector('.id-card-photo');
+                if (photoEl) photoEl.src = details.profileImageUrl;
+
+                const nameEl = card.querySelector('.id-card-name');
+                if (nameEl) nameEl.textContent = details.name;
+
+                const firmEl = card.querySelector('.id-card-firm');
+                if (firmEl) firmEl.textContent = details.firmName;
+
+                const phoneEl = card.querySelector('.id-card-phone');
+                if (phoneEl) phoneEl.textContent = `+91-${details.phone}`;
+
+                const regEl = card.querySelector('.id-card-reg-number');
+                if (regEl) regEl.textContent = details.registrationId;
+
+                const dateEl = card.querySelector('.id-card-attendance-date span');
+                if (dateEl) dateEl.textContent = formatAttendanceDates(details.attendance);
+
                 container.innerHTML = '';
                 container.append(card);
             }
 
+            /**
+             * Triggers a download of the generated entry pass.
+             * @param {HTMLElement} cardElement The #id-card element to capture.
+             * @param {HTMLElement} button The button that was clicked to trigger the download.
+             */
             function triggerIdCardDownload(cardElement, button) {
                 const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
                 const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
@@ -493,9 +653,9 @@
                     });
 
                     const result = await response.json().catch(() => {
-                        throw new Error("Invalid server response. Please try again.");
+                        throw new Error("Invalid server response. Please check your network connection and try again.");
                     });
-                    
+
                     if (result.status === 'success') {
                         setButtonLoading(true, 'Generating Entry Pass...');
                         populateAndShowIdCard(idCardWrapper, result.registrationData);
@@ -512,7 +672,7 @@
                         downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
                         downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Existing Pass';
                         downloadBtn.onclick = (e) => triggerIdCardDownload(cardContainer.querySelector('#id-card'), e.currentTarget);
-                        
+
                         content.append(cardContainer, downloadBtn);
                         showInfo('Already Registered', content, false);
                     } else {
