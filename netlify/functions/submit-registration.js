@@ -3,11 +3,10 @@ const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
 
-// Configuration
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
-const PHONE_COLUMN_INDEX = 4;
-const REG_ID_COLUMN_LETTER = "B";
+const PHONE_COLUMN_INDEX = 4;  // Column E = Phone
+const REG_ID_COLUMN_LETTER = "B"; // Column B = Reg. ID
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -23,18 +22,13 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: "v4", auth });
 
-const retryWithBackoff = async (operation, retries = 3, initialDelay = 500) => {
-  let delay = initialDelay;
+const retryWithBackoff = async (operation, retries = 3, delay = 500) => {
   for (let i = 0; i < retries; i++) {
     try {
       return await operation();
     } catch (err) {
-      if (i < retries - 1) {
-        await new Promise(res => setTimeout(res, delay));
-        delay *= 2;
-      } else {
-        throw err;
-      }
+      if (i < retries - 1) await new Promise(res => setTimeout(res, delay * (2 ** i)));
+      else throw err;
     }
   }
 };
@@ -42,12 +36,8 @@ const retryWithBackoff = async (operation, retries = 3, initialDelay = 500) => {
 const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   const contentType = event.headers["content-type"] || event.headers["Content-Type"];
   if (!contentType) return reject(new Error('Missing "Content-Type" header.'));
-  const bb = busboy({
-    headers: { "content-type": contentType },
-    limits: { fileSize: 5 * 1024 * 1024 },
-  });
-  const fields = {};
-  const files = {};
+  const bb = busboy({ headers: { "content-type": contentType }, limits: { fileSize: 5 * 1024 * 1024 } });
+  const fields = {}, files = {};
   bb.on("file", (name, file, info) => {
     const chunks = [];
     file.on("data", chunk => chunks.push(chunk));
@@ -82,11 +72,11 @@ exports.handler = async (event) => {
     } = fields;
     const { profileImage } = files;
 
-    // Step 1: Verify Razorpay Payment
-    const signatureBase = `${razorpay_order_id}|${razorpay_payment_id}`;
+    // 1. Verify Razorpay Payment Signature
+    const bodyToSign = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(signatureBase)
+      .update(bodyToSign)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
@@ -96,7 +86,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Step 2: Validate Required Fields
+    // 2. Validate Required Fields
     const required = { name, phone, firmName, address, district, state, attendance };
     for (const [key, val] of Object.entries(required)) {
       if (!val || val.trim() === "") {
@@ -107,11 +97,13 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ status: "error", error: "Profile photo required." }) };
     }
 
-    // Step 3: Check if phone already registered
+    // 3. Fetch all rows to check for duplicates and get row count
     const sheetData = await retryWithBackoff(() =>
       sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A1:K1000` })
     );
     const rows = sheetData.data.values || [];
+
+    // 4. Check for duplicate phone number
     const existing = rows.find(row => row[PHONE_COLUMN_INDEX] === phone);
     if (existing) {
       return {
@@ -133,16 +125,16 @@ exports.handler = async (event) => {
       };
     }
 
-    // Step 4: Upload Image to Cloudinary
+    // 5. Upload Profile Image to Cloudinary
     const uploadRes = await retryWithBackoff(() =>
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025")
     );
 
-    // Step 5: Get safe row count BEFORE appending
-    const totalRows = rows.length + 1;
-    const registrationId = `TDEXPOUP-${String(totalRows).padStart(4, "0")}`;
+    // 6. Calculate next row & registration ID
+    const newRowNumber = rows.length + 1;
+    const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
 
-    // Step 6: Append New Row to Sheet
+    // 7. Append Registration Row
     await retryWithBackoff(() =>
       sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
@@ -166,7 +158,7 @@ exports.handler = async (event) => {
       })
     );
 
-    // Step 7: Return Success Response
+    // 8. Return Success
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
