@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Razorpay and html2canvas Scripts -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
         xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG4dprMQbaウンジョンstage"
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -284,7 +287,6 @@
             color: white;
         }
 
-        /* Custom styling for the validation error list */
         #validation-error-list {
             text-align: left;
             padding-left: 1.5rem;
@@ -295,25 +297,20 @@
             padding: 1.5rem;
             font-size: 0.9rem;
             color: var(--text-light);
-            /* Sets the color for "Crafted with..." */
         }
 
-        /* Style for the link in the footer */
         .footer a {
             color: var(--primary-color);
-            /* A darker, more readable color */
             font-weight: 500;
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
-        /* A simple hover effect for the link */
         .footer a:hover {
             color: var(--primary-light);
             text-decoration: underline;
         }
 
-        /* Keyframes define the pulsing animation */
         @keyframes pulse {
 
             0%,
@@ -326,13 +323,10 @@
             }
         }
 
-        /* Apply the animation to the heart icon */
         .footer .fa-heart {
             color: var(--danger-color);
-            /* The red color for the heart */
             animation: pulse 1.5s ease-in-out infinite;
             display: inline-block;
-            /* Ensures the transform animation works correctly */
         }
     </style>
 </head>
@@ -344,17 +338,14 @@
                 <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner with event visuals"
-                            class="img-fluid rounded-3 mb-4">
+                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908022/unnamed_z7bzx7.jpg"
+                            alt="Tent Decor Expo UP 2025 Banner with event visuals" class="img-fluid rounded-3 mb-4">
                         <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
                             tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
                             <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
-                            <p class="mb-2 fs-5">
-                                <i class="fas fa-calendar-alt fa-fw me-2"></i>
-                                Sept 12 · 13 · 14, 2025
+                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
                             </p>
-
                             <p class="fs-5" style="line-height: 1.5;"><i
                                     class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Prathishthan, Lucknow</p>
                         </div>
@@ -414,49 +405,18 @@
                                 <div class="attendance-options">
                                     <div class="form-check d-inline-block me-3"><input class="form-check-input"
                                             type="checkbox" name="attendance" value="Day 1" id="day1"><label
-                                            class="form-check-label" for="day1">Day 1 (12th Sept)</label></div>
+                                            class="form-check-label" for="day1">Day 1</label></div>
                                     <div class="form-check d-inline-block me-3"><input class="form-check-input"
                                             type="checkbox" name="attendance" value="Day 2" id="day2"><label
-                                            class="form-check-label" for="day2">Day 2 (13th Sept)</label></div>
+                                            class="form-check-label" for="day2">Day 2</label></div>
                                     <div class="form-check d-inline-block"><input class="form-check-input"
                                             type="checkbox" name="attendance" value="Day 3" id="day3"><label
-                                            class="form-check-label" for="day3">Day 3 (14th Sept)</label></div>
+                                            class="form-check-label" for="day3">Day 3</label></div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="p-3 rounded-3"
-                                    style="background-color: var(--body-bg); border: 1px solid var(--border-color);">
-                                    <h4 class="fw-bold text-center">Payment Details</h4>
-                                    <p class="text-center mb-2 text-secondary">Registration Fee: <strong class="fs-5"
-                                            style="color: var(--success-color);">₹500</strong></p>
-                                    <div class="text-center">
-                                        <img src="assets/qr-code.png" alt="QR Code for UPI Payment" class="img-fluid"
-                                            style="max-width: 150px; border-radius: 0.5rem;"
-                                            onerror="this.onerror=null;this.src='https://placehold.co/150x150/e9ecef/6c757d?text=QR+Unavailable'; this.alt='QR Code is currently unavailable'">
-                                        <p class="mt-2 mb-1">Payee: <strong>TENT CATERERS AND DECORATORS WELFARE
-                                                ASSOCIATION OF UP</strong></p>
-                                        <p class="mb-2 small text-secondary">Scan QR or copy UPI ID:</p>
-                                        <div class="input-group mx-auto" style="max-width:320px;">
-                                            <span class="p-2 flex-grow-1 text-center"
-                                                style="background-color: #e9ecef; font-family: monospace; font-size: clamp(0.8rem, 3vw, 1rem); word-break: break-all;">wl0502260a0022197@unionbank</span>
-                                            <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
-                                                data-bs-toggle="tooltip" title="Copy UPI ID"><i
-                                                    class="fa-regular fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12"><label for="paymentScreenshot" class="form-label fw-semibold">Upload
-                                    Payment Screenshot <span class="text-danger">*</span></label>
-                                <div class="custom-file-input"><input type="file" class="form-control"
-                                        id="paymentScreenshot" name="paymentScreenshot"
-                                        accept="image/png, image/jpeg, image/jpg" required><label
-                                        class="file-input-label" for="paymentScreenshot"><i
-                                            class="fas fa-receipt"></i><span>Choose a file...</span></label></div>
                             </div>
                             <div class="col-12 mt-4">
                                 <button class="btn btn-primary w-100" type="submit" id="submitBtn">
-                                    <span class="button-text">Submit Registration</span>
+                                    <span class="button-text">Proceed to Pay ₹1</span>
                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                         aria-hidden="true"></span>
                                 </button>
@@ -469,8 +429,8 @@
     </main>
 
     <footer class="footer">
-        <p>Crafted with <i class="fas fa-heart" style="color: var(--danger-color);"></i> by <a
-                href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
+        <p>Crafted with <i class="fas fa-heart"></i> by <a href="https://ellowdigital.netlify.app" target="_blank"
+                rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
 
     <!-- Universal Modal for Info and Error Messages -->
@@ -494,9 +454,7 @@
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
-                <div class="id-card-header-text"
-                    style="font-size: 2rem; font-weight: 900; margin-top: 0.5rem; color: #FDB813;">TENT
-                    DECOR EXPO UP 2025</div>
+                <div class="id-card-header-text">EVENT ENTRY PASS</div>
             </div>
             <div class="id-card-body">
                 <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
@@ -532,17 +490,12 @@
             const idCardWrapper = document.getElementById('id-card-wrapper');
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
-            const copyUpiBtn = document.getElementById('copyUpiBtn');
-            const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
-            const UPI_ID = 'wl0502260a0022197@unionbank';
 
             // --- Helper Functions ---
-
             function showInfo(title, content, isError = true) {
                 const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
                 const infoModalBody = infoModalEl.querySelector('#infoModalBody');
-
                 infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
                 infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
                 infoModalBody.innerHTML = '';
@@ -554,12 +507,12 @@
                 infoModal.show();
             }
 
-            function setButtonLoading(isLoading, text = 'Submit Registration') {
+            function setButtonLoading(isLoading, text = 'Proceed to Pay ₹500') {
                 const buttonText = submitBtn.querySelector('.button-text');
                 const buttonSpinner = submitBtn.querySelector('.spinner-border');
                 submitBtn.disabled = isLoading;
-                buttonText.textContent = text;
-                isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
+                if (buttonText) buttonText.textContent = text;
+                isLoading ? buttonSpinner?.classList.remove('d-none') : buttonSpinner?.classList.add('d-none');
             }
 
             function formatAttendanceDates(attendanceString) {
@@ -567,38 +520,28 @@
                 const selectedDays = attendanceString.split(',').map(s => s.trim());
                 const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
                 const dates = selectedDays.map(day => dateMap[day]).filter(Boolean).sort((a, b) => a - b);
-
                 if (dates.length === 0) return 'N/A';
                 if (dates.length === 3) return 'Sep 12-14, 2025';
-
                 const lastDate = dates.pop();
                 if (dates.length === 0) return `Sep ${lastDate}, 2025`;
-
                 return `Sep ${dates.join(', ')} & ${lastDate}, 2025`;
             }
 
             function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
-
                 const photoEl = card.querySelector('.id-card-photo');
                 if (photoEl) photoEl.src = details.profileImageUrl;
-
                 const nameEl = card.querySelector('.id-card-name');
                 if (nameEl) nameEl.textContent = details.name;
-
                 const firmEl = card.querySelector('.id-card-firm');
                 if (firmEl) firmEl.textContent = details.firmName;
-
                 const phoneEl = card.querySelector('.id-card-phone');
                 if (phoneEl) phoneEl.textContent = `+91-${details.phone}`;
-
                 const regEl = card.querySelector('.id-card-reg-number');
                 if (regEl) regEl.textContent = details.registrationId;
-
                 const dateEl = card.querySelector('.id-card-attendance-date span');
                 if (dateEl) dateEl.textContent = formatAttendanceDates(details.attendance);
-
                 container.innerHTML = '';
                 container.append(card);
             }
@@ -609,7 +552,6 @@
                 const originalButtonHtml = button.innerHTML;
                 button.disabled = true;
                 button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
-
                 html2canvas(cardElement, {
                     scale: 3,
                     useCORS: true,
@@ -628,7 +570,6 @@
                 });
             }
 
-            // --- NEW: Advanced Form Validation with Popup ---
             function validateForm() {
                 const errors = [];
                 const fieldsToValidate = [
@@ -639,9 +580,7 @@
                     { id: 'address', name: 'Full Address' },
                     { id: 'district', name: 'District' },
                     { id: 'state', name: 'State' },
-                    { id: 'paymentScreenshot', name: 'Payment Screenshot', type: 'file' }
                 ];
-
                 fieldsToValidate.forEach(field => {
                     const input = document.getElementById(field.id);
                     if (field.type === 'file') {
@@ -654,12 +593,10 @@
                         }
                     }
                 });
-
                 const isAnyDayChecked = form.querySelector('input[name="attendance"]:checked') !== null;
                 if (!isAnyDayChecked) {
                     errors.push('Please select at least one Attending Day.');
                 }
-
                 if (errors.length > 0) {
                     const errorList = document.createElement('ul');
                     errorList.id = 'validation-error-list';
@@ -677,61 +614,63 @@
                 return true;
             }
 
-            // --- Main Form Submission Logic (Updated) ---
+            // --- Main Form Submission Logic ---
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
-
-                // Use the new advanced validation function
                 if (!validateForm()) {
                     return;
                 }
 
-                setButtonLoading(true, 'Validating...');
-                const formData = new FormData(form);
-                const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value);
-                formData.set('attendance', selectedDays.join(', '));
-
+                setButtonLoading(true, 'Creating Order...');
                 try {
-                    setButtonLoading(true, 'Uploading, please wait...');
-                    const response = await fetch('/.netlify/functions/submit-registration', {
-                        method: 'POST',
-                        body: formData
+                    const orderResponse = await fetch('/.netlify/functions/create-order', { method: 'POST' });
+                    if (!orderResponse.ok) throw new Error('Could not create payment order.');
+                    const order = await orderResponse.json();
+
+                    const options = {
+                        key: "rzp_live_vSPgXsGoXlOofA", // IMPORTANT: Replace with your public Key ID
+                        amount: order.amount,
+                        currency: order.currency,
+                        name: "TENT DECOR EXPO UP 2025",
+                        description: "Event Registration Fee",
+                        order_id: order.id,
+                        handler: async function (response) {
+                            setButtonLoading(true, 'Verifying Payment...');
+                            const formData = new FormData(form);
+                            formData.append('razorpay_payment_id', response.razorpay_payment_id);
+                            formData.append('razorpay_order_id', response.razorpay_order_id);
+                            formData.append('razorpay_signature', response.razorpay_signature);
+
+                            const finalResponse = await fetch('/.netlify/functions/submit-registration', {
+                                method: 'POST',
+                                body: formData,
+                            });
+                            const result = await finalResponse.json();
+                            if (result.status === 'success') {
+                                populateAndShowIdCard(idCardWrapper, result.registrationData);
+                                formContainer.classList.add('d-none');
+                                idCardSection.classList.remove('d-none');
+                            } else {
+                                throw new Error(result.error || 'Payment verification failed.');
+                            }
+                        },
+                        prefill: {
+                            name: document.getElementById('name').value,
+                            contact: document.getElementById('phone').value,
+                        },
+                        theme: { color: "#0A2540" }
+                    };
+                    const rzp = new Razorpay(options);
+                    rzp.on('payment.failed', function (response) {
+                        showInfo('Payment Failed', `Error: ${response.error.description}`, true);
                     });
-
-                    const result = await response.json().catch(() => {
-                        throw new Error("Invalid server response. Please check your network connection and try again.");
-                    });
-
-                    if (result.status === 'success') {
-                        setButtonLoading(true, 'Generating Entry Pass...');
-                        populateAndShowIdCard(idCardWrapper, result.registrationData);
-                        formContainer.classList.add('d-none');
-                        idCardSection.classList.remove('d-none');
-                    } else if (result.status === 'duplicate') {
-                        const content = document.createElement('div');
-                        content.innerHTML = `<p>${result.message} You can download your existing entry pass below.</p>`;
-                        const cardContainer = document.createElement('div');
-                        cardContainer.className = 'mt-3';
-                        populateAndShowIdCard(cardContainer, result.registrationData);
-
-                        const downloadBtn = document.createElement('button');
-                        downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
-                        downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Existing Pass';
-                        downloadBtn.onclick = (e) => triggerIdCardDownload(cardContainer.querySelector('#id-card'), e.currentTarget);
-
-                        content.append(cardContainer, downloadBtn);
-                        showInfo('Already Registered', content, false);
-                    } else {
-                        throw new Error(result.error || 'An unexpected error occurred on the server.');
-                    }
+                    rzp.open();
                 } catch (error) {
-                    console.error('Submission Error:', error);
-                    showInfo('Registration Error', error.message, true);
+                    console.error('Payment Error:', error);
+                    showInfo('Payment Error', 'Could not initiate payment. Please try again.', true);
                 } finally {
-                    if (!formContainer.classList.contains('d-none')) {
-                        setButtonLoading(false);
-                    }
+                    setButtonLoading(false);
                 }
             });
 
@@ -740,22 +679,6 @@
                 const cardElement = idCardWrapper.querySelector('#id-card');
                 if (cardElement) triggerIdCardDownload(cardElement, e.currentTarget);
             });
-
-            copyUpiBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(UPI_ID).then(() => {
-                    const icon = copyUpiBtn.querySelector('i');
-                    copyTooltip.show();
-                    icon.classList.replace('fa-copy', 'fa-check');
-                    setTimeout(() => {
-                        copyTooltip.hide();
-                        icon.classList.replace('fa-check', 'fa-copy');
-                    }, 2000);
-                }).catch(err => {
-                    showInfo('Copy Failed', 'Could not copy to clipboard. Please copy it manually.');
-                    console.error('Clipboard copy failed:', err);
-                });
-            });
-
             document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';

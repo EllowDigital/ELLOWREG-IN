@@ -1,7 +1,7 @@
 {
   "name": "expo-registration-form",
-  "version": "1.2.0",
-  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form.",
+  "version": "1.3.0",
+  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form with Razorpay.",
   "private": true,
   "author": "Sarwan Yadav",
   "license": "ISC",
@@ -11,6 +11,7 @@
   "dependencies": {
     "googleapis": "105.0.0",
     "cloudinary": "1.37.0",
-    "busboy": "1.6.0"
+    "busboy": "1.6.0",
+    "razorpay": "^2.9.4"
   }
 }
