@@ -491,81 +491,86 @@
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
 
+            // Show error/info modal
             function showInfo(title, content, isError = true) {
-                const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
-                const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
-                const infoModalBody = infoModalEl.querySelector('#infoModalBody');
-                infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
-                infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
-                infoModalBody.innerHTML = '';
+                const titleEl = infoModalEl.querySelector('#infoModalTitle');
+                const headerEl = infoModalEl.querySelector('#infoModalHeader');
+                const bodyEl = infoModalEl.querySelector('#infoModalBody');
+
+                titleEl.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
+                headerEl.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+                bodyEl.innerHTML = '';
                 if (typeof content === 'string') {
-                    infoModalBody.textContent = content;
+                    bodyEl.textContent = content;
                 } else {
-                    infoModalBody.append(content);
+                    bodyEl.append(content);
                 }
                 infoModal.show();
             }
 
+            // Toggle submit button spinner and text
             function setButtonLoading(isLoading, text = 'Proceed to Pay ₹500') {
                 const buttonText = submitBtn.querySelector('.button-text');
                 const buttonSpinner = submitBtn.querySelector('.spinner-border');
                 submitBtn.disabled = isLoading;
                 if (buttonText) buttonText.textContent = text;
-                isLoading ? buttonSpinner?.classList.remove('d-none') : buttonSpinner?.classList.add('d-none');
+                buttonSpinner?.classList.toggle('d-none', !isLoading);
             }
 
+            // Format attendance display on entry pass
             function formatAttendanceDates(attendanceString) {
-                if (!attendanceString || typeof attendanceString !== 'string') return 'N/A';
-                const selectedDays = attendanceString.split(',').map(s => s.trim());
+                const selected = attendanceString.split(',').map(d => d.trim());
                 const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
-                const dates = selectedDays.map(day => dateMap[day]).filter(Boolean).sort((a, b) => a - b);
-                if (dates.length === 0) return 'N/A';
-                if (dates.length === 3) return 'Sep 12-14, 2025';
-                const lastDate = dates.pop();
-                if (dates.length === 0) return `Sep ${lastDate}, 2025`;
-                return `Sep ${dates.join(', ')} & ${lastDate}, 2025`;
+                const dates = selected.map(d => dateMap[d]).filter(Boolean).sort((a, b) => a - b);
+                if (dates.length === 3) return 'Sep 12–14, 2025';
+                if (dates.length === 1) return `Sep ${dates[0]}, 2025`;
+                const last = dates.pop();
+                return `Sep ${dates.join(', ')} & ${last}, 2025`;
             }
 
-            function populateAndShowIdCard(container, details) {
+            // Inject registration data into ID card
+            function populateAndShowIdCard(container, data) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
-                card.querySelector('.id-card-photo').src = details.profileImageUrl;
-                card.querySelector('.id-card-name').textContent = details.name;
-                card.querySelector('.id-card-firm').textContent = details.firmName;
-                card.querySelector('.id-card-phone').textContent = `+91-${details.phone}`;
-                card.querySelector('.id-card-reg-number').textContent = details.registrationId;
-                card.querySelector('.id-card-attendance-date span').textContent = formatAttendanceDates(details.attendance);
+                card.querySelector('.id-card-photo').src = data.profileImageUrl;
+                card.querySelector('.id-card-name').textContent = data.name;
+                card.querySelector('.id-card-firm').textContent = data.firmName;
+                card.querySelector('.id-card-phone').textContent = `+91-${data.phone}`;
+                card.querySelector('.id-card-reg-number').textContent = data.registrationId;
+                card.querySelector('.id-card-attendance-date span').textContent = formatAttendanceDates(data.attendance);
                 container.innerHTML = '';
-                container.append(card);
+                container.appendChild(card);
             }
 
+            // Trigger download of ID card
             function triggerIdCardDownload(cardElement, button) {
                 const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
-                const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                const originalButtonHtml = button.innerHTML;
+                const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
+                const original = button.innerHTML;
+
                 button.disabled = true;
                 button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
-                html2canvas(cardElement, {
-                    scale: 3,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `ENTRY-PASS_${name}_${regNumber}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                }).catch(err => {
-                    console.error('Error generating canvas:', err);
-                    showInfo('Download Error', 'Could not generate the entry pass image. Please try taking a screenshot.', true);
-                }).finally(() => {
-                    button.disabled = false;
-                    button.innerHTML = originalButtonHtml;
-                });
+
+                html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#fff' })
+                    .then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `ENTRY-PASS_${name}_${reg}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    })
+                    .catch(() => {
+                        showInfo('Download Error', 'Could not generate image. Try screenshot.', true);
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                        button.innerHTML = original;
+                    });
             }
 
+            // Basic form validation
             function validateForm() {
                 const errors = [];
-                const fieldsToValidate = [
+                const fields = [
                     { id: 'profileImage', name: 'Profile Photo', type: 'file' },
                     { id: 'name', name: 'Full Name' },
                     { id: 'phone', name: 'Phone Number' },
@@ -574,57 +579,53 @@
                     { id: 'district', name: 'District' },
                     { id: 'state', name: 'State' },
                 ];
-                fieldsToValidate.forEach(field => {
-                    const input = document.getElementById(field.id);
-                    if (field.type === 'file') {
-                        if (input.files.length === 0) {
-                            errors.push(`${field.name} is required.`);
-                        }
+
+                fields.forEach(({ id, name, type }) => {
+                    const el = document.getElementById(id);
+                    if (type === 'file') {
+                        if (!el.files.length) errors.push(`${name} is required.`);
                     } else {
-                        if (!input.checkValidity()) {
-                            errors.push(`${field.name} is invalid or missing.`);
-                        }
+                        if (!el.checkValidity()) errors.push(`${name} is invalid or missing.`);
                     }
                 });
-                const isAnyDayChecked = form.querySelector('input[name="attendance"]:checked') !== null;
-                if (!isAnyDayChecked) {
+
+                if (!form.querySelector('input[name="attendance"]:checked')) {
                     errors.push('Please select at least one Attending Day.');
                 }
-                if (errors.length > 0) {
-                    const errorList = document.createElement('ul');
-                    errorList.id = 'validation-error-list';
+
+                if (errors.length) {
+                    const list = document.createElement('ul');
                     errors.forEach(err => {
                         const li = document.createElement('li');
                         li.textContent = err;
-                        errorList.appendChild(li);
+                        list.appendChild(li);
                     });
                     const message = document.createElement('div');
-                    message.innerHTML = '<p class="mb-2">Please correct the following issues:</p>';
-                    message.appendChild(errorList);
-                    showInfo('Missing Information', message, true);
+                    message.innerHTML = '<p class="mb-2">Please correct the following:</p>';
+                    message.appendChild(list);
+                    showInfo('Missing Information', message);
                     return false;
                 }
                 return true;
             }
 
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                event.stopPropagation();
+            // 🧠 Form Submit with Razorpay + Retry Logic
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
                 if (!validateForm()) return;
 
                 const phone = document.getElementById('phone').value;
-                setButtonLoading(true, 'Checking phone & creating order...');
+                setButtonLoading(true, 'Checking registration...');
 
                 try {
-                    const orderResponse = await fetch('/.netlify/functions/create-order', {
+                    const orderRes = await fetch('/.netlify/functions/create-order', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ phone }),
+                        body: JSON.stringify({ phone })
                     });
 
-                    // Already registered logic
-                    if (orderResponse.status === 409) {
-                        const { error, registrationData } = await orderResponse.json();
+                    if (orderRes.status === 409) {
+                        const { error, registrationData } = await orderRes.json();
                         showInfo('Already Registered', error, false);
                         populateAndShowIdCard(idCardWrapper, registrationData);
                         formContainer.classList.add('d-none');
@@ -632,8 +633,8 @@
                         return;
                     }
 
-                    if (!orderResponse.ok) throw new Error('Could not create payment order.');
-                    const order = await orderResponse.json();
+                    if (!orderRes.ok) throw new Error('Unable to initiate Razorpay order.');
+                    const order = await orderRes.json();
 
                     const rzp = new Razorpay({
                         key: "rzp_live_vSPgXsGoXlOofA",
@@ -643,61 +644,92 @@
                         description: "Event Registration Fee",
                         order_id: order.id,
                         handler: async function (response) {
-                            setButtonLoading(true, 'Verifying Payment...');
-                            const formData = new FormData(form);
-                            formData.append('razorpay_payment_id', response.razorpay_payment_id);
-                            formData.append('razorpay_order_id', response.razorpay_order_id);
-                            formData.append('razorpay_signature', response.razorpay_signature);
+                            const MAX_RETRIES = 3;
 
-                            const finalResponse = await fetch('/.netlify/functions/submit-registration', {
-                                method: 'POST',
-                                body: formData,
-                            });
-                            const result = await finalResponse.json();
-                            if (result.status === 'success') {
+                            const submitRegistration = async () => {
+                                const formData = new FormData(form);
+                                formData.append('razorpay_payment_id', response.razorpay_payment_id);
+                                formData.append('razorpay_order_id', response.razorpay_order_id);
+                                formData.append('razorpay_signature', response.razorpay_signature);
+
+                                const res = await fetch('/.netlify/functions/submit-registration', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+
+                                if (!res.ok) throw new Error('Failed to submit registration');
+                                const json = await res.json();
+                                if (json.status !== 'success') throw new Error(json.error || 'Unknown failure');
+                                return json;
+                            };
+
+                            const retryWithBackoff = async (fn, retries = MAX_RETRIES, delay = 1000) => {
+                                for (let i = 0; i <= retries; i++) {
+                                    try {
+                                        return await fn();
+                                    } catch (err) {
+                                        if (i === retries) throw err;
+                                        await new Promise(r => setTimeout(r, delay));
+                                        delay *= 2;
+                                    }
+                                }
+                            };
+
+                            try {
+                                if (!navigator.onLine) {
+                                    showInfo("Offline", "You are offline. Please reconnect and try again.", true);
+                                    return;
+                                }
+
+                                setButtonLoading(true, 'Submitting Registration...');
+                                const result = await retryWithBackoff(() => submitRegistration());
+
                                 populateAndShowIdCard(idCardWrapper, result.registrationData);
                                 formContainer.classList.add('d-none');
                                 idCardSection.classList.remove('d-none');
-                            } else {
-                                throw new Error(result.error || 'Payment verification failed.');
+                            } catch (err) {
+                                showInfo('Submission Failed', err.message || 'Something went wrong', true);
+                            } finally {
+                                setButtonLoading(false);
                             }
                         },
                         prefill: {
                             name: document.getElementById('name').value,
-                            contact: phone,
+                            contact: phone
                         },
                         theme: { color: "#0A2540" },
                         modal: {
-                            ondismiss: function () {
-                                showInfo("Payment Cancelled", "You cancelled the payment. Registration was not completed.", true);
+                            ondismiss: () => {
+                                showInfo("Payment Cancelled", "You cancelled the payment. Registration not completed.", true);
                             }
                         }
                     });
 
                     rzp.open();
-
-                } catch (error) {
-                    console.error('Payment Error:', error);
-                    showInfo('Payment Error', error.message || 'Could not initiate payment. Please try again.', true);
+                } catch (err) {
+                    showInfo("Error", err.message || 'Could not initiate payment.', true);
                 } finally {
                     setButtonLoading(false);
                 }
             });
 
+            // ✅ Download Button Logic
             document.getElementById('download-id-btn').addEventListener('click', (e) => {
-                const cardElement = idCardWrapper.querySelector('#id-card');
-                if (cardElement) triggerIdCardDownload(cardElement, e.currentTarget);
+                const card = idCardWrapper.querySelector('#id-card');
+                if (card) triggerIdCardDownload(card, e.currentTarget);
             });
 
+            // ✅ Update file name preview
             document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
                 input.addEventListener('change', (e) => {
-                    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
-                    const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
-                    if (labelSpan) labelSpan.textContent = fileName;
+                    const fileName = e.target.files[0]?.name || 'Choose a file...';
+                    const label = e.target.closest('.custom-file-input')?.querySelector('.file-input-label span');
+                    if (label) label.textContent = fileName;
                 });
             });
         });
     </script>
+
 
 </body>
 
