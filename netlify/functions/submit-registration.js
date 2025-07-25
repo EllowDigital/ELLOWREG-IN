@@ -1,8 +1,11 @@
-// This function requires 'busboy' to parse multipart/form-data with file uploads.
+// This function uses Firebase Firestore for scalable, concurrent data handling.
+// It also syncs the data to Google Sheets for easy viewing.
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const { google } = require('googleapis');
 const cloudinary = require('cloudinary').v2;
 
-// Helper function to parse multipart form data with a file size limit
+// --- Helper Functions (unchanged) ---
 const parseMultipartForm = async (event) => {
   return new Promise((resolve, reject) => {
     const busboy = require('busboy');
@@ -37,7 +40,6 @@ const parseMultipartForm = async (event) => {
   });
 };
 
-// Helper function to upload a file buffer to Cloudinary
 const uploadToCloudinary = (fileBuffer, folderName) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -51,13 +53,25 @@ const uploadToCloudinary = (fileBuffer, folderName) => {
   });
 };
 
+// --- Firebase Initialization ---
+let firebaseApp;
+if (!global._firebaseApp) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_CREDENTIALS);
+  global._firebaseApp = initializeApp({
+    credential: cert(serviceAccount)
+  });
+}
+firebaseApp = global._firebaseApp;
+const db = getFirestore(firebaseApp);
+
+// --- Main Handler ---
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
   try {
-    // --- Configure Services ---
+    // --- Configure Cloudinary ---
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -71,91 +85,110 @@ exports.handler = async (event) => {
 
     const requiredFields = { name, phone, firmName, address, district, state, attendance };
     for (const [key, value] of Object.entries(requiredFields)) {
-      if (!value || value.trim() === '') {
+      if (!value || !value.trim()) {
         return { statusCode: 400, body: JSON.stringify({ error: `Missing required field: ${key}` }) };
       }
     }
     if (!profileImage) return { statusCode: 400, body: JSON.stringify({ error: 'Profile photo is required.' }) };
     if (!paymentScreenshot) return { statusCode: 400, body: JSON.stringify({ error: 'Payment screenshot is required.' }) };
 
-    // --- Authenticate with Google Sheets API ---
-    const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const sheets = google.sheets({ version: 'v4', auth });
+    // 2. Check for Duplicate Phone Number in Firestore (Authoritative Check)
+    const registrationsRef = db.collection('registrations');
+    const snapshot = await registrationsRef.where('phone', '==', phone).limit(1).get();
 
-    // 2. Check for Duplicate Phone Number and Get Row Count
-    const sheetData = await sheets.spreadsheets.values.get({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      // Fetch all columns needed for the duplicate user card (B to K)
-      range: 'Registrations!B:K',
-    });
-
-    const rows = sheetData.data.values || [];
-    const nextId = rows.length + 1; // The next ID is the current number of rows + 1
-
-    for (const row of rows) {
-      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, F=4, G=5, H=6, I=7, J=8, K=9
-      const existingPhone = row[2]; // Column D is the phone number
-
-      if (existingPhone === phone) {
-        const existingRegistrationId = row[0]; // Column B
-        const existingName = row[1];           // Column C
-        const existingFirmName = row[3];       // Column E
-        const existingAttendance = row[7];     // Column I <-- Get existing attendance
-        const existingProfileImageUrl = row[9];// Column K
-
-        // If a duplicate is found, return a 409 Conflict status with all details.
-        return {
-          statusCode: 409,
-          body: JSON.stringify({
-            error: 'This mobile number has already been registered.',
-            details: {
-              registrationId: existingRegistrationId,
-              name: existingName,
-              firmName: existingFirmName,
-              phone: existingPhone,
-              profileImageUrl: existingProfileImageUrl,
-              attendance: existingAttendance, // <-- ADD attendance to duplicate response
-            }
-          }),
-        };
-      }
+    if (!snapshot.empty) {
+      const existingDoc = snapshot.docs[0].data();
+      return {
+        statusCode: 409,
+        body: JSON.stringify({
+          error: 'This mobile number has already been registered.',
+          details: {
+            registrationId: existingDoc.registrationId,
+            name: existingDoc.name,
+            firmName: existingDoc.firmName,
+            phone: existingDoc.phone,
+            profileImageUrl: existingDoc.profileImageUrl,
+            attendance: existingDoc.attendance,
+          }
+        }),
+      };
     }
 
-    // 3. Generate the new, sequential Registration Number
+    // 3. Get a new sequential registration ID using a Firestore Transaction
+    const counterRef = db.collection('counters').doc('registrations');
+    let nextId;
+
+    await db.runTransaction(async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
+      if (!counterDoc.exists) {
+        nextId = 1;
+        transaction.set(counterRef, { count: nextId });
+      } else {
+        nextId = counterDoc.data().count + 1;
+        transaction.update(counterRef, { count: FieldValue.increment(1) });
+      }
+    });
+
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
-    // 4. Upload both images to Cloudinary in parallel for efficiency
+    // 4. Upload images to Cloudinary
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")
     ]);
 
-    // 5. Append all data to the Google Sheet
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'Registrations', // Append to the first empty row of the sheet
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [[
-          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // A
-          registrationId, // B
-          name,           // C
-          phone,          // D
-          firmName,       // E
-          address,        // F
-          district,       // G
-          state,          // H
-          attendance,     // I
-          uploadPaymentResponse.secure_url, // J
-          uploadProfileResponse.secure_url,   // K
-        ]],
-      },
-    });
+    // 5. Save the new registration to Firestore (Primary Write)
+    const newRegistrationData = {
+      registrationId,
+      name,
+      phone,
+      firmName,
+      address,
+      district,
+      state,
+      attendance,
+      paymentScreenshotUrl: uploadPaymentResponse.secure_url,
+      profileImageUrl: uploadProfileResponse.secure_url,
+      createdAt: FieldValue.serverTimestamp()
+    };
 
-    // 6. Return a successful response with all data needed for the new entry pass
+    await registrationsRef.doc(phone).set(newRegistrationData);
+
+    // --- 6. Sync to Google Sheets (Secondary Write) ---
+    // This is wrapped in a try/catch so a failure here does not break the registration.
+    try {
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+      const sheets = google.sheets({ version: 'v4', auth });
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        range: 'Registrations!A1', // Append to the sheet
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [[
+            new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+            registrationId,
+            name,
+            phone,
+            firmName,
+            address,
+            district,
+            state,
+            attendance,
+            newRegistrationData.paymentScreenshotUrl,
+            newRegistrationData.profileImageUrl,
+          ]],
+        },
+      });
+    } catch (sheetError) {
+      // Log the error but don't stop the function. The user has been registered successfully in Firestore.
+      console.error('GOOGLE_SHEET_SYNC_ERROR:', sheetError.message);
+    }
+
+    // --- 7. Return a successful response to the user ---
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -164,8 +197,8 @@ exports.handler = async (event) => {
         name,
         phone,
         firmName,
-        profileImageUrl: uploadProfileResponse.secure_url,
-        attendance: attendance, // <-- ADD attendance to success response
+        profileImageUrl: newRegistrationData.profileImageUrl,
+        attendance: attendance,
       }),
     };
 
