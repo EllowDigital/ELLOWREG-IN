@@ -1,16 +1,18 @@
-// This function requires 'busboy' to parse multipart/form-data with file uploads.
+// WARNING: This version uses Google Sheets as a database.
+// It is NOT recommended for production use as it is not scalable and can fail under load.
+
 const { google } = require('googleapis');
 const cloudinary = require('cloudinary').v2;
+const busboy = require('busboy');
 
-// Helper function to parse multipart form data with a file size limit
+// Helper function to parse multipart form data
 const parseMultipartForm = async (event) => {
   return new Promise((resolve, reject) => {
-    const busboy = require('busboy');
     const fields = {};
     const files = {};
     const bb = busboy({
       headers: event.headers,
-      limits: { fileSize: 5 * 1024 * 1024 } // 5MB file size limit per file
+      limits: { fileSize: 5 * 1024 * 1024 } // 5MB
     });
 
     bb.on('file', (name, file, info) => {
@@ -18,15 +20,9 @@ const parseMultipartForm = async (event) => {
       const chunks = [];
       file.on('data', (chunk) => chunks.push(chunk));
       file.on('end', () => {
-        files[name] = {
-          filename,
-          content: Buffer.concat(chunks),
-          contentType: mimeType,
-        };
+        files[name] = { filename, content: Buffer.concat(chunks), contentType: mimeType };
       });
-      file.on('limit', () => {
-        reject(new Error(`File "${filename}" is too large. The limit is 5MB.`));
-      });
+      file.on('limit', () => reject(new Error(`File "${filename}" is too large.`)));
     });
 
     bb.on('field', (name, val) => { fields[name] = val; });
@@ -37,32 +33,35 @@ const parseMultipartForm = async (event) => {
   });
 };
 
-// Helper function to upload a file buffer to Cloudinary
+// Helper function to upload to Cloudinary
 const uploadToCloudinary = (fileBuffer, folderName) => {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: folderName },
-      (error, result) => {
-        if (error) return reject(new Error(`Cloudinary upload failed: ${error.message}`));
-        resolve(result);
-      }
-    );
-    uploadStream.end(fileBuffer);
+    cloudinary.uploader.upload_stream({ folder: folderName }, (error, result) => {
+      if (error) return reject(new Error(`Cloudinary upload failed: ${error.message}`));
+      resolve(result);
+    }).end(fileBuffer);
   });
 };
 
+// Main handler function
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
   try {
-    // --- Configure Services ---
+    // Configure services from environment variables
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+    const sheets = google.sheets({ version: 'v4', auth });
 
     // 1. Parse and Validate Form Data
     const { fields, files } = await parseMultipartForm(event);
@@ -78,54 +77,39 @@ exports.handler = async (event) => {
     if (!profileImage) return { statusCode: 400, body: JSON.stringify({ error: 'Profile photo is required.' }) };
     if (!paymentScreenshot) return { statusCode: 400, body: JSON.stringify({ error: 'Payment screenshot is required.' }) };
 
-    // --- Authenticate with Google Sheets API ---
-    const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    // 2. Check for Duplicate Phone Number and Get Row Count
+    // 2. Check for Duplicate Phone Number
     const sheetData = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      // Fetch all columns needed for the duplicate user card (B to K)
-      range: 'Registrations!B:K',
+      range: 'Registrations!A:K', // Fetch all relevant columns
     });
 
     const rows = sheetData.data.values || [];
-    const nextId = rows.length + 1; // The next ID is the current number of rows + 1
+    const nextId = rows.length; // Use length before adding header row consideration
 
-    for (const row of rows) {
-      // Column mapping based on the range B:K -> B=0, C=1, D=2, E=3, ..., K=9
-      const existingPhone = row[2]; // Column D is the phone number
-
-      if (existingPhone === phone) {
-        const existingRegistrationId = row[0]; // Column B
-        const existingName = row[1];       // Column C
-        const existingFirmName = row[3];     // Column E
-        const existingProfileImageUrl = row[9]; // Column K
-
-        // If a duplicate is found, return a 409 Conflict status with all details.
-        return {
-          statusCode: 409,
-          body: JSON.stringify({
-            error: 'This mobile number has already been registered.',
-            details: {
-              registrationId: existingRegistrationId,
-              name: existingName,
-              firmName: existingFirmName,
-              phone: existingPhone,
-              profileImageUrl: existingProfileImageUrl
-            }
-          }),
-        };
-      }
+    // Check for duplicate phone, assuming phone is in Column D
+    const duplicateRow = rows.find(row => row[3] === phone);
+    if (duplicateRow) {
+      // Return details of the existing registration
+      return {
+        statusCode: 409,
+        body: JSON.stringify({
+          error: 'This mobile number has already been registered.',
+          details: {
+            registrationId: duplicateRow[1],
+            name: duplicateRow[2],
+            firmName: duplicateRow[4],
+            phone: duplicateRow[3],
+            profileImageUrl: duplicateRow[10], // Assuming profile image URL is in Column K
+            attendance: duplicateRow[8] // Assuming attendance is in Column I
+          }
+        }),
+      };
     }
 
     // 3. Generate the new, sequential Registration Number
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
-    // 4. Upload both images to Cloudinary in parallel for efficiency
+    // 4. Upload images to Cloudinary
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")
@@ -134,7 +118,7 @@ exports.handler = async (event) => {
     // 5. Append all data to the Google Sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'Registrations', // Append to the first empty row of the sheet
+      range: 'Registrations',
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [[
@@ -153,7 +137,7 @@ exports.handler = async (event) => {
       },
     });
 
-    // 6. Return a successful response with all data needed for the new ID card
+    // 6. Return a successful response with all data needed for the pass
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -163,6 +147,7 @@ exports.handler = async (event) => {
         phone,
         firmName,
         profileImageUrl: uploadProfileResponse.secure_url,
+        attendance: attendance, // *** UPDATED: Added attendance to the response ***
       }),
     };
 
