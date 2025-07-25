@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>TENT DECOR EXPO UP 2025 - Registration</title>
-        <link rel="icon" type="image/x-icon"
-            href="https://placehold.co/32x32/0A2540/FFF?text=TD">
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
-            rel="stylesheet">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-        <style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TENT DECOR EXPO UP 2025 - Registration</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"
+        onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG4dprMQbaウンジョンstage"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
         :root {
             --primary-color: #0A2540;
             --primary-light: #3c6e9e;
@@ -35,6 +37,7 @@
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
             background-color: var(--body-bg);
+            line-height: 1.6;
         }
 
         .registration-container {
@@ -42,7 +45,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 1.5rem;
         }
 
         .registration-card {
@@ -53,7 +56,6 @@
             overflow: hidden;
             width: 100%;
             max-width: 1200px;
-            /* Max-width for very large screens */
         }
 
         .info-panel {
@@ -61,20 +63,13 @@
             color: #fff;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            /* Align content to the top */
+            justify-content: space-between;
             padding: 2rem;
         }
 
         .info-panel-banner {
             border-radius: 8px;
             margin-bottom: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .info-panel {
-                padding: 3rem;
-            }
         }
 
         .form-panel {
@@ -95,29 +90,16 @@
             font-weight: 600;
         }
 
-        .form-control,
         .form-floating>.form-control {
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            height: auto;
-            /* Override Bootstrap's fixed height */
-        }
-
-        .form-floating {
-            position: relative;
-        }
-
-        .form-floating>.form-control {
-            padding: 1.5rem 1rem 0.5rem 1rem;
             height: calc(3.5rem + 2px);
         }
 
         .form-floating>label {
-            padding: 1rem 1rem;
-            height: 100%;
+            padding: 1rem;
         }
 
-        .form-control:focus {
+        .form-control:focus,
+        .form-check-input:focus {
             border-color: var(--primary-light);
             box-shadow: 0 0 0 0.2rem rgba(10, 37, 64, 0.2);
         }
@@ -141,12 +123,12 @@
         .custom-file-input {
             position: relative;
             overflow: hidden;
-            display: inline-block;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             width: 100%;
             cursor: pointer;
             transition: border-color 0.2s ease-in-out;
+            background-color: #fff;
         }
 
         .custom-file-input:hover {
@@ -193,7 +175,7 @@
             border: 1px solid var(--border-color);
         }
 
-        #upiId {
+        #upiIdDisplay {
             background-color: #e9ecef;
             font-family: monospace;
             font-size: clamp(0.8rem, 3vw, 1rem);
@@ -301,6 +283,35 @@
             word-break: break-all;
         }
 
+        .id-card-event-details {
+            border-top: 1px dashed var(--border-color);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-color);
+        }
+
+        .id-card-event-details p {
+            margin-bottom: 0.25rem;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .id-card-event-details i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary-light);
+            margin-right: 0.5rem;
+        }
+
+        .id-card-notice {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
         .footer {
             text-align: center;
             padding: 1.5rem;
@@ -317,471 +328,435 @@
             background-color: var(--primary-color);
             color: white;
         }
-
-        /* === NEW STYLES FOR UPDATED ENTRY PASS === */
-        .id-card-event-details {
-            border-top: 1px dashed var(--border-color);
-            margin-top: 1rem;
-            padding-top: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-color);
-        }
-
-        .id-card-event-details p {
-            margin-bottom: 0.25rem;
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        .id-card-event-details i {
-            color: var(--primary-light);
-            margin-right: 0.5rem;
-        }
-
-        .id-card-notice {
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
     </style>
-    </head>
+</head>
 
-    <body>
-        <main class="registration-container">
-            <div class="card registration-card">
-                <div class="row g-0">
-                    <!-- Info Panel -->
-                    <div class="col-lg-5 info-panel">
-                        <img src="assets/unnamed.jpg"
-                            alt="Tent Decor Expo UP 2025 Banner"
+<body>
+    <main class="registration-container">
+        <div class="card registration-card">
+            <div class="row g-0">
+                <div class="col-lg-5 info-panel">
+                    <div>
+                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner with event visuals"
                             class="info-panel-banner img-fluid">
-                        <p class="lead mb-4 text-center">Join industry leaders
-                            and innovators at the premier expo for tent,
-                            catering, sound & SFX products.</p>
+                        <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
+                            tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
-                            <h5 class="fw-bold mb-3"
-                                style="color: var(--accent-color);">Event
-                                Details</h5>
-                            <p class="mb-2 fs-5"><i
-                                    class="fas fa-calendar-alt fa-fw me-2"></i>September
-                                12th-14th, 2025</p>
+                            <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
+                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
+                            </p>
                             <p class="fs-5" style="line-height: 1.5;"><i
-                                    class="fas fa-map-marker-alt fa-fw me-2"></i>Indira
-                                Gandhi Prathishthan, Gomati Nagar, Lucknow -
-                                226010</p>
-                        </div>
-                        <div class="text-center mt-auto">
-                            <h5 class="fw-bold mb-2"
-                                style="color: var(--accent-color);">For
-                                Enquiries</h5>
-                            <p class="mb-1 fs-5"><i
-                                    class="fas fa-phone-alt fa-fw me-2"></i>7905881922</p>
-                            <p class="fs-5"><i
-                                    class="fas fa-phone-alt fa-fw me-2"></i>9953903330</p>
+                                    class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Prathishthan, Gomati
+                                Nagar, Lucknow - 226010</p>
                         </div>
                     </div>
+                    <div class="text-center mt-4">
+                        <h5 class="fw-bold mb-2" style="color: var(--accent-color);">For Enquiries</h5>
+                        <p class="mb-1 fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+917905881922"
+                                class="text-white text-decoration-none">7905881922</a></p>
+                        <p class="fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+919953903330"
+                                class="text-white text-decoration-none">9953903330</a></p>
+                    </div>
+                </div>
 
-                    <!-- Form Panel -->
-                    <div class="col-lg-7 form-panel">
-                        <div id="id-card-section" class="d-none text-center">
-                            <h2 class="h3 mb-2 fw-bold">Registration
-                                Confirmed</h2>
-                            <p class="lead mb-4 text-secondary">Your entry pass
-                                is now available.</p>
-                            <div id="id-card-wrapper"></div>
-                            <button id="download-id-btn"
-                                class="btn btn-primary w-100 mt-4"><i
-                                    class="fas fa-download me-2"></i>Download
-                                Entry Pass</button>
-                        </div>
+                <div class="col-lg-7 form-panel d-flex flex-column">
+                    <div id="id-card-section" class="d-none text-center my-auto">
+                        <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
+                            Confirmed</h2>
+                        <p class="lead mb-4 text-secondary">Your entry pass is now available. Download and save it.</p>
+                        <div id="id-card-wrapper"></div>
+                        <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i
+                                class="fas fa-download me-2"></i>Download Entry Pass</button>
+                    </div>
 
-                        <div id="form-container">
-                            <h2 class="form-heading">Get Your Entry Pass</h2>
-                            <form class="row g-3 g-lg-4 needs-validation"
-                                id="registrationForm" novalidate>
-                                <div class="col-12"><label
-                                        class="form-label fw-semibold">Upload
-                                        Your Photo <span
-                                            class="text-danger">*</span></label>
-                                    <div class="custom-file-input"><input
-                                            type="file" id="profileImage"
-                                            name="profileImage"
-                                            accept="image/png, image/jpeg"
-                                            required><label
-                                            class="file-input-label"
-                                            for="profileImage"><i
-                                                class="fas fa-upload"></i><span>Choose
-                                                a
-                                                file...</span></label></div>
+                    <div id="form-container">
+                        <h2 class="form-heading">Get Your Entry Pass</h2>
+                        <form class="row g-3 g-lg-4 needs-validation" id="registrationForm" novalidate>
+                            <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-file-input"><input type="file" id="profileImage" name="profileImage"
+                                        accept="image/png, image/jpeg, image/jpg" required><label
+                                        class="file-input-label" for="profileImage"><i
+                                            class="fas fa-upload"></i><span>Choose a file...</span></label></div>
+                            </div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name"
+                                    name="name" placeholder="Full Name" required minlength="3"><label for="name">Full
+                                    Name</label></div>
+                            <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone"
+                                    name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label
+                                    for="phone">10-Digit Phone Number</label></div>
+                            <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName"
+                                    name="firmName" placeholder="Firm Name" required minlength="3"><label
+                                    for="firmName">Firm Name</label></div>
+                            <div class="col-12 form-floating"><textarea class="form-control" placeholder="Full Address"
+                                    id="address" name="address" style="height: 100px" required
+                                    minlength="10"></textarea><label for="address">Full Address</label></div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="district"
+                                    name="district" placeholder="District" required><label
+                                    for="district">District</label></div>
+                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state"
+                                    name="state" placeholder="State" required><label for="state">State</label></div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Attending Days:<span
+                                        class="text-danger">*</span></label>
+                                <div class="attendance-options">
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            name="attendance" value="Day 1" id="day1"><label class="form-check-label"
+                                            for="day1">Day 1</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            name="attendance" value="Day 2" id="day2"><label class="form-check-label"
+                                            for="day2">Day 2</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            name="attendance" value="Day 3" id="day3"><label class="form-check-label"
+                                            for="day3">Day 3</label></div>
                                 </div>
-                                <div class="col-md-6 form-floating"><input
-                                        type="text" class="form-control"
-                                        id="name"
-                                        name="name" placeholder="Full Name"
-                                        required><label for="name">Full
-                                        Name</label>
-                                </div>
-                                <div class="col-md-6 form-floating"><input
-                                        type="tel" class="form-control"
-                                        id="phone"
-                                        name="phone" placeholder="Phone Number"
-                                        required pattern="^[6-9]\d{9}$"><label
-                                        for="phone">Phone Number</label></div>
-                                <div class="col-12 form-floating"><input
-                                        type="text" class="form-control"
-                                        id="firmName"
-                                        name="firmName" placeholder="Firm Name"
-                                        required><label for="firmName">Firm
-                                        Name</label></div>
-                                <div class="col-12 form-floating"><textarea
-                                        class="form-control"
-                                        placeholder="Full Address"
-                                        id="address" name="address"
-                                        style="height: 100px"
-                                        required></textarea><label
-                                        for="address">Full Address</label></div>
-                                <div class="col-md-6 form-floating"><input
-                                        type="text" class="form-control"
-                                        id="district"
-                                        name="district" placeholder="District"
-                                        required><label
-                                        for="district">District</label></div>
-                                <div class="col-md-6 form-floating"><input
-                                        type="text" class="form-control"
-                                        id="state"
-                                        name="state" placeholder="State"
-                                        required><label
-                                        for="state">State</label></div>
-                                <div class="col-12"><label
-                                        class="form-label fw-semibold">Attending
-                                        Days:<span
-                                            class="text-danger">*</span></label>
-                                    <div class="attendance-options">
-                                        <div class="form-check"><input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="attendance" value="Day 1"
-                                                id="day1"><label
-                                                class="form-check-label"
-                                                for="day1">Day 1</label></div>
-                                        <div class="form-check"><input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="attendance" value="Day 2"
-                                                id="day2"><label
-                                                class="form-check-label"
-                                                for="day2">Day 2</label></div>
-                                        <div class="form-check"><input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                name="attendance" value="Day 3"
-                                                id="day3"><label
-                                                class="form-check-label"
-                                                for="day3">Day 3</label></div>
-                                    </div>
-                                    <div class="invalid-feedback d-block"
-                                        id="attendance-error"
-                                        style="display: none;">
-                                        Please select at least one day.</div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="p-3 rounded-3 payment-section">
-                                        <h4 class="fw-bold text-center">Payment
-                                            Details</h4>
-                                        <p
-                                            class="text-center mb-2 text-secondary">Registration
-                                            Fee: <strong class="fs-5"
-                                                style="color: var(--success-color);">₹500</strong></p>
-                                        <div class="text-center"><img
-                                                src="assets/qr-code.png"
-                                                alt="QR Code"
-                                                class="img-fluid"
-                                                style="max-width: 150px; border-radius: 0.5rem;"
-                                                onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=QR+Not+Found';">
-                                            <p class="mt-2 mb-1">Payee:
-                                                <strong>TENT CATERTERS AND
-                                                    DECORATERS WELFARE
-                                                    ASSOCIATION OF
-                                                    UP</strong></p>
-                                            <p
-                                                class="mb-2 small text-secondary">Scan
-                                                QR or copy UPI ID:</p>
-                                            <div class="input-group mx-auto"
-                                                style="max-width:320px;"><span
-                                                    class="p-2 flex-grow-1 text-center"
-                                                    id="upiId">wl0502260a0022197@unionbank</span><button
-                                                    class="btn btn-outline-secondary"
-                                                    type="button"
-                                                    id="copyUpiBtn"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Copy"><i
-                                                        class="fa-regular fa-copy"></i></button></div>
+                                <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
+                                    Please select at least one day.</div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="p-3 rounded-3 payment-section">
+                                    <h4 class="fw-bold text-center">Payment Details</h4>
+                                    <p class="text-center mb-2 text-secondary">Registration Fee: <strong class="fs-5"
+                                            style="color: var(--success-color);">₹500</strong></p>
+                                    <div class="text-center">
+                                        <img src="assets/qr-code.png" alt="QR Code for UPI Payment" class="img-fluid"
+                                            style="max-width: 150px; border-radius: 0.5rem;"
+                                            onerror="this.onerror=null;this.src='https://placehold.co/150x150/e9ecef/6c757d?text=QR+Unavailable'; this.alt='QR Code is currently unavailable'">
+                                        <p class="mt-2 mb-1">Payee: <strong>TENT CATERERS AND DECORATORS WELFARE
+                                                ASSOCIATION OF UP</strong></p>
+                                        <p class="mb-2 small text-secondary">Scan QR or copy UPI ID:</p>
+                                        <div class="input-group mx-auto" style="max-width:320px;">
+                                            <span class="p-2 flex-grow-1 text-center"
+                                                id="upiIdDisplay">wl0502260a0022197@unionbank</span>
+                                            <button class="btn btn-outline-secondary" type="button" id="copyUpiBtn"
+                                                data-bs-toggle="tooltip" title="Copy UPI ID"><i
+                                                    class="fa-regular fa-copy"></i></button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12"><label
-                                        for="paymentScreenshot"
-                                        class="form-label fw-semibold">Upload
-                                        Payment Screenshot<span
-                                            class="text-danger">*</span></label>
-                                    <div class="custom-file-input"><input
-                                            type="file" class="form-control"
-                                            id="paymentScreenshot"
-                                            name="paymentScreenshot"
-                                            accept="image/png, image/jpeg"
-                                            required><label
-                                            class="file-input-label"
-                                            for="paymentScreenshot"><i
-                                                class="fas fa-receipt"></i><span>Choose
-                                                a
-                                                file...</span></label></div>
-                                </div>
-                                <div class="col-12 mt-4"><button
-                                        class="btn btn-primary w-100"
-                                        type="submit"
-                                        id="submitBtn"><span
-                                            class="button-text">Submit
-                                            Registration</span><span
-                                            class="spinner-border spinner-border-sm d-none"
-                                            role="status"></span></button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+                            </div>
 
-        <footer class="footer">
-            <p>Crafted with <i class="fas fa-heart"
-                    style="color: var(--danger-color);"></i> by <a
-                    href="https://ellowdigital.netlify.app" target="_blank"
-                    rel="noopener noreferrer">EllowDigital</a></p>
-        </footer>
+                            <div class="col-12"><label for="paymentScreenshot" class="form-label fw-semibold">Upload
+                                    Payment Screenshot <span class="text-danger">*</span></label>
+                                <div class="custom-file-input"><input type="file" class="form-control"
+                                        id="paymentScreenshot" name="paymentScreenshot"
+                                        accept="image/png, image/jpeg, image/jpg" required><label
+                                        class="file-input-label" for="paymentScreenshot"><i
+                                            class="fas fa-receipt"></i><span>Choose a file...</span></label></div>
+                            </div>
 
-        <!-- Modal for Info/Error Messages -->
-        <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header" id="infoModalHeader">
-                        <h5 class="modal-title" id="infoModalTitle"></h5><button
-                            type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
+                            <div class="col-12 mt-4">
+                                <button class="btn btn-primary w-100" type="submit" id="submitBtn">
+                                    <span class="button-text">Submit Registration</span>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                        aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-body" id="infoModalBody"></div>
-                    <div class="modal-footer"><button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">Close</button></div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Hidden Template for Entry Pass Generation -->
-        <div id="id-card-template" class="d-none">
-            <div id="id-card">
-                <div class="id-card-header">
-                    <div class="header-text">EVENT ENTRY PASS</div>
+    <footer class="footer">
+        <p>Crafted with <i class="fas fa-heart" style="color: var(--danger-color);"></i> by <a
+                href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
+    </footer>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="infoModalHeader">
+                    <h5 class="modal-title" id="infoModalTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <div class="id-card-body">
-                    <img class="id-card-photo" src alt="Attendee Photo"
-                        crossorigin="anonymous">
-                    <h4 class="id-card-name"></h4>
-                    <p class="id-card-firm"></p>
-                    <div class="id-card-details"><span
-                            class="id-card-phone id-card-detail"><i
-                                class="fas fa-phone"></i><span></span></span></div>
-                </div>
-                <div class="id-card-footer">
-                    <small>REGISTRATION NO.</small>
-                    <div class="id-card-reg-number"></div>
-                    <div class="id-card-event-details">
-                        <p><i class="fas fa-calendar-alt fa-fw"></i> Sep 12-14,
-                            2025</p>
-                        <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira
-                            Gandhi Pratishthan, Lucknow</p>
-                    </div>
-                </div>
-                <div class="id-card-notice">
-                    Please keep this pass safe. You are responsible if it is
-                    lost.
+                <div class="modal-body" id="infoModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
+    <div id="id-card-template" class="d-none">
+        <div id="id-card">
+            <div class="id-card-header">
+                <div class="header-text">EVENT ENTRY PASS</div>
+            </div>
+            <div class="id-card-body">
+                <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
+                <h4 class="id-card-name"></h4>
+                <p class="id-card-firm"></p>
+                <div class="id-card-details">
+                    <span class="id-card-phone id-card-detail"><i class="fas fa-phone"></i><span></span></span>
+                </div>
+            </div>
+            <div class="id-card-footer">
+                <small>REGISTRATION NO.</small>
+                <div class="id-card-reg-number"></div>
+                <div class="id-card-event-details">
+                    <p><i class="fas fa-calendar-alt fa-fw"></i> Sep 12-14, 2025</p>
+                    <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Prathishthan, Lucknow</p>
+                </div>
+            </div>
+            <div class="id-card-notice">Please keep this pass safe. You are responsible if it is lost.</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- Element References ---
             const form = document.getElementById('registrationForm');
             const submitBtn = document.getElementById('submitBtn');
-            const buttonText = submitBtn.querySelector('.button-text');
-            const buttonSpinner = submitBtn.querySelector('.spinner-border');
             const formContainer = document.getElementById('form-container');
             const idCardSection = document.getElementById('id-card-section');
             const idCardWrapper = document.getElementById('id-card-wrapper');
-            const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
-            const infoModalHeader = document.getElementById('infoModalHeader');
-            const infoModalTitle = document.getElementById('infoModalTitle');
-            const infoModalBody = document.getElementById('infoModalBody');
+            const infoModalEl = document.getElementById('infoModal');
+            const infoModal = new bootstrap.Modal(infoModalEl);
             const copyUpiBtn = document.getElementById('copyUpiBtn');
             const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
             const attendanceErrorEl = document.getElementById('attendance-error');
+            const UPI_ID = 'wl0502260a0022197@unionbank';
 
+            // --- Helper Functions ---
+
+            /**
+             * Displays a modal with a title and message.
+             * @param {string} title The title of the modal.
+             * @param {string|HTMLElement} content The body content.
+             * @param {boolean} [isError=true] Toggles between error and info styling.
+             */
             function showInfo(title, content, isError = true) {
-                infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>${title}`;
+                const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
+                const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
+                const infoModalBody = infoModalEl.querySelector('#infoModalBody');
+
+                infoModalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
                 infoModalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
                 infoModalBody.innerHTML = '';
-                infoModalBody.append(content);
+                if (typeof content === 'string') {
+                    infoModalBody.textContent = content;
+                } else {
+                    infoModalBody.append(content);
+                }
                 infoModal.show();
             }
 
+            /**
+             * Sets the loading state of the submit button.
+             * @param {boolean} isLoading True to show loading state, false to hide.
+             * @param {string} [text] Optional text to display while loading.
+             */
             function setButtonLoading(isLoading, text = 'Submit Registration') {
+                const buttonText = submitBtn.querySelector('.button-text');
+                const buttonSpinner = submitBtn.querySelector('.spinner-border');
                 submitBtn.disabled = isLoading;
                 buttonText.textContent = text;
                 isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
             }
 
-            function adjustFontSize(element) {
-                const container = element.parentElement;
-                if (!container) return;
-                let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
-                element.style.fontSize = `${fontSize}px`;
-                while (element.scrollWidth > container.clientWidth && fontSize > 10) {
-                    fontSize -= 0.5;
-                    element.style.fontSize = `${fontSize}px`;
+            /**
+             * Validates a file based on type and size.
+             * @param {File} file The file to validate.
+             * @param {string[]} allowedTypes Allowed MIME types.
+             * @param {number} maxSizeInMB Maximum size in megabytes.
+             * @returns {string|null} An error message string or null if valid.
+             */
+            function validateFile(file, allowedTypes, maxSizeInMB) {
+                if (!file) return "This field is required.";
+                if (!allowedTypes.includes(file.type)) {
+                    return `Invalid file type. Please upload ${allowedTypes.join(', ')}.`;
                 }
+                if (file.size > maxSizeInMB * 1024 * 1024) {
+                    return `File is too large. Maximum size is ${maxSizeInMB}MB.`;
+                }
+                return null;
             }
 
-            function triggerIdCardDownload(cardElement) {
-                const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
-                const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `ENTRY-PASS_${name}_${regNumber}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
-            }
-
-            function populateAndShowIdCard(container, details, isDuplicate = false) {
+            /**
+             * Creates and displays the entry pass.
+             * @param {HTMLElement} container The element to inject the card into.
+             * @param {object} details The registration data.
+             */
+            function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
+
                 card.querySelector('.id-card-photo').src = details.profileImageUrl;
-                const nameEl = card.querySelector('.id-card-name');
-                nameEl.textContent = details.name;
-                const firmEl = card.querySelector('.id-card-firm');
-                firmEl.textContent = details.firmName;
+                card.querySelector('.id-card-name').textContent = details.name;
+                card.querySelector('.id-card-firm').textContent = details.firmName;
                 card.querySelector('.id-card-phone span').textContent = `+91-${details.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = details.registrationId;
 
                 container.innerHTML = '';
                 container.append(card);
-
-                requestAnimationFrame(() => {
-                    adjustFontSize(nameEl);
-                    adjustFontSize(firmEl);
-                });
-
-                if (isDuplicate) {
-                    const downloadBtn = document.createElement('button');
-                    downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
-                    downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original Entry Pass';
-                    downloadBtn.onclick = () => triggerIdCardDownload(card);
-                    container.append(downloadBtn);
-                }
             }
+
+            /**
+             * Triggers a download of the generated entry pass.
+             * @param {HTMLElement} cardElement The #id-card element to capture.
+             */
+            function triggerIdCardDownload(cardElement) {
+                const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
+                const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
+                const downloadButton = document.getElementById('download-id-btn');
+                downloadButton.disabled = true;
+                downloadButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+
+                html2canvas(cardElement, {
+                    scale: 3,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `ENTRY-PASS_${name}_${regNumber}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }).catch(err => {
+                    console.error('Error generating canvas:', err);
+                    showInfo('Download Error', 'Could not generate the entry pass image. Please try taking a screenshot.', true);
+                }).finally(() => {
+                    downloadButton.disabled = false;
+                    downloadButton.innerHTML = '<i class="fas fa-download me-2"></i>Download Entry Pass';
+                });
+            }
+
+
+            // --- Event Listeners ---
 
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
+                // Custom validation for checkboxes
                 const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
                 attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
 
+                form.classList.add('was-validated');
                 if (!form.checkValidity() || !isChecked) {
-                    form.classList.add('was-validated');
+                    return;
+                }
+
+                // Client-side file validation
+                const profileImgFile = form.querySelector('#profileImage').files[0];
+                const screenshotFile = form.querySelector('#paymentScreenshot').files[0];
+                const imgError = validateFile(profileImgFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
+                const screenshotError = validateFile(screenshotFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
+
+                if (imgError || screenshotError) {
+                    showInfo('Validation Error', `${imgError ? 'Profile Image: ' + imgError : ''}\n${screenshotError ? 'Screenshot: ' + screenshotError : ''}`);
                     return;
                 }
 
                 setButtonLoading(true, 'Validating...');
                 const formData = new FormData(form);
-                const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value).join(', ');
-                formData.set('attendance', selectedDays);
+                const selectedDays = Array.from(form.querySelectorAll('input[name="attendance"]:checked')).map(cb => cb.value);
+                formData.set('attendance', selectedDays.join(', '));
 
                 try {
                     setButtonLoading(true, 'Uploading, please wait...');
-                    const response = await fetch('/.netlify/functions/submit-registration', { method: 'POST', body: formData });
-                    const result = await response.json();
+                    // This assumes you have a Netlify function at this endpoint
+                    const response = await fetch('/.netlify/functions/submit-registration', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json().catch(() => { throw new Error("Invalid response from server.") });
 
                     if (!response.ok) {
+                        // Handle specific "Already Registered" error
                         if (response.status === 409 && result.details) {
                             const content = document.createElement('div');
-                            const message = document.createElement('p');
-                            message.textContent = 'This mobile number has already been registered with the following details:';
-                            content.append(message);
+                            content.innerHTML = `<p>This mobile number has already been registered. You can download the existing entry pass below.</p>`;
                             const cardContainer = document.createElement('div');
                             cardContainer.className = 'mt-3';
-                            populateAndShowIdCard(cardContainer, result.details, true);
-                            content.append(cardContainer);
+                            populateAndShowIdCard(cardContainer, result.details);
+
+                            const downloadBtn = document.createElement('button');
+                            downloadBtn.className = 'btn btn-primary w-100 mt-3 py-2';
+                            downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Original Entry Pass';
+                            downloadBtn.onclick = () => triggerIdCardDownload(cardContainer.querySelector('#id-card'));
+
+                            content.append(cardContainer, downloadBtn);
                             showInfo('Already Registered', content, false);
                         } else {
-                            const message = document.createElement('p');
-                            message.textContent = result.error || 'An unexpected server error occurred.';
-                            showInfo('Registration Error', message);
+                            // Handle other server errors
+                            showInfo('Registration Error', result.error || 'An unexpected server error occurred. Please try again later.');
                         }
-                        throw new Error('Server returned an error.');
+                        return; // Stop execution on error
                     }
 
+                    // --- Success Case ---
                     setButtonLoading(true, 'Generating Entry Pass...');
                     populateAndShowIdCard(idCardWrapper, result);
-
                     formContainer.classList.add('d-none');
                     idCardSection.classList.remove('d-none');
 
                 } catch (error) {
-                    console.error('Submission Error:', error.message);
-                    setButtonLoading(false);
+                    console.error('Submission Error:', error);
+                    showInfo('Network Error', 'Could not connect to the server. Please check your internet connection and try again.');
+                } finally {
+                    // Reset button state only if the form is still visible
+                    if (!formContainer.classList.contains('d-none')) {
+                        setButtonLoading(false);
+                    }
                 }
             });
 
+            // Download button on the success screen
             document.getElementById('download-id-btn').addEventListener('click', () => {
                 const cardElement = idCardWrapper.querySelector('#id-card');
                 if (cardElement) triggerIdCardDownload(cardElement);
             });
 
+            // Copy UPI ID button
             copyUpiBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(document.getElementById('upiId').textContent).then(() => {
-                    const originalTitle = copyUpiBtn.getAttribute('data-bs-original-title');
+                navigator.clipboard.writeText(UPI_ID).then(() => {
+                    const originalIcon = 'fa-copy';
+                    const successIcon = 'fa-check';
+                    const icon = copyUpiBtn.querySelector('i');
                     copyUpiBtn.setAttribute('data-bs-original-title', 'Copied!');
                     copyTooltip.show();
-                    copyUpiBtn.querySelector('i').classList.replace('fa-copy', 'fa-check');
+                    icon.classList.replace(originalIcon, successIcon);
+
                     setTimeout(() => {
-                        copyUpiBtn.setAttribute('data-bs-original-title', originalTitle);
+                        copyUpiBtn.setAttribute('data-bs-original-title', 'Copy UPI ID');
                         copyTooltip.hide();
-                        copyUpiBtn.querySelector('i').classList.replace('fa-check', 'fa-copy');
+                        icon.classList.replace(successIcon, originalIcon);
                     }, 2000);
+                }).catch(err => {
+                    showInfo('Copy Failed', 'Could not copy to clipboard. Please copy it manually.');
+                    console.error('Clipboard copy failed:', err);
                 });
             });
 
+            // Update file input labels on change
+            document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
+                    const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
+                    if (labelSpan) {
+                        labelSpan.textContent = fileName;
+                    }
+                });
+            });
+
+            // Real-time validation for attendance checkboxes
             form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
                     const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;
                     attendanceErrorEl.style.display = isAnyChecked ? 'none' : 'block';
                 });
             });
-
-            document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
-                    const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
-                    if (labelSpan) { labelSpan.textContent = fileName; }
-                });
-            });
         });
     </script>
-    </body>
+</body>
 
 </html>
