@@ -58,14 +58,10 @@ const uploadToCloudinary = (fileBuffer, folderName) => {
 let firebaseApp;
 let googleAuth;
 
-// This block ensures initialization only happens once per function instance.
-// It's crucial for performance in a serverless environment.
 if (!global._firebaseApp) {
-  // Define the paths to the credential files created by the build script.
   const firebaseCredsPath = path.join(__dirname, 'firebase-credentials.json');
   const googleCredsPath = path.join(__dirname, 'google-credentials.json');
 
-  // Check if files exist before trying to read them.
   if (!fs.existsSync(firebaseCredsPath) || !fs.existsSync(googleCredsPath)) {
     throw new Error('Credential files not found. Ensure the build script ran successfully.');
   }
@@ -73,19 +69,16 @@ if (!global._firebaseApp) {
   const serviceAccount = require(firebaseCredsPath);
   const googleKey = require(googleCredsPath);
 
-  // Initialize Firebase Admin SDK
   global._firebaseApp = initializeApp({
     credential: cert(serviceAccount)
   });
 
-  // Initialize Google Auth client
   global._googleAuth = new google.auth.GoogleAuth({
     credentials: googleKey,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
 }
 
-// Use the globally cached instances.
 firebaseApp = global._firebaseApp;
 googleAuth = global._googleAuth;
 const db = getFirestore(firebaseApp);
@@ -98,24 +91,20 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Configure Cloudinary (uses standard environment variables)
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 
-    // 1. Parse Form Data
     const { fields, files } = await parseMultipartForm(event);
     const { name, phone, firmName, address, district, state, attendance } = fields;
     const { profileImage, paymentScreenshot } = files;
 
-    // 2. Validate Input
     if (!name || !phone || !firmName || !address || !district || !state || !attendance || !profileImage || !paymentScreenshot) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields.' }) };
     }
 
-    // 3. Firestore: Check for Duplicates
     const registrationsRef = db.collection('registrations');
     const snapshot = await registrationsRef.where('phone', '==', phone).limit(1).get();
 
@@ -130,7 +119,6 @@ exports.handler = async (event) => {
       };
     }
 
-    // 4. Firestore: Get a new sequential ID using a Transaction
     const counterRef = db.collection('counters').doc('registrations');
     let nextId;
     await db.runTransaction(async (transaction) => {
@@ -140,22 +128,26 @@ exports.handler = async (event) => {
     });
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
-    // 5. Cloudinary: Upload Images
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       uploadToCloudinary(profileImage.content, "expo-profile-images-2025"),
       uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")
     ]);
 
-    // 6. Firestore: Save New Registration
+    // Data object for saving to the databases
     const newRegistrationData = {
       registrationId, name, phone, firmName, address, district, state, attendance,
       paymentScreenshotUrl: uploadPaymentResponse.secure_url,
       profileImageUrl: uploadProfileResponse.secure_url,
-      createdAt: FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp() // This is for the database ONLY
     };
     await registrationsRef.doc(phone).set(newRegistrationData);
 
-    // 7. Google Sheets: Sync Data (Secondary Task)
+    // Data object to send back to the frontend (WITHOUT the serverTimestamp)
+    const responseData = {
+      registrationId, name, phone, firmName, address, district, state, attendance,
+      profileImageUrl: newRegistrationData.profileImageUrl
+    };
+
     try {
       const sheets = google.sheets({ version: 'v4', auth: googleAuth });
       await sheets.spreadsheets.values.append({
@@ -172,19 +164,17 @@ exports.handler = async (event) => {
         },
       });
     } catch (sheetError) {
-      // If Sheets fails, log it but don't fail the registration.
       console.error('GOOGLE_SHEET_SYNC_ERROR:', sheetError.message);
     }
 
-    // 8. Return Success Response
+    // Return the clean responseData object
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newRegistrationData),
+      body: JSON.stringify(responseData),
     };
 
   } catch (error) {
-    // Catch any other unexpected errors
     console.error('REGISTRATION_ERROR:', error);
     return {
       statusCode: 500,
