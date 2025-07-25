@@ -24,8 +24,8 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: "v4", auth });
 
+// --- Advanced Helper Functions ---
 
-// --- NEW: Advanced Retry Helper Function ---
 /**
  * Retries an async operation with exponential backoff.
  * @param {Function} operation The async function to execute.
@@ -40,27 +40,24 @@ const retryWithBackoff = async (operation, retries = 3, initialDelay = 500) => {
       return await operation(); // Attempt the operation
     } catch (error) {
       if (i < retries - 1) {
-        console.log(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`);
+        console.log(`Attempt ${i + 1} failed for ${operation.name}. Retrying in ${delay}ms...`);
         await new Promise(res => setTimeout(res, delay));
         delay *= 2; // Double the delay for the next retry
       } else {
-        console.error(`All ${retries} attempts failed.`);
+        console.error(`All ${retries} attempts failed for ${operation.name}.`);
         throw error; // Rethrow the error after all retries have failed
       }
     }
   }
 };
 
-
-// --- Helper Functions (No changes) ---
 const parseMultipartForm = (event) => {
-  // ... (rest of the function is unchanged)
   return new Promise((resolve, reject) => {
     const contentType = event.headers["content-type"] || event.headers["Content-Type"];
     if (!contentType) return reject(new Error('Missing "Content-Type" header.'));
     const bb = busboy({
       headers: { "content-type": contentType },
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB per file
     });
     const fields = {};
     const files = {};
@@ -81,7 +78,6 @@ const parseMultipartForm = (event) => {
 };
 
 const uploadToCloudinary = (fileBuffer, folderName) => {
-  // ... (rest of the function is unchanged)
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       { folder: folderName, resource_type: "auto" },
@@ -94,7 +90,6 @@ const uploadToCloudinary = (fileBuffer, folderName) => {
   });
 };
 
-
 // --- Main Handler Logic ---
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -106,7 +101,7 @@ exports.handler = async (event) => {
     const { name, phone, firmName, address, district, state, attendance } = fields;
     const { profileImage, paymentScreenshot } = files;
 
-    // Validation remains the same
+    // Validate required fields
     const requiredFields = { name, phone, firmName, address, district, state, attendance };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value || String(value).trim() === "") {
@@ -116,22 +111,22 @@ exports.handler = async (event) => {
     if (!profileImage) return { statusCode: 400, body: JSON.stringify({ error: "Profile photo is required." }) };
     if (!paymentScreenshot) return { statusCode: 400, body: JSON.stringify({ error: "Payment screenshot is required." }) };
 
-    // UPDATED: Check for duplicates with retry
+    // Check for duplicate phone number with retry
     const phoneDataResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!${PHONE_COLUMN}:${PHONE_COLUMN}`,
-    }));
+    }), 3, 500);
 
     const phoneNumbers = phoneDataResponse.data.values || [];
     const duplicateRowIndex = phoneNumbers.findIndex(row => row && row[0] === phone);
 
     if (duplicateRowIndex !== -1) {
       const rowNumber = duplicateRowIndex + 1;
-      // UPDATED: Fetch existing data with retry
+      // Fetch existing data with retry
       const existingData = await retryWithBackoff(() => sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: `${SHEET_NAME}!A${rowNumber}:K${rowNumber}`,
-      }));
+      }), 3, 500);
       const rowDetails = existingData.data.values[0];
 
       return {
@@ -140,38 +135,51 @@ exports.handler = async (event) => {
           status: "duplicate",
           message: "This mobile number has already been registered.",
           registrationData: {
-            registrationId: rowDetails[1], name: rowDetails[2], firmName: rowDetails[3],
-            phone: rowDetails[4], profileImageUrl: rowDetails[10],
+            registrationId: rowDetails[1],
+            name: rowDetails[2],
+            firmName: rowDetails[3], // Corrected: Col D
+            phone: rowDetails[4],    // Corrected: Col E
+            attendance: rowDetails[8], // Col I for attendance
+            profileImageUrl: rowDetails[10],
           },
         }),
       };
     }
 
-    // UPDATED: Upload images to Cloudinary with retry
+    // Upload images to Cloudinary with retry
     const [uploadProfileResponse, uploadPaymentResponse] = await Promise.all([
       retryWithBackoff(() => uploadToCloudinary(profileImage.content, "expo-profile-images-2025")),
       retryWithBackoff(() => uploadToCloudinary(paymentScreenshot.content, "expo-payments-2025")),
     ]);
 
-    // UPDATED: Append to sheet with retry
+    // Atomically append the new row with a PENDING ID
     const appendResult = await retryWithBackoff(() => sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: SHEET_NAME,
       valueInputOption: "USER_ENTERED",
       resource: {
         values: [[
-          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), "PENDING",
-          name, firmName, phone, address, district, state, attendance,
-          uploadPaymentResponse.secure_url, uploadProfileResponse.secure_url,
+          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), // A
+          "PENDING",      // B
+          name,           // C
+          firmName,       // D (Corrected)
+          phone,          // E (Corrected)
+          address,        // F
+          district,       // G
+          state,          // H
+          attendance,     // I
+          uploadPaymentResponse.secure_url, // J
+          uploadProfileResponse.secure_url, // K
         ]],
       },
     }));
 
+    // Generate the final ID based on the new row number
     const updatedRange = appendResult.data.updates.updatedRange;
     const newRowNumber = parseInt(updatedRange.match(/(\d+)$/)[0], 10);
     const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
 
-    // UPDATED: Update sheet with retry
+    // Update the row with the final, unique registration ID
     await retryWithBackoff(() => sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!${REG_ID_COLUMN}${newRowNumber}`,
@@ -185,7 +193,11 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         status: "success",
         registrationData: {
-          registrationId, name, phone, firmName,
+          registrationId,
+          name,
+          phone,
+          firmName,
+          attendance,
           profileImageUrl: uploadProfileResponse.secure_url,
         }
       }),
@@ -194,8 +206,7 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error("REGISTRATION_ERROR:", error);
     return {
-      // Use a 503 Service Unavailable status code if retries fail, else 500
-      statusCode: error.code || 500,
+      statusCode: error.code || 500, // Use specific error code if available
       body: JSON.stringify({
         error: "Registration failed after multiple attempts. Please try again later.",
         details: error.message,
