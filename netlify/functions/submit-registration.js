@@ -1,11 +1,8 @@
-// /netlify/functions/submit-registration.js
-
 const { google } = require("googleapis");
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
-const crypto = require("crypto"); // Required for payment verification
+const crypto = require("crypto");
 
-// --- Configuration ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
 const PHONE_COLUMN = "E";
@@ -22,10 +19,8 @@ const auth = new google.auth.GoogleAuth({
   credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
-
 const sheets = google.sheets({ version: "v4", auth });
 
-// --- Helper Functions ---
 const retryWithBackoff = async (operation, retries = 3, initialDelay = 500) => {
   let delay = initialDelay;
   for (let i = 0; i < retries; i++) {
@@ -33,11 +28,9 @@ const retryWithBackoff = async (operation, retries = 3, initialDelay = 500) => {
       return await operation();
     } catch (error) {
       if (i < retries - 1) {
-        console.log(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`);
         await new Promise(res => setTimeout(res, delay));
         delay *= 2;
       } else {
-        console.error(`All ${retries} attempts failed.`);
         throw error;
       }
     }
@@ -57,33 +50,31 @@ const parseMultipartForm = (event) => {
     bb.on("file", (name, file, info) => {
       const { filename, mimeType } = info;
       const chunks = [];
-      file.on("data", (chunk) => chunks.push(chunk));
-      file.on("limit", () => reject(new Error(`File "${filename}" exceeds 5MB limit.`)));
+      file.on("data", chunk => chunks.push(chunk));
+      file.on("limit", () => reject(new Error(`File "${filename}" exceeds 5MB.`)));
       file.on("end", () => {
         files[name] = { filename, content: Buffer.concat(chunks), contentType: mimeType };
       });
     });
     bb.on("field", (name, val) => { fields[name] = val; });
     bb.on("close", () => resolve({ fields, files }));
-    bb.on("error", (err) => reject(new Error(`Error parsing form: ${err}`)));
+    bb.on("error", err => reject(new Error(`Error parsing form: ${err}`)));
     bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
   });
 };
 
 const uploadToCloudinary = (fileBuffer, folderName) => {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
+    cloudinary.uploader.upload_stream(
       { folder: folderName, resource_type: "auto" },
       (error, result) => {
         if (error) return reject(new Error(`Cloudinary upload failed: ${error.message}`));
         resolve(result);
       }
-    );
-    uploadStream.end(fileBuffer);
+    ).end(fileBuffer);
   });
 };
 
-// --- Main Handler Logic ---
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
@@ -97,73 +88,93 @@ exports.handler = async (event) => {
     } = fields;
     const { profileImage } = files;
 
-    // --- 1. PAYMENT VERIFICATION (CRITICAL STEP) ---
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    // 1. Verify Razorpay Signature
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
+      .update(body)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ status: "error", error: "Invalid payment signature. Registration failed." }),
+        body: JSON.stringify({ status: "error", error: "Invalid Razorpay signature. Payment not verified." }),
       };
     }
 
-    // --- 2. VALIDATE FORM FIELDS ---
-    const requiredFields = { name, phone, firmName, address, district, state, attendance };
-    for (const [key, value] of Object.entries(requiredFields)) {
+    // 2. Validate Form
+    const required = { name, phone, firmName, address, district, state, attendance };
+    for (const [key, value] of Object.entries(required)) {
       if (!value || String(value).trim() === "") {
-        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing required field: ${key}` }) };
+        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing: ${key}` }) };
       }
     }
-    if (!profileImage) return { statusCode: 400, body: JSON.stringify({ status: "error", error: "Profile photo is required." }) };
+    if (!profileImage) return { statusCode: 400, body: JSON.stringify({ status: "error", error: "Profile photo required." }) };
 
-    // --- 3. CHECK FOR DUPLICATE PHONE NUMBER ---
-    const phoneDataResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({
+    // 3. Check for Duplicate Phone
+    const response = await retryWithBackoff(() => sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!${PHONE_COLUMN}:${PHONE_COLUMN}`,
+      range: `${SHEET_NAME}!A1:K1000`, // full data
     }));
-    const phoneNumbers = phoneDataResponse.data.values || [];
-    const duplicateRowIndex = phoneNumbers.findIndex(row => row && row[0] === phone);
+    const rows = response.data.values || [];
 
-    if (duplicateRowIndex !== -1) {
-      // Logic for handling duplicates remains the same
-      // ...
+    const existingRow = rows.find(row => row[4] === phone); // phone is column E
+    if (existingRow) {
+      const registrationId = existingRow[1]; // column B
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          status: "success",
+          registrationData: {
+            registrationId,
+            name: existingRow[2],
+            firmName: existingRow[3],
+            phone: existingRow[4],
+            address: existingRow[5],
+            district: existingRow[6],
+            state: existingRow[7],
+            attendance: existingRow[8],
+            profileImageUrl: existingRow[10], // image url
+          }
+        })
+      };
     }
 
-    // --- 4. UPLOAD PROFILE IMAGE ---
-    const uploadProfileResponse = await retryWithBackoff(() => uploadToCloudinary(profileImage.content, "expo-profile-images-2025"));
+    // 4. Upload Image
+    const uploadRes = await retryWithBackoff(() =>
+      uploadToCloudinary(profileImage.content, "expo-profile-images-2025")
+    );
 
-    // --- 5. APPEND TO GOOGLE SHEET ---
-    const appendResult = await retryWithBackoff(() => sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: SHEET_NAME,
-      valueInputOption: "USER_ENTERED",
-      resource: {
-        values: [[
-          new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), "PENDING",
-          name, firmName, phone, address, district, state, attendance,
-          razorpay_payment_id, // Store Payment ID instead of screenshot URL
-          uploadProfileResponse.secure_url,
-        ]],
-      },
-    }));
+    // 5. Append to Google Sheet
+    const append = await retryWithBackoff(() =>
+      sheets.spreadsheets.values.append({
+        spreadsheetId: SPREADSHEET_ID,
+        range: SHEET_NAME,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: [[
+            new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), "PENDING",
+            name, firmName, phone, address, district, state, attendance,
+            razorpay_payment_id, uploadRes.secure_url
+          ]]
+        },
+      })
+    );
 
-    // --- 6. GENERATE AND UPDATE REGISTRATION ID ---
-    const updatedRange = appendResult.data.updates.updatedRange;
-    const newRowNumber = parseInt(updatedRange.match(/(\d+)$/)[0], 10);
-    const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
+    // 6. Generate Registration ID
+    const newRow = parseInt(append.data.updates.updatedRange.match(/(\d+)$/)[0], 10);
+    const registrationId = `TDEXPOUP-${String(newRow).padStart(4, "0")}`;
 
-    await retryWithBackoff(() => sheets.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!${REG_ID_COLUMN}${newRowNumber}`,
-      valueInputOption: "USER_ENTERED",
-      resource: { values: [[registrationId]] },
-    }));
+    await retryWithBackoff(() =>
+      sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEET_NAME}!${REG_ID_COLUMN}${newRow}`,
+        valueInputOption: "USER_ENTERED",
+        resource: { values: [[registrationId]] },
+      })
+    );
 
-    // --- 7. RETURN SUCCESS RESPONSE ---
+    // 7. Return Entry Pass Data
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -171,7 +182,7 @@ exports.handler = async (event) => {
         status: "success",
         registrationData: {
           registrationId, name, phone, firmName, attendance,
-          profileImageUrl: uploadProfileResponse.secure_url,
+          profileImageUrl: uploadRes.secure_url,
         }
       }),
     };
@@ -179,10 +190,10 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error("REGISTRATION_ERROR:", error);
     return {
-      statusCode: error.code || 500,
+      statusCode: 500,
       body: JSON.stringify({
         status: "error",
-        error: "Registration failed after multiple attempts. Please try again later.",
+        error: "Registration failed.",
         details: error.message,
       }),
     };

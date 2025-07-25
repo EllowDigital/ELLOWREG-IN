@@ -338,7 +338,8 @@
                 <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908022/unnamed_z7bzx7.jpg"
+                        <img src="assets/unnamed.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x300/0A2540/FFF?text=TENT DECOR EXPO UP 2025 LUCKNOW';"
                             alt="Tent Decor Expo UP 2025 Banner with event visuals" class="img-fluid rounded-3 mb-4">
                         <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
                             tent, catering, sound & SFX products.</p>
@@ -482,7 +483,6 @@
         crossorigin="anonymous"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- Element References ---
             const form = document.getElementById('registrationForm');
             const submitBtn = document.getElementById('submitBtn');
             const formContainer = document.getElementById('form-container');
@@ -491,7 +491,6 @@
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
 
-            // --- Helper Functions ---
             function showInfo(title, content, isError = true) {
                 const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
@@ -530,18 +529,12 @@
             function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
-                const photoEl = card.querySelector('.id-card-photo');
-                if (photoEl) photoEl.src = details.profileImageUrl;
-                const nameEl = card.querySelector('.id-card-name');
-                if (nameEl) nameEl.textContent = details.name;
-                const firmEl = card.querySelector('.id-card-firm');
-                if (firmEl) firmEl.textContent = details.firmName;
-                const phoneEl = card.querySelector('.id-card-phone');
-                if (phoneEl) phoneEl.textContent = `+91-${details.phone}`;
-                const regEl = card.querySelector('.id-card-reg-number');
-                if (regEl) regEl.textContent = details.registrationId;
-                const dateEl = card.querySelector('.id-card-attendance-date span');
-                if (dateEl) dateEl.textContent = formatAttendanceDates(details.attendance);
+                card.querySelector('.id-card-photo').src = details.profileImageUrl;
+                card.querySelector('.id-card-name').textContent = details.name;
+                card.querySelector('.id-card-firm').textContent = details.firmName;
+                card.querySelector('.id-card-phone').textContent = `+91-${details.phone}`;
+                card.querySelector('.id-card-reg-number').textContent = details.registrationId;
+                card.querySelector('.id-card-attendance-date span').textContent = formatAttendanceDates(details.attendance);
                 container.innerHTML = '';
                 container.append(card);
             }
@@ -614,22 +607,36 @@
                 return true;
             }
 
-            // --- Main Form Submission Logic ---
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                if (!validateForm()) {
-                    return;
-                }
+                if (!validateForm()) return;
 
-                setButtonLoading(true, 'Creating Order...');
+                const phone = document.getElementById('phone').value;
+                setButtonLoading(true, 'Checking phone & creating order...');
+
                 try {
-                    const orderResponse = await fetch('/.netlify/functions/create-order', { method: 'POST' });
+                    const orderResponse = await fetch('/.netlify/functions/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone }),
+                    });
+
+                    // Already registered logic
+                    if (orderResponse.status === 409) {
+                        const { error, registrationData } = await orderResponse.json();
+                        showInfo('Already Registered', error, false);
+                        populateAndShowIdCard(idCardWrapper, registrationData);
+                        formContainer.classList.add('d-none');
+                        idCardSection.classList.remove('d-none');
+                        return;
+                    }
+
                     if (!orderResponse.ok) throw new Error('Could not create payment order.');
                     const order = await orderResponse.json();
 
-                    const options = {
-                        key: "rzp_live_vSPgXsGoXlOofA", // IMPORTANT: Replace with your public Key ID
+                    const rzp = new Razorpay({
+                        key: "rzp_live_vSPgXsGoXlOofA",
                         amount: order.amount,
                         currency: order.currency,
                         name: "TENT DECOR EXPO UP 2025",
@@ -657,28 +664,31 @@
                         },
                         prefill: {
                             name: document.getElementById('name').value,
-                            contact: document.getElementById('phone').value,
+                            contact: phone,
                         },
-                        theme: { color: "#0A2540" }
-                    };
-                    const rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (response) {
-                        showInfo('Payment Failed', `Error: ${response.error.description}`, true);
+                        theme: { color: "#0A2540" },
+                        modal: {
+                            ondismiss: function () {
+                                showInfo("Payment Cancelled", "You cancelled the payment. Registration was not completed.", true);
+                            }
+                        }
                     });
+
                     rzp.open();
+
                 } catch (error) {
                     console.error('Payment Error:', error);
-                    showInfo('Payment Error', 'Could not initiate payment. Please try again.', true);
+                    showInfo('Payment Error', error.message || 'Could not initiate payment. Please try again.', true);
                 } finally {
                     setButtonLoading(false);
                 }
             });
 
-            // --- Other Event Listeners ---
             document.getElementById('download-id-btn').addEventListener('click', (e) => {
                 const cardElement = idCardWrapper.querySelector('#id-card');
                 if (cardElement) triggerIdCardDownload(cardElement, e.currentTarget);
             });
+
             document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
@@ -688,6 +698,7 @@
             });
         });
     </script>
+
 </body>
 
 </html>
