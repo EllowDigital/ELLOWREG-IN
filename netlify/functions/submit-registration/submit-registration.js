@@ -1,5 +1,5 @@
-// This function uses Firebase Firestore and reads credentials from local files
-// to avoid environment variable size limits.
+// This function reads credentials from Base64 encoded environment variables.
+// This is the most secure and reliable method.
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const { google } = require('googleapis');
@@ -49,17 +49,43 @@ const uploadToCloudinary = (fileBuffer, folderName) => {
   });
 };
 
-// --- Firebase Initialization ---
+
+// --- Firebase & Google Initialization from Base64 ---
 let firebaseApp;
+let googleAuth;
+
+// This block ensures initialization only happens once
 if (!global._firebaseApp) {
-  // **MODIFIED**: Read credentials from a local file
-  const serviceAccount = require('./firebase-credentials.json');
+  // Decode Firebase credentials from Base64
+  const firebaseCredsB64 = process.env.FIREBASE_CREDENTIALS_B64;
+  if (!firebaseCredsB64) {
+    throw new Error("Firebase credentials (Base64) are not set in environment variables.");
+  }
+  const decodedFirebaseCreds = Buffer.from(firebaseCredsB64, 'base64').toString('utf-8');
+  const serviceAccount = JSON.parse(decodedFirebaseCreds);
+
   global._firebaseApp = initializeApp({
     credential: cert(serviceAccount)
   });
+
+  // Decode Google credentials from Base64
+  const googleCredsB64 = process.env.GOOGLE_CREDENTIALS_B64;
+  if (!googleCredsB64) {
+    throw new Error("Google Sheets credentials (Base64) are not set in environment variables.");
+  }
+  const decodedGoogleCreds = Buffer.from(googleCredsB64, 'base64').toString('utf-8');
+  const googleKey = JSON.parse(decodedGoogleCreds);
+
+  global._googleAuth = new google.auth.GoogleAuth({
+    credentials: googleKey,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
 }
+
 firebaseApp = global._firebaseApp;
+googleAuth = global._googleAuth;
 const db = getFirestore(firebaseApp);
+
 
 // --- Main Handler ---
 exports.handler = async (event) => {
@@ -68,6 +94,7 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Configure Cloudinary (uses standard env vars)
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -78,25 +105,26 @@ exports.handler = async (event) => {
     const { name, phone, firmName, address, district, state, attendance } = fields;
     const { profileImage, paymentScreenshot } = files;
 
-    // Validation... (unchanged)
+    // --- Validation (unchanged) ---
     if (!name || !phone || !firmName || !profileImage || !paymentScreenshot) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields.' }) };
     }
 
+    // --- Firestore Operations (unchanged) ---
     const registrationsRef = db.collection('registrations');
     const snapshot = await registrationsRef.where('phone', '==', phone).limit(1).get();
 
     if (!snapshot.empty) {
-      // Handle duplicate... (unchanged)
-      return { statusCode: 409, body: JSON.stringify({ error: 'Already registered.' }) };
+      const existingDoc = snapshot.docs[0].data();
+      return { statusCode: 409, body: JSON.stringify({ error: 'This mobile number has already been registered.', details: existingDoc }) };
     }
 
     const counterRef = db.collection('counters').doc('registrations');
-    let nextId;
-    await db.runTransaction(async (transaction) => {
+    const { nextId } = await db.runTransaction(async (transaction) => {
       const counterDoc = await transaction.get(counterRef);
-      nextId = (counterDoc.exists ? counterDoc.data().count : 0) + 1;
-      transaction.set(counterRef, { count: nextId }, { merge: true });
+      const newCount = (counterDoc.exists ? counterDoc.data().count : 0) + 1;
+      transaction.set(counterRef, { count: newCount }, { merge: true });
+      return { nextId: newCount };
     });
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
@@ -106,14 +134,7 @@ exports.handler = async (event) => {
     ]);
 
     const newRegistrationData = {
-      registrationId,
-      name,
-      phone,
-      firmName,
-      address,
-      district,
-      state,
-      attendance,
+      registrationId, name, phone, firmName, address, district, state, attendance,
       paymentScreenshotUrl: uploadPaymentResponse.secure_url,
       profileImageUrl: uploadProfileResponse.secure_url,
       createdAt: FieldValue.serverTimestamp()
@@ -121,20 +142,15 @@ exports.handler = async (event) => {
 
     await registrationsRef.doc(phone).set(newRegistrationData);
 
-    // **MODIFIED**: Sync to Google Sheets using a local key file
+    // --- Google Sheets Sync (unchanged logic, but uses initialized auth) ---
     try {
-      const auth = new google.auth.GoogleAuth({
-        keyFile: './google-credentials.json', // Reads from local file
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-      });
-      const sheets = google.sheets({ version: 'v4', auth });
-
+      const sheets = google.sheets({ version: 'v4', auth: googleAuth });
       await sheets.spreadsheets.values.append({
         spreadsheetId: process.env.GOOGLE_SHEET_ID,
         range: 'Registrations!A1',
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [[ /* Data... (unchanged) */]]
+          values: [[ /* Data... */ new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }), registrationId, name, phone, firmName, address, district, state, attendance, newRegistrationData.paymentScreenshotUrl, newRegistrationData.profileImageUrl]],
         },
       });
     } catch (sheetError) {
@@ -143,11 +159,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        registrationId, name, phone, firmName,
-        profileImageUrl: newRegistrationData.profileImageUrl,
-        attendance,
-      }),
+      body: JSON.stringify(newRegistrationData),
     };
 
   } catch (error) {
