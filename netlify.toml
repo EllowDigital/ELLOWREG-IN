@@ -1,0 +1,23 @@
+# This file should be placed in the root of your project.
+
+[build]
+  # This command assumes your serverless function is in the 'netlify/functions' directory.
+  # Adjust if your function directory is named something else.
+  functions = "netlify/functions"
+
+# This is the crucial rule to fix the "405 Method Not Allowed" error.
+# It tells Netlify to rewrite requests from your site's root
+# to your serverless function correctly.
+[[redirects]]
+  # The path that your form is posting to.
+  from = "/.netlify/functions/submit-registration"
+  
+  # The actual location of the function.
+  to = "/.netlify/functions/submit-registration"
+  
+  # A status of 200 makes this a rewrite, so the URL in the browser bar doesn't change.
+  status = 200
+  
+  # This ensures the rule does not apply to other HTTP methods.
+  # We are keeping it commented out for now as it's not strictly necessary for this fix.
+  # force = false # Make sure this is not set to true, as it can interfere.
