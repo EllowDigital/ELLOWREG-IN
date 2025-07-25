@@ -67,7 +67,7 @@ if (!global._firebaseApp) {
 
   // Check if files exist before trying to read them.
   if (!fs.existsSync(firebaseCredsPath) || !fs.existsSync(googleCredsPath)) {
-      throw new Error('Credential files not found. Ensure the build script ran successfully.');
+    throw new Error('Credential files not found. Ensure the build script ran successfully.');
   }
 
   const serviceAccount = require(firebaseCredsPath);
@@ -134,9 +134,9 @@ exports.handler = async (event) => {
     const counterRef = db.collection('counters').doc('registrations');
     let nextId;
     await db.runTransaction(async (transaction) => {
-        const counterDoc = await transaction.get(counterRef);
-        nextId = (counterDoc.exists ? counterDoc.data().count : 0) + 1;
-        transaction.set(counterRef, { count: nextId }, { merge: true });
+      const counterDoc = await transaction.get(counterRef);
+      nextId = (counterDoc.exists ? counterDoc.data().count : 0) + 1;
+      transaction.set(counterRef, { count: nextId }, { merge: true });
     });
     const registrationId = `TDEXPOUP-${String(nextId).padStart(4, '0')}`;
 
