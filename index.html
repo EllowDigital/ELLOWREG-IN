@@ -283,6 +283,57 @@
             background-color: var(--primary-color);
             color: white;
         }
+
+        /* Custom styling for the validation error list */
+        #validation-error-list {
+            text-align: left;
+            padding-left: 1.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            /* Sets the color for "Crafted with..." */
+        }
+
+        /* Style for the link in the footer */
+        .footer a {
+            color: var(--primary-color);
+            /* A darker, more readable color */
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        /* A simple hover effect for the link */
+        .footer a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        /* Keyframes define the pulsing animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Apply the animation to the heart icon */
+        .footer .fa-heart {
+            color: var(--danger-color);
+            /* The red color for the heart */
+            animation: pulse 1.5s ease-in-out infinite;
+            display: inline-block;
+            /* Ensures the transform animation works correctly */
+        }
     </style>
 </head>
 
@@ -332,7 +383,7 @@
                     <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading">Get Your Entry Pass</h2>
-                        <form class="row g-3 g-lg-4 needs-validation" id="registrationForm" novalidate>
+                        <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
                             <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span
                                         class="text-danger">*</span></label>
                                 <div class="custom-file-input"><input type="file" id="profileImage" name="profileImage"
@@ -371,8 +422,6 @@
                                             type="checkbox" name="attendance" value="Day 3" id="day3"><label
                                             class="form-check-label" for="day3">Day 3 (14th Sept)</label></div>
                                 </div>
-                                <div class="invalid-feedback d-block" id="attendance-error" style="display: none;">
-                                    Please select at least one day.</div>
                             </div>
                             <div class="col-12">
                                 <div class="p-3 rounded-3"
@@ -446,10 +495,8 @@
         <div id="id-card">
             <div class="id-card-header">
                 <div class="id-card-header-text"
-                    style="font-size: 2.5rem; font-weight: 900; margin-top: 0.5rem; color: #FDB813;">
-                    TENT DECOR EXPO UP 2025
-                </div>
-
+                    style="font-size: 2rem; font-weight: 900; margin-top: 0.5rem; color: #FDB813;">TENT
+                    DECOR EXPO UP 2025</div>
             </div>
             <div class="id-card-body">
                 <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
@@ -487,17 +534,10 @@
             const infoModal = new bootstrap.Modal(infoModalEl);
             const copyUpiBtn = document.getElementById('copyUpiBtn');
             const copyTooltip = new bootstrap.Tooltip(copyUpiBtn);
-            const attendanceErrorEl = document.getElementById('attendance-error');
             const UPI_ID = 'wl0502260a0022197@unionbank';
 
             // --- Helper Functions ---
 
-            /**
-             * Displays a modal with a title and message.
-             * @param {string} title The title for the modal.
-             * @param {string|HTMLElement} content The body content for the modal.
-             * @param {boolean} [isError=true] Toggles between error and info styling.
-             */
             function showInfo(title, content, isError = true) {
                 const infoModalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const infoModalHeader = infoModalEl.querySelector('#infoModalHeader');
@@ -514,11 +554,6 @@
                 infoModal.show();
             }
 
-            /**
-             * Sets the loading state of the submit button.
-             * @param {boolean} isLoading True to show loading state, false otherwise.
-             * @param {string} [text] Optional text to display while loading.
-             */
             function setButtonLoading(isLoading, text = 'Submit Registration') {
                 const buttonText = submitBtn.querySelector('.button-text');
                 const buttonSpinner = submitBtn.querySelector('.spinner-border');
@@ -527,29 +562,6 @@
                 isLoading ? buttonSpinner.classList.remove('d-none') : buttonSpinner.classList.add('d-none');
             }
 
-            /**
-             * Validates a file based on type and size.
-             * @param {File} file The file to validate.
-             * @param {string[]} allowedTypes An array of allowed MIME types.
-             * @param {number} maxSizeInMB Maximum file size in megabytes.
-             * @returns {string|null} An error message string or null if the file is valid.
-             */
-            function validateFile(file, allowedTypes, maxSizeInMB) {
-                if (!file) return "This field is required.";
-                if (!allowedTypes.includes(file.type)) {
-                    return `Invalid file type. Please upload ${allowedTypes.join(', ')}.`;
-                }
-                if (file.size > maxSizeInMB * 1024 * 1024) {
-                    return `File is too large. Maximum size is ${maxSizeInMB}MB.`;
-                }
-                return null;
-            }
-
-            /**
-             * Converts an attendance string like "Day 1, Day 3" to a formatted date string.
-             * @param {string} attendanceString The comma-separated string of days.
-             * @returns {string} A formatted date string (e.g., "Sep 12 & 14, 2025").
-             */
             function formatAttendanceDates(attendanceString) {
                 if (!attendanceString || typeof attendanceString !== 'string') return 'N/A';
                 const selectedDays = attendanceString.split(',').map(s => s.trim());
@@ -565,16 +577,10 @@
                 return `Sep ${dates.join(', ')} & ${lastDate}, 2025`;
             }
 
-            /**
-             * Creates and displays the entry pass.
-             * @param {HTMLElement} container The element to inject the card into.
-             * @param {object} details The registration data from the backend.
-             */
             function populateAndShowIdCard(container, details) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
 
-                // Safely find and update elements to prevent crashes
                 const photoEl = card.querySelector('.id-card-photo');
                 if (photoEl) photoEl.src = details.profileImageUrl;
 
@@ -597,11 +603,6 @@
                 container.append(card);
             }
 
-            /**
-             * Triggers a download of the generated entry pass.
-             * @param {HTMLElement} cardElement The #id-card element to capture.
-             * @param {HTMLElement} button The button that was clicked to trigger the download.
-             */
             function triggerIdCardDownload(cardElement, button) {
                 const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
                 const regNumber = cardElement.querySelector('.id-card-reg-number').textContent.trim();
@@ -627,22 +628,62 @@
                 });
             }
 
-            // --- Main Form Submission Logic ---
+            // --- NEW: Advanced Form Validation with Popup ---
+            function validateForm() {
+                const errors = [];
+                const fieldsToValidate = [
+                    { id: 'profileImage', name: 'Profile Photo', type: 'file' },
+                    { id: 'name', name: 'Full Name' },
+                    { id: 'phone', name: 'Phone Number' },
+                    { id: 'firmName', name: 'Firm Name' },
+                    { id: 'address', name: 'Full Address' },
+                    { id: 'district', name: 'District' },
+                    { id: 'state', name: 'State' },
+                    { id: 'paymentScreenshot', name: 'Payment Screenshot', type: 'file' }
+                ];
+
+                fieldsToValidate.forEach(field => {
+                    const input = document.getElementById(field.id);
+                    if (field.type === 'file') {
+                        if (input.files.length === 0) {
+                            errors.push(`${field.name} is required.`);
+                        }
+                    } else {
+                        if (!input.checkValidity()) {
+                            errors.push(`${field.name} is invalid or missing.`);
+                        }
+                    }
+                });
+
+                const isAnyDayChecked = form.querySelector('input[name="attendance"]:checked') !== null;
+                if (!isAnyDayChecked) {
+                    errors.push('Please select at least one Attending Day.');
+                }
+
+                if (errors.length > 0) {
+                    const errorList = document.createElement('ul');
+                    errorList.id = 'validation-error-list';
+                    errors.forEach(err => {
+                        const li = document.createElement('li');
+                        li.textContent = err;
+                        errorList.appendChild(li);
+                    });
+                    const message = document.createElement('div');
+                    message.innerHTML = '<p class="mb-2">Please correct the following issues:</p>';
+                    message.appendChild(errorList);
+                    showInfo('Missing Information', message, true);
+                    return false;
+                }
+                return true;
+            }
+
+            // --- Main Form Submission Logic (Updated) ---
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
-                const isChecked = form.querySelector('input[name="attendance"]:checked') !== null;
-                attendanceErrorEl.style.display = isChecked ? 'none' : 'block';
-                form.classList.add('was-validated');
-                if (!form.checkValidity() || !isChecked) return;
-
-                const profileImgFile = form.querySelector('#profileImage').files[0];
-                const screenshotFile = form.querySelector('#paymentScreenshot').files[0];
-                const imgError = validateFile(profileImgFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
-                const screenshotError = validateFile(screenshotFile, ['image/jpeg', 'image/png', 'image/jpg'], 5);
-                if (imgError || screenshotError) {
-                    showInfo('Validation Error', `${imgError ? 'Profile Image: ' + imgError + '\n' : ''}${screenshotError ? 'Screenshot: ' + screenshotError : ''}`);
+                // Use the new advanced validation function
+                if (!validateForm()) {
                     return;
                 }
 
@@ -720,13 +761,6 @@
                     const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
                     const labelSpan = e.target.closest('.custom-file-input').querySelector('.file-input-label span');
                     if (labelSpan) labelSpan.textContent = fileName;
-                });
-            });
-
-            form.querySelectorAll('input[name="attendance"]').forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const isAnyChecked = form.querySelector('input[name="attendance"]:checked') !== null;
-                    attendanceErrorEl.style.display = isAnyChecked ? 'none' : 'block';
                 });
             });
         });
