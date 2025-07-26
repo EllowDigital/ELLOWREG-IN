@@ -6,21 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
+    <!-- SEO Meta Tags -->
     <meta name="description"
         content="Register now for TENT DECOR EXPO UP 2025, India's top B2B event for tent and decor professionals. Get your entry pass today.">
     <meta name="keywords" content="Tent Expo, Decor Expo, Lucknow Event, B2B Event, Registration, 2025 Expo">
     <meta name="author" content="TENT DECOR EXPO Team">
 
+    <!-- Open Graph / Social Sharing -->
     <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
         content="Join India's premier tent and decor event in Lucknow. Register now and get your official entry pass.">
     <meta property="og:image" content="https://td-expoup25.netlify.app/assets/favicon.ico">
-    <meta property="og:url" content="https://td-expoup25.netlify.app/">
+    <meta property="og:url" content="https://td-expoup25.netlify.app/"> <!-- Replace with actual domain -->
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- Favicon with Fallback -->
     <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
+    <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css"
         integrity="sha512-fw7f+TcMjTb7bpbLJZlP8g2Y4XcCyFZW8uy8HsRZsH/SwbMw0plKHFHr99DN3l04VsYNwvzicUX/6qurvIxbxw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -32,12 +36,15 @@
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <!-- Razorpay and html2canvas Scripts -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+    <!-- Image Compression Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
+        integrity="sha512-AqNGerESFmfQYTtyWZDQv8WSi4ICG16z/O+8JyAD5Iaafp+fnAU4xbJipYZ0bU9DrhXAsx1Vylli0oebd9l55g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
         :root {
@@ -357,6 +364,7 @@
     <main class="registration-container">
         <div class="card registration-card">
             <div class="row g-0">
+                <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
                         <img src="assets/unnamed.jpg"
@@ -366,7 +374,9 @@
                             tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
                             <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
-                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
+                            <p class="mb-2 fs-5">
+                                <i class="fas fa-calendar-alt fa-fw me-2"></i>
+                                Sept 12 · 13 · 14, 2025
                             </p>
                             <p class="fs-5" style="line-height: 1.5;"><i
                                     class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Pratishthan, Lucknow</p>
@@ -381,7 +391,9 @@
                     </div>
                 </div>
 
+                <!-- Right-side Form Panel -->
                 <div class="col-lg-7 form-panel d-flex flex-column">
+                    <!-- Success View (Initially hidden) -->
                     <div id="id-card-section" class="d-none text-center my-auto">
                         <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
                             Confirmed!</h2>
@@ -394,6 +406,7 @@
                         </button>
                     </div>
 
+                    <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading">Get Your Entry Pass</h2>
                         <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
@@ -444,23 +457,23 @@
                                     <div class="form-check d-inline-block me-3">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 1"
                                             id="day1">
-                                        <label class="form-check-label" for="day1">Day 1</label>
+                                        <label class="form-check-label" for="day1">Day 1 (Sept 12, 2025)</label>
                                     </div>
                                     <div class="form-check d-inline-block me-3">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 2"
                                             id="day2">
-                                        <label class="form-check-label" for="day2">Day 2</label>
+                                        <label class="form-check-label" for="day2">Day 2 (Sept 13, 2025)</label>
                                     </div>
                                     <div class="form-check d-inline-block">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 3"
                                             id="day3">
-                                        <label class="form-check-label" for="day3">Day 3</label>
+                                        <label class="form-check-label" for="day3">Day 3 (Sept 14, 2025)</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 mt-4">
                                 <button class="btn btn-primary w-100" type="submit" id="submitBtn">
-                                    <span class="button-text">Proceed to Pay ₹1</span>
+                                    <span class="button-text">Proceed to Pay ₹500</span>
                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                         aria-hidden="true"></span>
                                 </button>
@@ -477,6 +490,7 @@
                 target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
 
+    <!-- Universal Modal for Info and Error Messages -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -493,10 +507,13 @@
         </div>
     </div>
 
+    <!-- Hidden Template for Generating the Entry Pass -->
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
-                <div class="id-card-header-text">EVENT ENTRY PASS</div>
+                <div class="id-card-header-text"
+                    style="font-size: 2rem; font-weight: 900; margin-top: 0.5rem; color: #FDB813;">TENT
+                    DECOR EXPO UP 2025</div>
             </div>
             <div class="id-card-body">
                 <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
@@ -519,12 +536,14 @@
     </div>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"
-        integrity="sha512-Tc0i+vRogmX4NN7tuLbQfBxa8JkfUSAxSFVzmU31nVdHyiHElPPy2cWfFacmCJKw0VqovrzKhdd2TSTMdAxp2g=="
+    <!-- External and Page-Specific Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.min.js"
+        integrity="sha512-zKeerWHHuP3ar7kX2WKBSENzb+GJytFSBL6HrR2nPSR1kOX1qjm+oHooQtbDpDBSITgyl7QXZApvDfDWvKjkUw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             // --- Configuration & Constants ---
             const CONSTANTS = {
                 API: {
@@ -629,8 +648,9 @@
                 const data = {};
                 for (const [key, value] of formData.entries()) {
                     if (key === 'attendance') {
-                        data[key] = formData.getAll(key);
-                    } else {
+                        if (!data[key]) data[key] = [];
+                        data[key].push(value);
+                    } else if (key !== 'profileImage') { // Don't save file input to localStorage
                         data[key] = value;
                     }
                 }
@@ -638,8 +658,9 @@
             }
 
             function loadFormData() {
-                const data = JSON.parse(localStorage.getItem(CONSTANTS.FORM_DATA_KEY));
-                if (data) {
+                const savedData = localStorage.getItem(CONSTANTS.FORM_DATA_KEY);
+                if (savedData) {
+                    const data = JSON.parse(savedData);
                     Object.keys(data).forEach(key => {
                         const element = form.elements[key];
                         if (element) {
@@ -648,11 +669,7 @@
                                     const checkbox = document.querySelector(`input[name="attendance"][value="${value}"]`);
                                     if (checkbox) checkbox.checked = true;
                                 });
-                            } else if (element.length) { // Radio/Checkbox group
-                                Array.from(element).forEach(el => {
-                                    if (el.value === data[key]) el.checked = true;
-                                });
-                            } else {
+                            } else if (element.type !== 'file') {
                                 element.value = data[key];
                             }
                         }
@@ -752,8 +769,8 @@
                     key: order.key,
                     amount: order.amount,
                     currency: order.currency,
-                    name: "TENT DECOR EXPO UP 2025",
-                    description: "Event Registration Fee",
+                    name: "Tent Decor Expo UP 2025",
+                    description: "Entry Pass Fee",
                     order_id: order.id,
                     handler: handlePaymentSuccess,
                     prefill: {
@@ -786,9 +803,11 @@
                         throw new Error("You are offline. Please reconnect to finalize your registration.");
                     }
                     const formData = new FormData(form);
-                    // Replace original file with the compressed one
+
+                    // Replace original file with the compressed one if it exists
                     if (compressedImageFile) {
-                        formData.set('profileImage', compressedImageFile, compressedImageFile.name);
+                        // Use the original filename for Cloudinary
+                        formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
                     }
 
                     formData.append('razorpay_payment_id', response.razorpay_payment_id);
@@ -876,17 +895,18 @@
 
                 // Image compression options
                 const options = {
-                    maxSizeMB: 0.02, // Target size ~20KB
+                    maxSizeMB: 0.2, // Target size ~200KB, a good balance for profile pics
                     maxWidthOrHeight: 800,
                     useWebWorker: true,
                     initialQuality: 0.8
                 }
 
                 try {
-                    compressedImageFile = await imageCompression(file, options);
+                    const compressedFile = await imageCompression(file, options);
                     console.log(`Original size: ${(file.size / 1024).toFixed(2)} KB`);
-                    console.log(`Compressed size: ${(compressedImageFile.size / 1024).toFixed(2)} KB`);
+                    console.log(`Compressed size: ${(compressedFile.size / 1024).toFixed(2)} KB`);
                     fileInputLabel.textContent = `${file.name} (Compressed)`;
+                    compressedImageFile = compressedFile; // Store the compressed file
                 } catch (error) {
                     console.error('Image compression error:', error);
                     showInfo('Compression Error', 'Could not compress the image. Please try another one.', true);

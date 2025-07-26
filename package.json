@@ -1,7 +1,7 @@
 {
   "name": "expo-registration-form",
-  "version": "2.1.0",
-  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form with a database, cloud storage, and Google Sheets sync.",
+  "version": "2.2.0",
+  "description": "Handles submissions for the TENT DECOR EXPO UP 2025 registration form with a database, cloud storage, and Google Sheets sync.",
   "private": true,
   "author": "Sarwan Yadav",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "exceljs": "^4.4.0",
     "googleapis": "^128.0.0",
     "pg": "^8.11.3",
+    "pg-query-stream": "^4.2.3",
     "razorpay": "^2.9.4"
   }
 }

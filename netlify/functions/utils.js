@@ -1,22 +1,18 @@
+// /netlify/functions/utils.js
+
 const { Pool } = require('pg');
 const { google } = require('googleapis');
 
 /**
- * PostgreSQL connection pool.
- * It automatically uses the DATABASE_URL environment variable.
- * The pool manages multiple client connections efficiently.
+ * PostgreSQL connection pool using environment variable DATABASE_URL.
  */
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // Required for connecting to cloud databases like Neon that use SSL
-    ssl: {
-        rejectUnauthorized: false
-    }
+    ssl: { rejectUnauthorized: false },
 });
 
 /**
- * Creates and authenticates a Google Sheets API client.
- * @returns {Promise<sheets_v4.Sheets>} An authenticated Google Sheets API instance.
+ * Authenticates and returns a Google Sheets API client.
  */
 const getGoogleSheetsClient = async () => {
     try {
@@ -28,31 +24,26 @@ const getGoogleSheetsClient = async () => {
         const authClient = await auth.getClient();
         return google.sheets({ version: 'v4', auth: authClient });
     } catch (error) {
-        console.error("Error initializing Google Sheets client:", error);
-        throw new Error("Could not authenticate with Google Sheets. Check GOOGLE_CREDENTIALS.");
+        console.error("Google Sheets Auth Error:", error);
+        throw new Error("Invalid GOOGLE_CREDENTIALS");
     }
 };
 
 /**
- * Retries an asynchronous function with exponential backoff.
- * Useful for handling transient network or API errors.
- * @param {Function} fn The asynchronous function to execute.
- * @param {number} [retries=3] The maximum number of retries.
- * @param {number} [delay=500] The initial delay in milliseconds.
- * @returns {Promise<any>} The result of the successful function execution.
+ * Retries a function with exponential backoff.
  */
 const retryWithBackoff = async (fn, retries = 3, delay = 500) => {
-    for (let i = 0; i < retries; i++) {
+    for (let attempt = 0; attempt < retries; attempt++) {
         try {
             return await fn();
         } catch (err) {
-            if (i === retries - 1) {
-                console.error(`Function failed after ${retries} retries.`, err);
+            if (attempt === retries - 1) {
+                console.error(`Final retry failed after ${retries} attempts`, err);
                 throw err;
             }
-            const backoffDelay = delay * (2 ** i);
-            console.log(`Attempt ${i + 1} failed. Retrying in ${backoffDelay}ms...`);
-            await new Promise(res => setTimeout(res, backoffDelay));
+            const waitTime = delay * 2 ** attempt;
+            console.warn(`Retry ${attempt + 1}: Retrying in ${waitTime}ms...`);
+            await new Promise(res => setTimeout(res, waitTime));
         }
     }
 };
