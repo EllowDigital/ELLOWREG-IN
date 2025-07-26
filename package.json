@@ -1,7 +1,7 @@
 {
   "name": "expo-registration-form",
-  "version": "2.0.0",
-  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form with Razorpay and a PostgreSQL database.",
+  "version": "2.1.0",
+  "description": "Handles submissions for the TENT DECOR EXPO 2025 registration form with a database, cloud storage, and Google Sheets sync.",
   "private": true,
   "author": "Sarwan Yadav",
   "license": "ISC",
@@ -12,9 +12,11 @@
     "build": "echo 'No build step required, deploying functions.'"
   },
   "dependencies": {
+    "busboy": "^1.6.0",
+    "cloudinary": "^1.37.0",
+    "exceljs": "^4.4.0",
+    "googleapis": "^128.0.0",
     "pg": "^8.11.3",
-    "cloudinary": "1.37.0",
-    "busboy": "1.6.0",
     "razorpay": "^2.9.4"
   }
 }
