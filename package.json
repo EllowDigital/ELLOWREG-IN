@@ -8,6 +8,9 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "scripts": {
+    "build": "echo 'No build step required, deploying functions.'"
+  },
   "dependencies": {
     "googleapis": "105.0.0",
     "cloudinary": "1.37.0",
