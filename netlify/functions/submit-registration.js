@@ -4,8 +4,8 @@
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
-// IMPROVEMENT: Import shared utilities instead of re-defining them.
-const { sheets, retryWithBackoff } = require("./lib/utils");
+// FIX: Corrected the path to import from the same directory.
+const { sheets, retryWithBackoff } = require("./utils");
 
 // --- Constants ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
@@ -97,7 +97,6 @@ exports.handler = async (event) => {
     const { profileImage } = files;
 
     // 2. Security Check: Verify the payment signature from Razorpay.
-    // This is critical to prevent fraudulent submissions.
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -128,7 +127,6 @@ exports.handler = async (event) => {
     );
 
     // 5. Generate a unique Registration ID.
-    // IMPROVEMENT: This is more robust. It gets the current row count to ensure a sequential ID.
     const sheetData = await retryWithBackoff(() =>
       sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,

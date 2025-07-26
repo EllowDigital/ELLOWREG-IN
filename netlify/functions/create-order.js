@@ -2,8 +2,8 @@
 
 // --- Dependencies ---
 const Razorpay = require("razorpay");
-// IMPROVEMENT: Import shared utilities instead of re-defining them.
-const { sheets, retryWithBackoff } = require("./lib/utils");
+// FIX: Corrected the path to import from the same directory.
+const { sheets, retryWithBackoff } = require("./utils");
 
 // --- Constants ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
@@ -49,7 +49,6 @@ exports.handler = async (event) => {
 
         const rows = sheetData.data.values || [];
 
-        // --- FIX: Handle Empty Sheet ---
         // If the sheet is not empty, perform the check for existing users.
         if (rows.length > 0) {
             const headers = rows[0] || [];
@@ -85,7 +84,6 @@ exports.handler = async (event) => {
                 };
             }
         }
-        // --- End of Fix ---
 
         // If the sheet was empty or the user was not found, create a new Razorpay order.
         const order = await retryWithBackoff(() =>
