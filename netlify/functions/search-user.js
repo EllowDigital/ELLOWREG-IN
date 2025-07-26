@@ -48,6 +48,7 @@ exports.handler = async (event, context) => {
         dbClient = await pool.connect();
 
         const query = 'SELECT * FROM registrations WHERE phone = $1';
+        // CORRECTED: Use the connected client `dbClient` to query to ensure proper connection management
         const { rows } = await dbClient.query(query, [trimmedPhone]);
 
         // 5. Handle Response: Check if a user was found.
@@ -76,6 +77,7 @@ exports.handler = async (event, context) => {
         };
     } finally {
         // 7. Cleanup: Always release the database client back to the pool.
+        // This is crucial for preventing the server from running out of connections.
         if (dbClient) {
             dbClient.release();
         }

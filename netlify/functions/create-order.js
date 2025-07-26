@@ -1,198 +1,120 @@
-const cloudinary = require("cloudinary").v2;
-const busboy = require("busboy");
-const crypto = require("crypto");
-const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
+// /netlify/functions/create-order.js
+
+const Razorpay = require("razorpay");
+const { pool, retryWithBackoff } = require("./utils");
 
 // --- Constants ---
-const CLOUDINARY_FOLDER = "expo-profile-images-2025";
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations"; // Ensure this sheet name exists in your Google Sheet
+const ORDER_AMOUNT = 100; // The amount in the smallest currency unit (e.g., 100 paise = ₹1).
+const RECEIPT_PREFIX = "receipt_order_";
 
 // --- Service Initializations ---
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
+// Ensure your Razorpay keys are correctly set in your Netlify environment variables.
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// --- Utility Functions ---
-const parseMultipartForm = (event) => new Promise((resolve, reject) => {
-  const contentType = event.headers["content-type"] || event.headers["Content-Type"];
-  if (!contentType) {
-    return reject(new Error("Request is missing 'Content-Type' header."));
-  }
-  const bb = busboy({
-    headers: { "content-type": contentType },
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB file size limit
-  });
-  const fields = {};
-  const files = {};
-  bb.on("file", (name, file, info) => {
-    const chunks = [];
-    file.on("data", (chunk) => chunks.push(chunk));
-    file.on("limit", () => reject(new Error(`File '${info.filename}' exceeds the 5MB limit.`)));
-    file.on("end", () => {
-      files[name] = {
-        filename: info.filename,
-        content: Buffer.concat(chunks),
-        contentType: info.mimeType,
-      };
-    });
-  });
-  bb.on("field", (name, value) => { fields[name] = value; });
-  bb.on("close", () => resolve({ fields, files }));
-  bb.on("error", (err) => reject(new Error(`Error parsing form data: ${err.message}`)));
-  bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
-});
-
-const uploadToCloudinary = (buffer, folder) => new Promise((resolve, reject) => {
-  const uploadStream = cloudinary.uploader.upload_stream(
-    { folder, resource_type: "auto" },
-    (err, result) => {
-      if (err) return reject(new Error(`Cloudinary upload failed: ${err.message}`));
-      resolve(result);
-    }
-  );
-  uploadStream.end(buffer);
-});
-
-// --- Main Handler Function ---
+/**
+ * Main handler for creating a Razorpay order.
+ * It first checks if a user with the given phone number is already registered.
+ */
 exports.handler = async (event) => {
+  // 1. Ensure the request is a POST request
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    return {
+      statusCode: 405, // Method Not Allowed
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: "Method Not Allowed" })
+    };
   }
 
-  let dbClient; // Define client here to be accessible in finally block
-
+  let dbClient;
   try {
-    const { fields, files } = await parseMultipartForm(event);
-    const {
-      name, phone, firmName, address, district, state, attendance,
-      razorpay_order_id, razorpay_payment_id, razorpay_signature
-    } = fields;
-    const { profileImage } = files;
+    // 2. Parse and validate the incoming phone number from the JSON body
+    const { phone } = JSON.parse(event.body || "{}");
 
-    // 1. Security Check: Verify Razorpay signature
-    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const digest = shasum.digest("hex");
-
-    if (digest !== razorpay_signature) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Invalid payment signature." }) };
+    if (!phone || !/^[6-9]\d{9}$/.test(phone.trim())) {
+      return {
+        statusCode: 400, // Bad Request
+        body: JSON.stringify({ error: "A valid 10-digit phone number is required." }),
+      };
     }
+    const trimmedPhone = phone.trim();
 
-    // 2. Validate input
-    const requiredFields = { name, phone, firmName, address, district, state, attendance };
-    for (const [key, value] of Object.entries(requiredFields)) {
-      if (!value || String(value).trim() === "") {
-        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing required field: ${key}` }) };
-      }
-    }
-    if (!profileImage) {
-      return { statusCode: 400, body: JSON.stringify({ status: "error", error: "A profile photo is required." }) };
-    }
-
-    // 3. Upload image to Cloudinary
-    const uploadResult = await retryWithBackoff(() =>
-      uploadToCloudinary(profileImage.content, CLOUDINARY_FOLDER)
-    );
-
-    // 4. Generate a unique Registration ID
-    const registrationId = `TDEXPOUP-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
-    const registrationTimestamp = new Date();
-
-    // 5. Insert data into the database
-    dbClient = await pool.connect();
-    let newRecord;
+    // --- 3. Database Check ---
+    // This block checks if the user has already registered.
+    console.log(`[create-order] Checking database for phone: ${trimmedPhone}`);
     try {
-      const insertQuery = `
-        INSERT INTO registrations (registration_id, name, company, phone, address, city, state, day, payment_id, image_url, timestamp)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-        RETURNING *;
-      `;
-      const values = [
-        registrationId, name.trim(), firmName.trim(), phone.trim(), address.trim(),
-        district.trim(), state.trim(), attendance, razorpay_payment_id,
-        uploadResult.secure_url, registrationTimestamp
-      ];
-      const result = await dbClient.query(insertQuery, values);
-      newRecord = result.rows[0];
-    } catch (error) {
-      if (error.code === '23505' && error.constraint === 'registrations_phone_key') {
+      dbClient = await pool.connect();
+      const existingUserQuery = 'SELECT registration_id, name, phone, company, day, image_url FROM registrations WHERE phone = $1';
+      const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
+
+      if (rows.length > 0) {
+        // If a record is found, it means the user is already registered.
+        // Return a 409 Conflict status along with their existing data.
+        const registrationData = {
+          registrationId: rows[0].registration_id,
+          name: rows[0].name,
+          phone: rows[0].phone,
+          firmName: rows[0].company,
+          attendance: rows[0].day,
+          profileImageUrl: rows[0].image_url,
+        };
+        console.log(`[create-order] User with phone ${trimmedPhone} already exists. ID: ${registrationData.registrationId}`);
         return {
-          statusCode: 409, // Conflict
-          body: JSON.stringify({ error: 'This phone number is already registered.' })
+          statusCode: 409,
+          body: JSON.stringify({
+            error: "This phone number is already registered.",
+            registrationData: registrationData,
+          }),
         };
       }
-      throw error; // Re-throw other database errors
+      console.log(`[create-order] No existing registration found for ${trimmedPhone}.`);
+
+    } catch (dbError) {
+      console.error("[create-order] FATAL: Database connection or query failed.", dbError);
+      // This is a critical server-side error.
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "Could not connect to the database. Please check server logs and configuration.",
+          details: dbError.message
+        })
+      };
     } finally {
+      // IMPORTANT: Always release the database client back to the pool.
       if (dbClient) {
-        dbClient.release(); // IMPORTANT: Release the client back to the pool
+        dbClient.release();
       }
     }
 
-    // 6. Sync to Google Sheets (non-blocking "fire-and-forget")
-    // This ensures the user gets a fast response even if Sheets API is slow.
-    (async () => {
-      try {
-        const sheets = await getGoogleSheetsClient();
-        const newRowData = [
-          newRecord.registration_id,
-          newRecord.name,
-          newRecord.company,
-          newRecord.phone,
-          newRecord.address,
-          newRecord.city,
-          newRecord.state,
-          newRecord.day,
-          newRecord.payment_id,
-          new Date(newRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-          newRecord.image_url,
-        ];
+    // --- 4. Razorpay Order Creation ---
+    // This part only runs if the phone number was NOT found in the database.
+    console.log(`[create-order] Creating Razorpay order for new user: ${trimmedPhone}`);
 
-        await retryWithBackoff(() =>
-          sheets.spreadsheets.values.append({
-            spreadsheetId: SPREADSHEET_ID,
-            range: `${SHEET_NAME}!A1`,
-            valueInputOption: "USER_ENTERED",
-            resource: { values: [newRowData] },
-          })
-        );
-        console.log(`Successfully synced registration ${newRecord.registration_id} to Google Sheets.`);
-      } catch (sheetsError) {
-        console.error(`FAILED to sync registration ${newRecord.registration_id} to Google Sheets:`, sheetsError.message);
-      }
-    })();
-
-
-    // 7. Success response
-    const responseData = {
-      status: "success",
-      registrationData: {
-        registrationId: newRecord.registration_id,
-        name: newRecord.name,
-        phone: newRecord.phone,
-        firmName: newRecord.company,
-        attendance: newRecord.day,
-        profileImageUrl: newRecord.image_url,
-      },
+    const orderOptions = {
+      amount: ORDER_AMOUNT,
+      currency: "INR",
+      receipt: `${RECEIPT_PREFIX}${Date.now()}_${trimmedPhone}`,
     };
+
+    const order = await retryWithBackoff(() => razorpay.orders.create(orderOptions));
+    console.log(`[create-order] Razorpay order created successfully: ${order.id}`);
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(responseData),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
     };
 
   } catch (err) {
-    console.error("SUBMIT_REGISTRATION_ERROR:", err);
+    // This will catch errors from JSON parsing or Razorpay API calls.
+    console.error("[create-order] FATAL ERROR:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        status: "error",
-        error: "An internal server error occurred. Please try again or contact support if the problem persists.",
-        details: err.message,
+        error: "An internal server error occurred while creating the order.",
+        details: err.message, // This detail is helpful for debugging in Netlify logs
       }),
     };
   }
