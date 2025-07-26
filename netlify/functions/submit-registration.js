@@ -1,20 +1,13 @@
 // /netlify/functions/submit-registration.js
-
-// --- Dependencies ---
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
-// FIX: Corrected the path to import from the same directory.
-const { sheets, retryWithBackoff } = require("./utils");
+const { pool, retryWithBackoff } = require("./utils");
 
 // --- Constants ---
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations";
 const CLOUDINARY_FOLDER = "expo-profile-images-2025";
 
 // --- Service Initializations ---
-
-// Configure Cloudinary client.
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -23,7 +16,6 @@ cloudinary.config({
 });
 
 // --- Utility Functions ---
-
 /**
  * Parses a multipart/form-data request body from a Netlify function event.
  * @param {object} event The Netlify function event object.
@@ -88,7 +80,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    // 1. Parse form data and files from the request.
+    // 1. Parse form data
     const { fields, files } = await parseMultipartForm(event);
     const {
       name, phone, firmName, address, district, state, attendance,
@@ -96,21 +88,16 @@ exports.handler = async (event) => {
     } = fields;
     const { profileImage } = files;
 
-    // 2. Security Check: Verify the payment signature from Razorpay.
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
+    // 2. Security Check: Verify Razorpay signature
+    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest("hex");
 
-    if (expectedSignature !== razorpay_signature) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: "error", error: "Invalid Razorpay payment signature." }),
-      };
+    if (digest !== razorpay_signature) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Transaction not legit!" }) };
     }
 
-    // 3. Validate that all required fields and the profile image are present.
+    // 3. Validate input
     const requiredFields = { name, phone, firmName, address, district, state, attendance };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value || String(value).trim() === "") {
@@ -121,71 +108,78 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: "error", error: "A profile photo is required." }) };
     }
 
-    // 4. Upload the profile image to Cloudinary.
+    // 4. Upload image to Cloudinary
     const uploadResult = await retryWithBackoff(() =>
       uploadToCloudinary(profileImage.content, CLOUDINARY_FOLDER)
     );
 
-    // 5. Generate a unique Registration ID.
-    const sheetData = await retryWithBackoff(() =>
-      sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:A`, // Only need one column to count rows.
-      })
-    );
-    const newRowNumber = (sheetData.data.values || []).length + 1;
-    const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
+    // 5. Generate a unique Registration ID
+    const registrationId = `TDEXPOUP-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
-    // 6. Append the new registration data to the Google Sheet.
-    const newRowData = [
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    // 6. Insert data into the database
+    const dbClient = await pool.connect();
+    const insertQuery = `
+      INSERT INTO registrations (registration_id, name, company, phone, address, city, state, day, payment_id, image_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *;
+    `;
+    const values = [
       registrationId,
       name.trim(),
       firmName.trim(),
       phone.trim(),
       address.trim(),
-      district.trim(),
+      district.trim(), // Assuming 'district' maps to 'city'
       state.trim(),
       attendance,
       razorpay_payment_id,
       uploadResult.secure_url,
     ];
 
-    await retryWithBackoff(() =>
-      sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
-        range: SHEET_NAME,
-        valueInputOption: "USER_ENTERED",
-        resource: { values: [newRowData] },
-      })
-    );
+    let newRecord;
+    try {
+        const result = await dbClient.query(insertQuery, values);
+        newRecord = result.rows[0];
+    } catch (error) {
+        // Handle potential duplicate phone number error from the database
+        if (error.code === '23505' && error.constraint === 'registrations_phone_key') {
+             return {
+                statusCode: 409,
+                body: JSON.stringify({ error: 'This phone number is already registered.' })
+            };
+        }
+        // Re-throw other errors
+        throw error;
+    } finally {
+        dbClient.release();
+    }
 
-    // 7. Return a success response with the new registration data.
+    // 7. Success response
+    const responseData = {
+      status: "success",
+      registrationData: {
+        registrationId: newRecord.registration_id,
+        name: newRecord.name,
+        phone: newRecord.phone,
+        firmName: newRecord.company,
+        attendance: newRecord.day,
+        profileImageUrl: newRecord.image_url,
+      },
+    };
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status: "success",
-        registrationData: {
-          registrationId,
-          name: name.trim(),
-          phone: phone.trim(),
-          firmName: firmName.trim(),
-          attendance,
-          profileImageUrl: uploadResult.secure_url,
-        },
-      }),
+      body: JSON.stringify(responseData),
     };
 
   } catch (err) {
-    // 8. Catch-all error handler for logging and returning a generic error message.
-    console.error("SUBMIT_REGISTRATION_ERROR:", err.message || err);
+    console.error("SUBMIT_REGISTRATION_ERROR:", err);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         status: "error",
-        error: "Registration failed due to a server error. Please contact support.",
+        error: "An internal server error occurred. Please try again or contact support if the problem persists.",
         details: err.message,
       }),
     };
