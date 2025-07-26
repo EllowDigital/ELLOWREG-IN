@@ -632,7 +632,7 @@
                     const responseData = await orderRes.json();
 
                     if (orderRes.status === 409) {
-                        showInfo('Already Registered', responseData.error, false);
+                        showInfo('Already Registered', 'We found an existing registration with this phone number. Your entry pass is displayed below.', false);
                         populateAndShowIdCard(idCardWrapper, responseData.registrationData);
                         return;
                     }
@@ -666,7 +666,7 @@
                     theme: { color: "#0A2540" },
                     modal: {
                         ondismiss: () => {
-                            showInfo("Payment Cancelled", "Registration was not completed.", true);
+                            showInfo("Payment Cancelled", "Registration was not completed because the payment was cancelled.", true);
                             setButtonLoading(submitBtn, false);
                         }
                     }
