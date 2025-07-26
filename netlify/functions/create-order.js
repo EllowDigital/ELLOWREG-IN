@@ -40,15 +40,13 @@ exports.handler = async (event) => {
         const sheetData = await retryWithBackoff(() =>
             sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
-                // Fetch all columns to ensure we can build a complete object.
-                range: `${SHEET_NAME}!A:Z`,
+                range: `${SHEET_NAME}!A:Z`, // Fetch all columns to build a complete object.
             })
         );
 
         const rows = sheetData.data.values || [];
 
         if (rows.length > 0) {
-            // Get header row and find the phone column dynamically.
             const headers = rows[0].map(h => h.trim());
             const phoneColumnIndex = headers.findIndex(h => h.toLowerCase() === 'phone');
 
@@ -64,10 +62,9 @@ exports.handler = async (event) => {
             const existingRow = rows.slice(1).find(row => row[phoneColumnIndex] === trimmedPhone);
 
             if (existingRow) {
-                // FINAL FIX: Create a robust object from the row data and headers.
-                // This is not brittle and will not break if you reorder columns in your Google Sheet.
+                // BUG FIX: This new logic is robust and will not crash.
+                // It dynamically creates an object based on your sheet's headers.
                 const registrationObject = headers.reduce((obj, header, index) => {
-                    // Convert header to a camelCase key (e.g., "Firm Name" -> "firmName")
                     const key = (header.charAt(0).toLowerCase() + header.slice(1)).replace(/\s+/g, '');
                     obj[key] = existingRow[index] || ''; // Use empty string as a safe default.
                     return obj;
@@ -78,8 +75,6 @@ exports.handler = async (event) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         error: "This phone number is already registered.",
-                        // Pass the structured object to the frontend.
-                        // The keys here (e.g., registrationId) must match what the frontend expects.
                         registrationData: {
                             registrationId: registrationObject.registrationId,
                             name: registrationObject.name,
