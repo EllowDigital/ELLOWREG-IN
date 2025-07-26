@@ -1,29 +1,42 @@
 // /netlify/functions/search-user.js
+
+// Import the shared database connection pool from the utils file.
 const { pool } = require("./utils");
 
-exports.handler = async (event) => {
-    // 1. Authenticate the request using a secret key from environment variables
+/**
+ * Netlify serverless function to search for a registration by phone number.
+ * This function is protected and intended for admin use only.
+ */
+exports.handler = async (event, context) => {
+    // 1. Security Check: Ensure the request includes the correct secret key.
+    // This prevents unauthorized access to user data.
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
     if (!providedKey || providedKey !== secretKey) {
         return {
-            statusCode: 401,
-            body: JSON.stringify({ error: "Unauthorized" }),
+            statusCode: 401, // Unauthorized
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: "Unauthorized: Missing or invalid secret key." }),
         };
     }
 
-    // 2. Ensure the request method is GET
+    // 2. Method Check: This function should only respond to GET requests.
     if (event.httpMethod !== "GET") {
-        return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
+        return {
+            statusCode: 405, // Method Not Allowed
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: "Method Not Allowed" })
+        };
     }
 
-    // 3. Validate the phone number from query parameters
+    // 3. Input Validation: Check for the 'phone' query parameter.
     const { phone } = event.queryStringParameters;
     if (!phone || !/^[6-9]\d{9}$/.test(phone.trim())) {
         return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "A valid 10-digit phone number is required." }),
+            statusCode: 400, // Bad Request
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: "A valid 10-digit Indian mobile number is required." }),
         };
     }
 
@@ -31,36 +44,38 @@ exports.handler = async (event) => {
     let dbClient;
 
     try {
-        // 4. Connect to the database and search for the user
+        // 4. Database Query: Securely query the database for the user.
         dbClient = await pool.connect();
+
         const query = 'SELECT * FROM registrations WHERE phone = $1';
-        // Corrected: Use the connected client to query
         const { rows } = await dbClient.query(query, [trimmedPhone]);
 
-        // 5. Handle the result
+        // 5. Handle Response: Check if a user was found.
         if (rows.length === 0) {
             return {
-                statusCode: 404,
+                statusCode: 404, // Not Found
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: "No registration found for this phone number." }),
             };
         }
 
-        // Return the found registration data
+        // Return the found registration data as a JSON object.
         return {
-            statusCode: 200,
+            statusCode: 200, // OK
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(rows[0]),
         };
 
     } catch (error) {
-        console.error("Search error:", error);
+        // 6. Generic Error Handling: Catch any other unexpected errors.
+        console.error("Error in search-user function:", error);
         return {
-            statusCode: 500,
-            body: JSON.stringify({ error: "Database query failed." }),
+            statusCode: 500, // Internal Server Error
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: "An internal server error occurred." }),
         };
     } finally {
-        // Ensure the database client is always released back to the pool
+        // 7. Cleanup: Always release the database client back to the pool.
         if (dbClient) {
             dbClient.release();
         }

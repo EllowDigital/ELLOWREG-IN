@@ -2,32 +2,37 @@
 const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
 const ExcelJS = require('exceljs');
 
+// --- Constants ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations";
+const SHEET_NAME = "Registrations"; // The name of the tab in your Google Sheet
 
+// --- Main Handler ---
 exports.handler = async (event) => {
-    // Simple secret key authentication
+    // 1. Authenticate the request using a secret key from environment variables
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
     if (!providedKey || providedKey !== secretKey) {
-        return { statusCode: 401, body: "Unauthorized" };
+        return {
+            statusCode: 401,
+            body: JSON.stringify({ error: "Unauthorized" })
+        };
     }
 
     let dbClient;
     try {
-        // --- 1. Fetch all data from the database ---
+        // 2. Fetch all data from the database
         dbClient = await pool.connect();
-        console.log('Fetching all records from the database...');
+        console.log('Export: Fetching all records from the database...');
         const { rows } = await dbClient.query('SELECT * FROM registrations ORDER BY timestamp ASC');
-        console.log(`Found ${rows.length} records.`);
-        
-        // --- 2. Sync to Google Sheets (Overwrite method) ---
+        console.log(`Export: Found ${rows.length} records.`);
+
+        // 3. Sync to Google Sheets (Overwrite method)
         // This ensures the sheet is a perfect mirror of the database at the time of export.
         try {
             const sheets = await getGoogleSheetsClient();
             const headers = ["Registration ID", "Name", "Company", "Phone", "Address", "City", "State", "Days Attending", "Payment ID", "Timestamp", "Image URL"];
-            
+
             // Format rows for Google Sheets API
             const sheetData = rows.map(row => [
                 row.registration_id,
@@ -46,29 +51,30 @@ exports.handler = async (event) => {
             // Add headers to the beginning of the data
             const values = [headers, ...sheetData];
 
-            console.log('Clearing existing data from Google Sheet...');
+            console.log('Export: Clearing existing data from Google Sheet...');
             await retryWithBackoff(() => sheets.spreadsheets.values.clear({
                 spreadsheetId: SPREADSHEET_ID,
                 range: SHEET_NAME,
             }));
 
-            console.log('Writing new data to Google Sheet...');
+            console.log('Export: Writing new data to Google Sheet...');
             await retryWithBackoff(() => sheets.spreadsheets.values.update({
                 spreadsheetId: SPREADSHEET_ID,
                 range: `${SHEET_NAME}!A1`,
                 valueInputOption: 'USER_ENTERED',
                 resource: { values },
             }));
-            console.log('Google Sheets sync complete.');
+            console.log('Export: Google Sheets sync complete.');
         } catch (sheetsError) {
-            console.error("Google Sheets sync failed during export:", sheetsError.message);
-            // We'll log the error but still proceed to create the Excel file.
+            console.error("Export: Google Sheets sync failed during export:", sheetsError.message);
+            // We log the error but still proceed to create the Excel file, as the database is the source of truth.
         }
 
-        // --- 3. Generate Excel File (.xlsx) ---
+        // 4. Generate Excel File (.xlsx)
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Registrations');
 
+        // Define columns which will also be the headers
         worksheet.columns = [
             { header: 'Registration ID', key: 'registration_id', width: 20 },
             { header: 'Name', key: 'name', width: 30 },
@@ -82,13 +88,17 @@ exports.handler = async (event) => {
             { header: 'Timestamp', key: 'timestamp', width: 25, style: { numFmt: 'dd/mm/yyyy hh:mm:ss' } },
             { header: 'Image URL', key: 'image_url', width: 50 },
         ];
-        
+
+        // Style the header row
         worksheet.getRow(1).font = { bold: true };
+
+        // Add data rows from the database query result
         worksheet.addRows(rows);
-        
+
+        // Write the workbook to a buffer in memory
         const buffer = await workbook.xlsx.writeBuffer();
 
-        // --- 4. Return the Excel file for download ---
+        // 5. Return the Excel file for download
         return {
             statusCode: 200,
             headers: {
@@ -107,7 +117,7 @@ exports.handler = async (event) => {
         };
     } finally {
         if (dbClient) {
-            dbClient.release();
+            dbClient.release(); // Ensure the database connection is closed
         }
     }
 };

@@ -42,6 +42,7 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <!-- Custom Styles -->
     <style>
         :root {
             --primary-color: #0A2540;
@@ -176,6 +177,9 @@
 
         #id-card {
             width: 100%;
+            max-width: 400px;
+            /* Constrain width for better appearance */
+            margin: 0 auto;
             background-color: var(--card-bg);
             border-radius: 15px;
             font-family: 'Poppins', sans-serif;
@@ -390,51 +394,76 @@
                             Confirmed!</h2>
                         <p class="lead mb-4 text-secondary">Your entry pass is ready. Please download and save it.</p>
                         <div id="id-card-wrapper" class="mb-4"></div>
-                        <button id="download-id-btn" class="btn btn-primary w-100"><i
-                                class="fas fa-download me-2"></i>Download Entry Pass</button>
+                        <button id="download-id-btn" class="btn btn-primary w-100">
+                            <span class="button-text"><i class="fas fa-download me-2"></i>Download Entry Pass</span>
+                            <span class="spinner-border spinner-border-sm d-none" role="status"
+                                aria-hidden="true"></span>
+                        </button>
                     </div>
 
                     <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading">Get Your Entry Pass</h2>
                         <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
-                            <div class="col-12"><label class="form-label fw-semibold">Upload Your Photo <span
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Upload Your Photo <span
                                         class="text-danger">*</span></label>
-                                <div class="custom-file-input"><input type="file" id="profileImage" name="profileImage"
-                                        accept="image/png, image/jpeg, image/jpg" required><label
-                                        class="file-input-label" for="profileImage"><i
-                                            class="fas fa-upload"></i><span>Choose a file...</span></label></div>
+                                <div class="custom-file-input">
+                                    <input type="file" id="profileImage" name="profileImage"
+                                        accept="image/png, image/jpeg, image/jpg" required>
+                                    <label class="file-input-label" for="profileImage"><i
+                                            class="fas fa-upload"></i><span>Choose a file...</span></label>
+                                </div>
                             </div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="name"
-                                    name="name" placeholder="Full Name" required minlength="3"><label for="name">Full
-                                    Name</label></div>
-                            <div class="col-md-6 form-floating"><input type="tel" class="form-control" id="phone"
-                                    name="phone" placeholder="Phone Number" required pattern="^[6-9]\d{9}$"><label
-                                    for="phone">10-Digit Phone Number</label></div>
-                            <div class="col-12 form-floating"><input type="text" class="form-control" id="firmName"
-                                    name="firmName" placeholder="Firm Name" required minlength="3"><label
-                                    for="firmName">Firm Name</label></div>
-                            <div class="col-12 form-floating"><textarea class="form-control" placeholder="Full Address"
-                                    id="address" name="address" style="height: 100px" required
-                                    minlength="10"></textarea><label for="address">Full Address</label></div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="district"
-                                    name="district" placeholder="District" required><label
-                                    for="district">District</label></div>
-                            <div class="col-md-6 form-floating"><input type="text" class="form-control" id="state"
-                                    name="state" placeholder="State" required><label for="state">State</label></div>
+                            <div class="col-md-6 form-floating">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
+                                    required minlength="3">
+                                <label for="name">Full Name</label>
+                            </div>
+                            <div class="col-md-6 form-floating">
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                    placeholder="Phone Number" required pattern="^[6-9]\d{9}$">
+                                <label for="phone">10-Digit Phone Number</label>
+                            </div>
+                            <div class="col-12 form-floating">
+                                <input type="text" class="form-control" id="firmName" name="firmName"
+                                    placeholder="Firm Name" required minlength="3">
+                                <label for="firmName">Firm Name</label>
+                            </div>
+                            <div class="col-12 form-floating">
+                                <textarea class="form-control" placeholder="Full Address" id="address" name="address"
+                                    style="height: 100px" required minlength="10"></textarea>
+                                <label for="address">Full Address</label>
+                            </div>
+                            <div class="col-md-6 form-floating">
+                                <input type="text" class="form-control" id="district" name="district"
+                                    placeholder="District" required>
+                                <label for="district">District</label>
+                            </div>
+                            <div class="col-md-6 form-floating">
+                                <input type="text" class="form-control" id="state" name="state" placeholder="State"
+                                    required>
+                                <label for="state">State</label>
+                            </div>
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Attending Days:<span
                                         class="text-danger">*</span></label>
                                 <div>
-                                    <div class="form-check d-inline-block me-3"><input class="form-check-input"
-                                            type="checkbox" name="attendance" value="Day 1" id="day1"><label
-                                            class="form-check-label" for="day1">Day 1</label></div>
-                                    <div class="form-check d-inline-block me-3"><input class="form-check-input"
-                                            type="checkbox" name="attendance" value="Day 2" id="day2"><label
-                                            class="form-check-label" for="day2">Day 2</label></div>
-                                    <div class="form-check d-inline-block"><input class="form-check-input"
-                                            type="checkbox" name="attendance" value="Day 3" id="day3"><label
-                                            class="form-check-label" for="day3">Day 3</label></div>
+                                    <div class="form-check d-inline-block me-3">
+                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 1"
+                                            id="day1">
+                                        <label class="form-check-label" for="day1">Day 1</label>
+                                    </div>
+                                    <div class="form-check d-inline-block me-3">
+                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 2"
+                                            id="day2">
+                                        <label class="form-check-label" for="day2">Day 2</label>
+                                    </div>
+                                    <div class="form-check d-inline-block">
+                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 3"
+                                            id="day3">
+                                        <label class="form-check-label" for="day3">Day 3</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12 mt-4">
@@ -499,6 +528,7 @@
         </div>
     </div>
 
+
     <!-- External and Page-Specific Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"
         integrity="sha512-Tc0i+vRogmX4NN7tuLbQfBxa8JkfUSAxSFVzmU31nVdHyiHElPPy2cWfFacmCJKw0VqovrzKhdd2TSTMdAxp2g=="
@@ -509,7 +539,7 @@
 
             // --- Configuration & Constants ---
             const CONSTANTS = {
-                RAZORPAY_KEY_ID: "rzp_live_vSPgXsGoXlOofA",
+                RAZORPAY_KEY_ID: "rzp_test_rP89y3l3Y2aL7i", // Use your actual key here
                 API: {
                     CREATE_ORDER: '/.netlify/functions/create-order',
                     SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
@@ -534,14 +564,14 @@
                 const modalHeader = infoModalEl.querySelector('#infoModalHeader');
                 const modalBody = infoModalEl.querySelector('#infoModalBody');
 
-                modalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
-                modalHeader.className = `modal-header ${isError ? 'modal-header-error bg-danger' : 'modal-header-info bg-primary'}`;
+                modalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} me-2"></i>${title}`;
+                modalHeader.className = `modal-header text-white ${isError ? 'bg-danger' : 'bg-success'}`;
                 modalBody.innerHTML = '';
 
                 if (typeof content === 'string') {
                     modalBody.textContent = content;
                 } else {
-                    modalBody.append(content);
+                    modalBody.appendChild(content);
                 }
                 infoModal.show();
             }
@@ -565,7 +595,6 @@
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
 
-                // --- IMPROVEMENT: Clearer attendance date formatting ---
                 const dateMap = {
                     'Day 1': 'Sep 12',
                     'Day 2': 'Sep 13',
@@ -575,13 +604,10 @@
                 let attendanceText;
 
                 if (attendingDays.length >= 3 || attendingDays.length === 0) {
-                    // Fallback for all days or no data
                     attendanceText = 'All Days (Sep 12-14, 2025)';
                 } else if (attendingDays.length === 1) {
-                    // Clearly state the single day
                     attendanceText = `Attending On: ${dateMap[attendingDays[0]]}, 2025`;
                 } else {
-                    // List the specific multiple days
                     const formattedDates = attendingDays.map(d => dateMap[d]);
                     attendanceText = `Attending On: ${formattedDates.join(' & ')}, 2025`;
                 }
@@ -591,9 +617,7 @@
                 card.querySelector('.id-card-firm').textContent = data.firmName;
                 card.querySelector('.id-card-phone').textContent = `+91-${data.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = data.registrationId;
-                // Update the attendance text on the card
                 card.querySelector('.id-card-attendance-date span').textContent = attendanceText;
-
 
                 container.innerHTML = '';
                 container.appendChild(card);
@@ -609,8 +633,8 @@
                     if (el.type === 'file' && !el.files.length) {
                         errors.push('Profile Photo is required.');
                     } else if (!el.checkValidity()) {
-                        const label = el.labels[0]?.textContent || el.name;
-                        errors.push(`${label.replace('*', '')} is invalid or missing.`);
+                        const label = el.labels[0]?.textContent.replace('*', '').trim() || el.name;
+                        errors.push(`${label} is invalid or missing.`);
                     }
                 });
 
@@ -629,7 +653,7 @@
                     const message = document.createElement('div');
                     message.innerHTML = '<p class="fw-bold mb-2">Please correct the following:</p>';
                     message.appendChild(errorList);
-                    showInfo('Missing Information', message);
+                    showInfo('Missing Information', message, true);
                     return false;
                 }
                 return true;
@@ -662,20 +686,20 @@
                     });
                     const responseData = await orderRes.json();
 
-                    if (orderRes.status === 409) {
+                    if (orderRes.status === 409) { // User already exists
                         showInfo('Already Registered', 'We found an existing registration with this phone number. Your entry pass is displayed below.', false);
                         populateAndShowIdCard(idCardWrapper, responseData.registrationData);
-                        return;
+                        return; // Stop the process here
                     }
 
                     if (!orderRes.ok) {
-                        throw new Error(responseData.error || 'Unable to initiate Razorpay order.');
+                        throw new Error(responseData.error || 'Unable to initiate payment.');
                     }
 
                     openRazorpayCheckout(responseData);
 
                 } catch (err) {
-                    showInfo("Error", err.message || 'Could not initiate payment.', true);
+                    showInfo("Error", err.message || 'Could not initiate payment. Please check your connection and try again.', true);
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }
@@ -703,7 +727,8 @@
                     }
                 });
                 rzp.on('payment.failed', (response) => {
-                    showInfo("Payment Failed", `Error: ${response.error.description}`, true);
+                    console.error('Razorpay payment failed:', response.error);
+                    showInfo("Payment Failed", `Error: ${response.error.description}. Please try again.`, true);
                     setButtonLoading(submitBtn, false);
                 });
                 rzp.open();
@@ -759,7 +784,7 @@
                     const canvas = await html2canvas(cardElement, {
                         scale: 3,
                         useCORS: true,
-                        backgroundColor: null // Use transparent background
+                        backgroundColor: null // Use transparent background for PNG
                     });
 
                     // Restore shadow after capture
@@ -773,7 +798,7 @@
                     link.click();
                 } catch (err) {
                     console.error('Download Error:', err);
-                    showInfo('Download Error', 'Could not generate image. Please try taking a screenshot.', true);
+                    showInfo('Download Error', 'Could not generate image. Please try taking a screenshot instead.', true);
                 } finally {
                     setButtonLoading(downloadBtn, false);
                 }
