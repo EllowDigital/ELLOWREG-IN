@@ -42,8 +42,6 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-
     <style>
         :root {
             --primary-color: #0A2540;
@@ -502,9 +500,9 @@
     </div>
 
     <!-- External and Page-Specific Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"
+        integrity="sha512-Tc0i+vRogmX4NN7tuLbQfBxa8JkfUSAxSFVzmU31nVdHyiHElPPy2cWfFacmCJKw0VqovrzKhdd2TSTMdAxp2g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -537,7 +535,7 @@
                 const modalBody = infoModalEl.querySelector('#infoModalBody');
 
                 modalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
-                modalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+                modalHeader.className = `modal-header ${isError ? 'modal-header-error bg-danger' : 'modal-header-info bg-primary'}`;
                 modalBody.innerHTML = '';
 
                 if (typeof content === 'string') {
@@ -612,17 +610,17 @@
                         errors.push('Profile Photo is required.');
                     } else if (!el.checkValidity()) {
                         const label = el.labels[0]?.textContent || el.name;
-                        errors.push(`${label} is invalid or missing.`);
+                        errors.push(`${label.replace('*', '')} is invalid or missing.`);
                     }
                 });
 
-                if (!form.querySelector('input[name="attendance"]:checked')) {
+                if (form.querySelectorAll('input[name="attendance"]:checked').length === 0) {
                     errors.push('Please select at least one Attending Day.');
                 }
 
                 if (errors.length > 0) {
                     const errorList = document.createElement('ul');
-                    errorList.className = 'list-unstyled text-start';
+                    errorList.className = 'list-unstyled text-start mb-0';
                     errors.forEach(err => {
                         const li = document.createElement('li');
                         li.innerHTML = `<i class="fas fa-times-circle text-danger me-2"></i>${err}`;
@@ -736,7 +734,6 @@
                     const result = await retryWithBackoff(submitRegistration);
                     populateAndShowIdCard(idCardWrapper, result.registrationData);
                 } catch (err) {
-                    // IMPROVEMENT: This error message provides clear, actionable steps for the user.
                     const message = document.createElement('div');
                     message.innerHTML = `<p class="mb-3">We couldn't automatically confirm your registration due to an interruption.</p>
                                          <p class="fw-bold">First, please try filling out the form again with the same phone number.</p>
@@ -755,14 +752,27 @@
                 setButtonLoading(downloadBtn, true, 'Generating...');
 
                 try {
-                    const canvas = await html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#fff' });
+                    // Temporarily remove shadow for cleaner capture
+                    const originalShadow = cardElement.style.boxShadow;
+                    cardElement.style.boxShadow = 'none';
+
+                    const canvas = await html2canvas(cardElement, {
+                        scale: 3,
+                        useCORS: true,
+                        backgroundColor: null // Use transparent background
+                    });
+
+                    // Restore shadow after capture
+                    cardElement.style.boxShadow = originalShadow;
+
                     const link = document.createElement('a');
                     const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
                     const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                    link.download = `ENTRY-PASS_${name}_${reg}.png`;
+                    link.download = `Entry-Pass_${name}_${reg}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } catch (err) {
+                    console.error('Download Error:', err);
                     showInfo('Download Error', 'Could not generate image. Please try taking a screenshot.', true);
                 } finally {
                     setButtonLoading(downloadBtn, false);
