@@ -2,7 +2,6 @@
 
 // --- Dependencies ---
 const Razorpay = require("razorpay");
-// FIX: Corrected the path to import from the same directory.
 const { sheets, retryWithBackoff } = require("./utils");
 
 // --- Constants ---
@@ -12,8 +11,6 @@ const ORDER_AMOUNT = 100; // The amount in the smallest currency unit (e.g., 100
 const RECEIPT_PREFIX = "receipt_order_";
 
 // --- Service Initializations ---
-
-// Setup Razorpay client.
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -43,16 +40,17 @@ exports.handler = async (event) => {
         const sheetData = await retryWithBackoff(() =>
             sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
-                range: `${SHEET_NAME}!A:K`,
+                // Fetch all columns to ensure we can build a complete object.
+                range: `${SHEET_NAME}!A:Z`,
             })
         );
 
         const rows = sheetData.data.values || [];
 
-        // If the sheet is not empty, perform the check for existing users.
         if (rows.length > 0) {
-            const headers = rows[0] || [];
-            const phoneColumnIndex = headers.findIndex(header => header.toLowerCase().trim() === 'phone');
+            // Get header row and find the phone column dynamically.
+            const headers = rows[0].map(h => h.trim());
+            const phoneColumnIndex = headers.findIndex(h => h.toLowerCase() === 'phone');
 
             if (phoneColumnIndex === -1) {
                 console.error("Configuration Error: 'phone' column not found in Google Sheet headers.");
@@ -66,26 +64,36 @@ exports.handler = async (event) => {
             const existingRow = rows.slice(1).find(row => row[phoneColumnIndex] === trimmedPhone);
 
             if (existingRow) {
-                const [
-                    timestamp, registrationId, name, firmName, phoneNum,
-                    address, district, state, attendance, razorpayId, profileImageUrl
-                ] = existingRow;
+                // FINAL FIX: Create a robust object from the row data and headers.
+                // This is not brittle and will not break if you reorder columns in your Google Sheet.
+                const registrationObject = headers.reduce((obj, header, index) => {
+                    // Convert header to a camelCase key (e.g., "Firm Name" -> "firmName")
+                    const key = (header.charAt(0).toLowerCase() + header.slice(1)).replace(/\s+/g, '');
+                    obj[key] = existingRow[index] || ''; // Use empty string as a safe default.
+                    return obj;
+                }, {});
 
                 return {
                     statusCode: 409, // Conflict
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         error: "This phone number is already registered.",
+                        // Pass the structured object to the frontend.
+                        // The keys here (e.g., registrationId) must match what the frontend expects.
                         registrationData: {
-                            registrationId, name, phone: phoneNum, firmName,
-                            attendance, profileImageUrl,
+                            registrationId: registrationObject.registrationId,
+                            name: registrationObject.name,
+                            phone: registrationObject.phone,
+                            firmName: registrationObject.firmName,
+                            attendance: registrationObject.attendance,
+                            profileImageUrl: registrationObject.profileImageUrl,
                         },
                     }),
                 };
             }
         }
 
-        // If the sheet was empty or the user was not found, create a new Razorpay order.
+        // If the user is new, create a new Razorpay order.
         const order = await retryWithBackoff(() =>
             razorpay.orders.create({
                 amount: ORDER_AMOUNT,
@@ -101,7 +109,7 @@ exports.handler = async (event) => {
         };
 
     } catch (err) {
-        console.error("CREATE_ORDER_ERROR:", err.message || err);
+        console.error("CREATE_ORDER_ERROR:", err);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
