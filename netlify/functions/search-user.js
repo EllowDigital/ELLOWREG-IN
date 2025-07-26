@@ -1,8 +1,8 @@
-
+// /netlify/functions/search-user.js
 const { pool } = require("./utils");
 
 exports.handler = async (event) => {
-    // 1. Authenticate the request using a secret key
+    // 1. Authenticate the request using a secret key from environment variables
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
@@ -18,8 +18,9 @@ exports.handler = async (event) => {
         return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
     }
 
+    // 3. Validate the phone number from query parameters
     const { phone } = event.queryStringParameters;
-    if (!phone || !/^\d{10}$/.test(phone.trim())) {
+    if (!phone || !/^[6-9]\d{9}$/.test(phone.trim())) {
         return {
             statusCode: 400,
             body: JSON.stringify({ error: "A valid 10-digit phone number is required." }),
@@ -30,12 +31,13 @@ exports.handler = async (event) => {
     let dbClient;
 
     try {
-        // 3. Connect to the database and search for the user
+        // 4. Connect to the database and search for the user
         dbClient = await pool.connect();
         const query = 'SELECT * FROM registrations WHERE phone = $1';
+        // Corrected: Use the connected client to query
         const { rows } = await dbClient.query(query, [trimmedPhone]);
 
-        // 4. Handle the result
+        // 5. Handle the result
         if (rows.length === 0) {
             return {
                 statusCode: 404,
@@ -58,7 +60,7 @@ exports.handler = async (event) => {
             body: JSON.stringify({ error: "Database query failed." }),
         };
     } finally {
-        // Ensure the database client is always released
+        // Ensure the database client is always released back to the pool
         if (dbClient) {
             dbClient.release();
         }

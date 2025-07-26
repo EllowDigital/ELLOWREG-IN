@@ -1,7 +1,6 @@
 // /netlify/functions/create-order.js
 const Razorpay = require("razorpay");
 const { pool, retryWithBackoff } = require("./utils");
-const crypto = require("crypto");
 
 // Constants
 const ORDER_AMOUNT = 100; // The amount in the smallest currency unit (e.g., 100 paise = ₹1).
@@ -30,12 +29,12 @@ exports.handler = async (event) => {
 
         const dbClient = await pool.connect();
         try {
-            // Check if user already exists
+            // Check if user already exists using the indexed 'phone' column for performance
             const existingUserQuery = 'SELECT * FROM registrations WHERE phone = $1';
             const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
 
             if (rows.length > 0) {
-                // User already registered, return their data
+                // User already registered, return their data to generate the pass
                 const registrationData = {
                     registrationId: rows[0].registration_id,
                     name: rows[0].name,
@@ -46,7 +45,7 @@ exports.handler = async (event) => {
                 };
 
                 return {
-                    statusCode: 409, // Conflict
+                    statusCode: 409, // 409 Conflict is appropriate for a duplicate resource
                     body: JSON.stringify({
                         error: "This phone number is already registered.",
                         registrationData: registrationData,
@@ -54,7 +53,7 @@ exports.handler = async (event) => {
                 };
             }
         } finally {
-            dbClient.release();
+            dbClient.release(); // Ensure the connection is returned to the pool
         }
 
         // If not registered, create a new Razorpay order
