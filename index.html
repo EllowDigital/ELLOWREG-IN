@@ -6,25 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description"
         content="Register now for TENT DECOR EXPO UP 2025, India's top B2B event for tent and decor professionals. Get your entry pass today.">
     <meta name="keywords" content="Tent Expo, Decor Expo, Lucknow Event, B2B Event, Registration, 2025 Expo">
     <meta name="author" content="TENT DECOR EXPO Team">
 
-    <!-- Open Graph / Social Sharing -->
     <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
         content="Join India's premier tent and decor event in Lucknow. Register now and get your official entry pass.">
     <meta property="og:image" content="https://td-expoup25.netlify.app/assets/favicon.ico">
-    <meta property="og:url" content="https://td-expoup25.netlify.app/"> <!-- Replace with actual domain -->
+    <meta property="og:url" content="https://td-expoup25.netlify.app/">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- Favicon with Fallback -->
     <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css"
         integrity="sha512-fw7f+TcMjTb7bpbLJZlP8g2Y4XcCyFZW8uy8HsRZsH/SwbMw0plKHFHr99DN3l04VsYNwvzicUX/6qurvIxbxw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -36,11 +32,12 @@
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Razorpay and html2canvas Scripts -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
     <style>
         :root {
@@ -360,7 +357,6 @@
     <main class="registration-container">
         <div class="card registration-card">
             <div class="row g-0">
-                <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
                         <img src="assets/unnamed.jpg"
@@ -370,9 +366,7 @@
                             tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
                             <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
-                            <p class="mb-2 fs-5">
-                                <i class="fas fa-calendar-alt fa-fw me-2"></i>
-                                Sept 12 · 13 · 14, 2025
+                            <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
                             </p>
                             <p class="fs-5" style="line-height: 1.5;"><i
                                     class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Pratishthan, Lucknow</p>
@@ -387,9 +381,7 @@
                     </div>
                 </div>
 
-                <!-- Right-side Form Panel -->
                 <div class="col-lg-7 form-panel d-flex flex-column">
-                    <!-- Success View (Initially hidden) -->
                     <div id="id-card-section" class="d-none text-center my-auto">
                         <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
                             Confirmed!</h2>
@@ -402,7 +394,6 @@
                         </button>
                     </div>
 
-                    <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading">Get Your Entry Pass</h2>
                         <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
@@ -413,7 +404,7 @@
                                     <input type="file" id="profileImage" name="profileImage"
                                         accept="image/png, image/jpeg, image/jpg" required>
                                     <label class="file-input-label" for="profileImage"><i
-                                            class="fas fa-upload"></i><span>Choose a file...</span></label>
+                                            class="fas fa-upload"></i><span>Choose a file... (Max 5MB)</span></label>
                                 </div>
                             </div>
                             <div class="col-md-6 form-floating">
@@ -453,17 +444,17 @@
                                     <div class="form-check d-inline-block me-3">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 1"
                                             id="day1">
-                                        <label class="form-check-label" for="day1">Day 1 (Sept 12)</label>
+                                        <label class="form-check-label" for="day1">Day 1</label>
                                     </div>
                                     <div class="form-check d-inline-block me-3">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 2"
                                             id="day2">
-                                        <label class="form-check-label" for="day2">Day 2 (Sept 13)</label>
+                                        <label class="form-check-label" for="day2">Day 2</label>
                                     </div>
                                     <div class="form-check d-inline-block">
                                         <input class="form-check-input" type="checkbox" name="attendance" value="Day 3"
                                             id="day3">
-                                        <label class="form-check-label" for="day3">Day 3 (Sept 14)</label>
+                                        <label class="form-check-label" for="day3">Day 3</label>
                                     </div>
                                 </div>
                             </div>
@@ -486,7 +477,6 @@
                 target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
 
-    <!-- Universal Modal for Info and Error Messages -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -503,13 +493,10 @@
         </div>
     </div>
 
-    <!-- Hidden Template for Generating the Entry Pass -->
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
-                <div class="id-card-header-text"
-                    style="font-size: 2rem; font-weight: 900; margin-top: 0.5rem; color: #FDB813;">TENT
-                    DECOR EXPO UP 2025</div>
+                <div class="id-card-header-text">EVENT ENTRY PASS</div>
             </div>
             <div class="id-card-body">
                 <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
@@ -532,23 +519,25 @@
     </div>
 
 
-    <!-- External and Page-Specific Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"
         integrity="sha512-Tc0i+vRogmX4NN7tuLbQfBxa8JkfUSAxSFVzmU31nVdHyiHElPPy2cWfFacmCJKw0VqovrzKhdd2TSTMdAxp2g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             // --- Configuration & Constants ---
             const CONSTANTS = {
-                // The key is now fetched from the server, so no need to store it here.
                 API: {
                     CREATE_ORDER: '/.netlify/functions/create-order',
                     SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
                 },
-                MAX_SUBMISSION_RETRIES: 3
+                MAX_SUBMISSION_RETRIES: 3,
+                MAX_FILE_SIZE_MB: 5,
+                FORM_DATA_KEY: 'tentExpoFormData'
             };
+
+            // --- State ---
+            let compressedImageFile = null;
 
             // --- DOM Element Caching ---
             const form = document.getElementById('registrationForm');
@@ -559,7 +548,8 @@
             const downloadBtn = document.getElementById('download-id-btn');
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
-            const fileInputs = document.querySelectorAll('.custom-file-input input[type="file"]');
+            const profileImageInput = document.getElementById('profileImage');
+            const fileInputLabel = document.querySelector('.custom-file-input .file-input-label span');
 
             // --- UI Functions ---
             function showInfo(title, content, isError = true) {
@@ -633,13 +623,57 @@
                 idCardSection.classList.remove('d-none');
             }
 
+            // --- LocalStorage & Form Persistence ---
+            function saveFormData() {
+                const formData = new FormData(form);
+                const data = {};
+                for (const [key, value] of formData.entries()) {
+                    if (key === 'attendance') {
+                        data[key] = formData.getAll(key);
+                    } else {
+                        data[key] = value;
+                    }
+                }
+                localStorage.setItem(CONSTANTS.FORM_DATA_KEY, JSON.stringify(data));
+            }
+
+            function loadFormData() {
+                const data = JSON.parse(localStorage.getItem(CONSTANTS.FORM_DATA_KEY));
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const element = form.elements[key];
+                        if (element) {
+                            if (key === 'attendance' && Array.isArray(data[key])) {
+                                data[key].forEach(value => {
+                                    const checkbox = document.querySelector(`input[name="attendance"][value="${value}"]`);
+                                    if (checkbox) checkbox.checked = true;
+                                });
+                            } else if (element.length) { // Radio/Checkbox group
+                                Array.from(element).forEach(el => {
+                                    if (el.value === data[key]) el.checked = true;
+                                });
+                            } else {
+                                element.value = data[key];
+                            }
+                        }
+                    });
+                }
+            }
+
+            function clearFormData() {
+                localStorage.removeItem(CONSTANTS.FORM_DATA_KEY);
+            }
+
             // --- Validation and Logic ---
             function validateForm() {
                 const errors = [];
-                form.querySelectorAll('[required]').forEach(el => {
-                    if (el.type === 'file' && !el.files.length) {
-                        errors.push('Profile Photo is required.');
-                    } else if (!el.checkValidity()) {
+                // Use compressedImageFile to validate image presence
+                if (!compressedImageFile && profileImageInput.files.length === 0) {
+                    errors.push('Profile Photo is required.');
+                }
+
+                form.querySelectorAll('[required]:not([type="file"])').forEach(el => {
+                    if (!el.checkValidity()) {
                         const label = el.labels[0]?.textContent.replace('*', '').trim() || el.name;
                         errors.push(`${label} is invalid or missing.`);
                     }
@@ -696,6 +730,7 @@
                     if (orderRes.status === 409) { // User already exists
                         showInfo('Already Registered', 'We found an existing registration with this phone number. Your entry pass is displayed below.', false);
                         populateAndShowIdCard(idCardWrapper, responseData.registrationData);
+                        clearFormData(); // Clear form data as registration is complete
                         return;
                     }
 
@@ -714,7 +749,7 @@
 
             function openRazorpayCheckout(order) {
                 const options = {
-                    key: order.key, // *** THIS IS THE FIX: Using the key from the server ***
+                    key: order.key,
                     amount: order.amount,
                     currency: order.currency,
                     name: "TENT DECOR EXPO UP 2025",
@@ -751,6 +786,11 @@
                         throw new Error("You are offline. Please reconnect to finalize your registration.");
                     }
                     const formData = new FormData(form);
+                    // Replace original file with the compressed one
+                    if (compressedImageFile) {
+                        formData.set('profileImage', compressedImageFile, compressedImageFile.name);
+                    }
+
                     formData.append('razorpay_payment_id', response.razorpay_payment_id);
                     formData.append('razorpay_order_id', response.razorpay_order_id);
                     formData.append('razorpay_signature', response.razorpay_signature);
@@ -767,6 +807,7 @@
                 try {
                     const result = await retryWithBackoff(submitRegistration);
                     populateAndShowIdCard(idCardWrapper, result.registrationData);
+                    clearFormData(); // Success, so clear the stored form data
                 } catch (err) {
                     const message = document.createElement('div');
                     message.innerHTML = `<p class="mb-3">We couldn't automatically confirm your registration due to an interruption.</p>
@@ -813,16 +854,58 @@
                 }
             }
 
-            function handleFileChange(e) {
-                const fileName = e.target.files[0]?.name || 'Choose a file...';
-                const label = e.target.closest('.custom-file-input')?.querySelector('.file-input-label span');
-                if (label) label.textContent = fileName;
+            async function handleFileChange(e) {
+                const file = e.target.files[0];
+                if (!file) {
+                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
+                    compressedImageFile = null;
+                    return;
+                }
+
+                // Client-side file size validation
+                const fileSizeMB = file.size / 1024 / 1024;
+                if (fileSizeMB > CONSTANTS.MAX_FILE_SIZE_MB) {
+                    showInfo('File Too Large', `The selected file is too large (${fileSizeMB.toFixed(2)} MB). Please choose a file smaller than ${CONSTANTS.MAX_FILE_SIZE_MB} MB.`, true);
+                    e.target.value = ''; // Reset the input
+                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
+                    compressedImageFile = null;
+                    return;
+                }
+
+                fileInputLabel.textContent = 'Compressing image...';
+
+                // Image compression options
+                const options = {
+                    maxSizeMB: 0.02, // Target size ~20KB
+                    maxWidthOrHeight: 800,
+                    useWebWorker: true,
+                    initialQuality: 0.8
+                }
+
+                try {
+                    compressedImageFile = await imageCompression(file, options);
+                    console.log(`Original size: ${(file.size / 1024).toFixed(2)} KB`);
+                    console.log(`Compressed size: ${(compressedImageFile.size / 1024).toFixed(2)} KB`);
+                    fileInputLabel.textContent = `${file.name} (Compressed)`;
+                } catch (error) {
+                    console.error('Image compression error:', error);
+                    showInfo('Compression Error', 'Could not compress the image. Please try another one.', true);
+                    e.target.value = '';
+                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
+                    compressedImageFile = null;
+                }
             }
 
             // --- Initializing Event Listeners ---
             form.addEventListener('submit', handleFormSubmit);
             downloadBtn.addEventListener('click', handleDownloadIdCard);
-            fileInputs.forEach(input => input.addEventListener('change', handleFileChange));
+            profileImageInput.addEventListener('change', handleFileChange);
+
+            // Add listeners for saving form data to localStorage
+            form.addEventListener('input', saveFormData);
+
+            // Load any saved form data on page load
+            loadFormData();
         });
     </script>
 </body>
