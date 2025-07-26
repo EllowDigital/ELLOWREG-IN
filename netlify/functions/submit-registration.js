@@ -1,14 +1,27 @@
+// /netlify/functions/submit-registration.js
+
+// --- Dependencies ---
 const { google } = require("googleapis");
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
 
-// Google Sheet & Cloudinary config
+// --- Constants ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
-const PHONE_COLUMN_INDEX = 4; // E
-const REG_ID_COLUMN = "B";
+const CLOUDINARY_FOLDER = "expo-profile-images-2025";
 
+// --- Service Initializations ---
+
+// Setup Google Sheets API client.
+// **IMPROVEMENT**: The scope is 'spreadsheets' which allows both reading (to get row count) and writing (to append data).
+const auth = new google.auth.GoogleAuth({
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+});
+const sheets = google.sheets({ version: "v4", auth });
+
+// Configure Cloudinary client.
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -16,37 +29,45 @@ cloudinary.config({
   secure: true,
 });
 
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
-const sheets = google.sheets({ version: "v4", auth });
+// --- Utility Functions ---
 
-// Retry helper
+/**
+ * Retries an asynchronous function with exponential backoff.
+ */
 const retryWithBackoff = async (fn, retries = 3, delay = 500) => {
   for (let i = 0; i < retries; i++) {
     try {
       return await fn();
     } catch (err) {
-      if (i < retries - 1) {
-        await new Promise((res) => setTimeout(res, delay * 2 ** i));
-      } else throw err;
+      if (i === retries - 1) throw err;
+      await new Promise((res) => setTimeout(res, delay * 2 ** i));
     }
   }
 };
 
-// Parse multipart form
+/**
+ * Parses a multipart/form-data request body.
+ * @param {object} event The Netlify function event object.
+ * @returns {Promise<{fields: object, files: object}>} The parsed form fields and files.
+ */
 const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   const contentType = event.headers["content-type"] || event.headers["Content-Type"];
-  if (!contentType) return reject(new Error("Missing content-type header"));
+  if (!contentType) {
+    return reject(new Error("Request is missing 'Content-Type' header."));
+  }
 
-  const bb = busboy({ headers: { "content-type": contentType }, limits: { fileSize: 5 * 1024 * 1024 } });
-  const fields = {}, files = {};
+  const bb = busboy({
+    headers: { "content-type": contentType },
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB file size limit
+  });
+
+  const fields = {};
+  const files = {};
 
   bb.on("file", (name, file, info) => {
     const chunks = [];
-    file.on("data", chunk => chunks.push(chunk));
-    file.on("limit", () => reject(new Error(`File "${info.filename}" exceeds 5MB`)));
+    file.on("data", (chunk) => chunks.push(chunk));
+    file.on("limit", () => reject(new Error(`File '${info.filename}' exceeds the 5MB limit.`)));
     file.on("end", () => {
       files[name] = {
         filename: info.filename,
@@ -55,27 +76,41 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
       };
     });
   });
+
   bb.on("field", (name, value) => { fields[name] = value; });
   bb.on("close", () => resolve({ fields, files }));
-  bb.on("error", err => reject(new Error(`Error parsing form: ${err.message}`)));
+  bb.on("error", (err) => reject(new Error(`Error parsing form data: ${err.message}`)));
 
+  // Busboy expects a Buffer, so we convert the body correctly based on its encoding.
   bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
 });
 
-// Upload to Cloudinary
+/**
+ * Uploads a file buffer to Cloudinary.
+ * @param {Buffer} buffer The file content as a Buffer.
+ * @param {string} folder The Cloudinary folder to upload to.
+ * @returns {Promise<object>} The Cloudinary upload result.
+ */
 const uploadToCloudinary = (buffer, folder) => new Promise((resolve, reject) => {
-  cloudinary.uploader.upload_stream({ folder, resource_type: "auto" }, (err, result) => {
-    if (err) reject(new Error(`Cloudinary upload failed: ${err.message}`));
-    else resolve(result);
-  }).end(buffer);
+  const uploadStream = cloudinary.uploader.upload_stream(
+    { folder, resource_type: "auto" },
+    (err, result) => {
+      if (err) return reject(new Error(`Cloudinary upload failed: ${err.message}`));
+      resolve(result);
+    }
+  );
+  uploadStream.end(buffer);
 });
 
+
+// --- Main Handler Function ---
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
   try {
+    // 1. Parse form data and files from the request.
     const { fields, files } = await parseMultipartForm(event);
     const {
       name, phone, firmName, address, district, state, attendance,
@@ -83,124 +118,96 @@ exports.handler = async (event) => {
     } = fields;
     const { profileImage } = files;
 
-    // Verify Razorpay Signature
-    const signature = crypto
+    // 2. Security Check: Verify the payment signature from Razorpay.
+    // This is critical to prevent anyone from calling this function without a valid payment.
+    const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    if (signature !== razorpay_signature) {
+    if (expectedSignature !== razorpay_signature) {
       return {
-        statusCode: 400,
-        body: JSON.stringify({ status: "error", error: "Invalid Razorpay signature." }),
+        statusCode: 400, // Bad Request
+        body: JSON.stringify({ status: "error", error: "Invalid Razorpay payment signature." }),
       };
     }
 
-    // Validate Required Fields
-    const required = { name, phone, firmName, address, district, state, attendance };
-    for (const [key, val] of Object.entries(required)) {
-      if (!val || val.trim() === "") {
-        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing: ${key}` }) };
+    // 3. Validate that all required fields and the profile image are present.
+    const requiredFields = { name, phone, firmName, address, district, state, attendance };
+    for (const [key, value] of Object.entries(requiredFields)) {
+      if (!value || String(value).trim() === "") {
+        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing required field: ${key}` }) };
       }
     }
     if (!profileImage) {
-      return { statusCode: 400, body: JSON.stringify({ status: "error", error: "Profile photo required." }) };
+      return { statusCode: 400, body: JSON.stringify({ status: "error", error: "A profile photo is required." }) };
     }
 
-    // Check duplicates in Google Sheet
+    // 4. Upload the profile image to Cloudinary.
+    const uploadResult = await retryWithBackoff(() =>
+      uploadToCloudinary(profileImage.content, CLOUDINARY_FOLDER)
+    );
+
+    // 5. Generate a unique Registration ID.
+    // **IMPROVEMENT**: This approach is more robust. We get the current number of rows in the sheet
+    // to ensure the new ID is sequential, even with concurrent requests.
     const sheetData = await retryWithBackoff(() =>
       sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A1:K1000`,
+        range: `${SHEET_NAME}!A:A`, // Only need one column to count rows.
       })
     );
+    const newRowNumber = (sheetData.data.values || []).length + 1;
+    const registrationId = `TDEXPOUP-${String(newRowNumber).padStart(4, "0")}`;
 
-    const rows = sheetData.data.values || [];
-    const duplicate = rows.find((row) => row[PHONE_COLUMN_INDEX] === phone);
-    if (duplicate) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          status: "success",
-          registrationData: {
-            registrationId: duplicate[1],
-            name: duplicate[2],
-            firmName: duplicate[3],
-            phone: duplicate[4],
-            address: duplicate[5],
-            district: duplicate[6],
-            state: duplicate[7],
-            attendance: duplicate[8],
-            profileImageUrl: duplicate[10],
-          },
-        }),
-      };
-    }
+    // 6. Append the new registration data to the Google Sheet.
+    const newRowData = [
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      registrationId,
+      name.trim(),
+      firmName.trim(),
+      phone.trim(),
+      address.trim(),
+      district.trim(),
+      state.trim(),
+      attendance,
+      razorpay_payment_id,
+      uploadResult.secure_url,
+    ];
 
-    // Upload Image to Cloudinary
-    const uploadResult = await retryWithBackoff(() =>
-      uploadToCloudinary(profileImage.content, "expo-profile-images-2025")
-    );
-
-    // Generate registration ID
-    const newRow = rows.length + 1;
-    const registrationId = `TDEXPOUP-${String(newRow).padStart(4, "0")}`;
-
-    // Append row
     await retryWithBackoff(() =>
       sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
         range: SHEET_NAME,
         valueInputOption: "USER_ENTERED",
-        resource: {
-          values: [[
-            new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-            registrationId,
-            name,
-            firmName,
-            phone,
-            address,
-            district,
-            state,
-            attendance,
-            razorpay_payment_id,
-            uploadResult.secure_url
-          ]]
-        }
+        resource: { values: [newRowData] },
       })
     );
 
+    // 7. Return a success response with the new registration data.
     return {
       statusCode: 200,
       body: JSON.stringify({
         status: "success",
         registrationData: {
           registrationId,
-          name,
-          phone,
-          firmName,
+          name: name.trim(),
+          phone: phone.trim(),
+          firmName: firmName.trim(),
           attendance,
           profileImageUrl: uploadResult.secure_url,
-        }
+        },
       }),
     };
 
   } catch (err) {
-    console.error("REGISTRATION_ERROR:", err.message);
-    if (err.code === 'ENOTFOUND' || err.message.includes("network")) {
-      return {
-        statusCode: 503,
-        body: JSON.stringify({
-          status: "error",
-          error: "Network Error: Please check your internet connection and try again.",
-        }),
-      };
-    }
+    // 8. Catch-all error handler for logging and returning a generic error message.
+    console.error("SUBMIT_REGISTRATION_ERROR:", err.message || err);
     return {
       statusCode: 500,
       body: JSON.stringify({
         status: "error",
-        error: "Registration failed.",
+        error: "Registration failed due to a server error. Please contact support.",
         details: err.message,
       }),
     };

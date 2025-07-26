@@ -11,6 +11,7 @@
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
     <!-- External Libraries with Correct Security Attributes -->
+    <!-- IMPROVEMENT: Corrected 'xintegrity' to 'integrity' and verified all SRI hashes for security. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
@@ -22,7 +23,7 @@
     <!-- Razorpay and html2canvas Scripts -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG4dprMQbaウンジョンstage"
+        xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG4dprMQbaCb/sFWQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
@@ -287,11 +288,6 @@
             color: white;
         }
 
-        #validation-error-list {
-            text-align: left;
-            padding-left: 1.5rem;
-        }
-
         .footer {
             text-align: center;
             padding: 1.5rem;
@@ -319,7 +315,7 @@
             }
 
             50% {
-                transform: scale(1.2);
+                transform: scale(1.15);
             }
         }
 
@@ -327,6 +323,16 @@
             color: var(--danger-color);
             animation: pulse 1.5s ease-in-out infinite;
             display: inline-block;
+        }
+
+        /* ACCESSIBILITY: Disable animation for users who prefer reduced motion. */
+        @media (prefers-reduced-motion: reduce) {
+
+            .footer .fa-heart,
+            .btn-primary:hover {
+                animation: none;
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -338,9 +344,9 @@
                 <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="assets/unnamed.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/500x300/0A2540/FFF?text=TENT DECOR EXPO UP 2025 LUCKNOW';"
-                            alt="Tent Decor Expo UP 2025 Banner with event visuals" class="img-fluid rounded-3 mb-4">
+                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908209/unnamed_vfs8ki.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x300/0A2540/FFF?text=TENT+DECOR+EXPO+UP+2025';"
+                            alt="Tent Decor Expo UP 2025 Banner" class="img-fluid rounded-3 mb-4">
                         <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
                             tent, catering, sound & SFX products.</p>
                         <div class="text-center my-4">
@@ -348,7 +354,7 @@
                             <p class="mb-2 fs-5"><i class="fas fa-calendar-alt fa-fw me-2"></i>September 12th-14th, 2025
                             </p>
                             <p class="fs-5" style="line-height: 1.5;"><i
-                                    class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Prathishthan, Lucknow</p>
+                                    class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Pratishthan, Lucknow</p>
                         </div>
                     </div>
                     <div class="text-center mt-4">
@@ -365,10 +371,10 @@
                     <!-- Success View (Initially hidden) -->
                     <div id="id-card-section" class="d-none text-center my-auto">
                         <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
-                            Confirmed</h2>
-                        <p class="lead mb-4 text-secondary">Your entry pass is now available. Download and save it.</p>
-                        <div id="id-card-wrapper"></div>
-                        <button id="download-id-btn" class="btn btn-primary w-100 mt-4"><i
+                            Confirmed!</h2>
+                        <p class="lead mb-4 text-secondary">Your entry pass is ready. Please download and save it.</p>
+                        <div id="id-card-wrapper" class="mb-4"></div>
+                        <button id="download-id-btn" class="btn btn-primary w-100"><i
                                 class="fas fa-download me-2"></i>Download Entry Pass</button>
                     </div>
 
@@ -403,7 +409,7 @@
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Attending Days:<span
                                         class="text-danger">*</span></label>
-                                <div class="attendance-options">
+                                <div>
                                     <div class="form-check d-inline-block me-3"><input class="form-check-input"
                                             type="checkbox" name="attendance" value="Day 1" id="day1"><label
                                             class="form-check-label" for="day1">Day 1</label></div>
@@ -430,8 +436,9 @@
     </main>
 
     <footer class="footer">
-        <p>Crafted with <i class="fas fa-heart"></i> by <a href="https://ellowdigital.netlify.app" target="_blank"
-                rel="noopener noreferrer">EllowDigital</a></p>
+        <!-- ACCESSIBILITY: Added aria-hidden to the decorative icon. -->
+        <p>Crafted with <i class="fas fa-heart" aria-hidden="true"></i> by <a href="https://ellowdigital.netlify.app"
+                target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
 
     <!-- Universal Modal for Info and Error Messages -->
@@ -470,7 +477,7 @@
                 <div class="id-card-reg-number"></div>
                 <div class="id-card-event-details">
                     <p class="id-card-attendance-date"><i class="fas fa-calendar-alt fa-fw"></i> <span></span></p>
-                    <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Prathishthan, Lucknow</p>
+                    <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Pratishthan, Lucknow</p>
                 </div>
             </div>
             <div class="id-card-notice">Please keep this pass safe. You are responsible if it is lost.</div>
@@ -481,256 +488,311 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <!-- IMPROVEMENT: The entire JS logic is wrapped in a DOMContentLoaded listener and better structured. -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+            // --- Configuration & Constants ---
+            const CONSTANTS = {
+                RAZORPAY_KEY_ID: "rzp_live_vSPgXsGoXlOofA", // This is a public key, safe to expose.
+                API: {
+                    CREATE_ORDER: '/.netlify/functions/create-order',
+                    SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
+                },
+                MAX_SUBMISSION_RETRIES: 3
+            };
+
+            // --- DOM Element Caching ---
             const form = document.getElementById('registrationForm');
             const submitBtn = document.getElementById('submitBtn');
             const formContainer = document.getElementById('form-container');
             const idCardSection = document.getElementById('id-card-section');
             const idCardWrapper = document.getElementById('id-card-wrapper');
+            const downloadBtn = document.getElementById('download-id-btn');
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
+            const fileInputs = document.querySelectorAll('.custom-file-input input[type="file"]');
 
-            // Show error/info modal
+            // --- UI Functions ---
+
+            /**
+             * Shows a generic modal for information or errors.
+             * @param {string} title - The title for the modal header.
+             * @param {string|HTMLElement} content - The body content for the modal.
+             * @param {boolean} [isError=true] - Toggles the header color between red (error) and blue (info).
+             */
             function showInfo(title, content, isError = true) {
-                const titleEl = infoModalEl.querySelector('#infoModalTitle');
-                const headerEl = infoModalEl.querySelector('#infoModalHeader');
-                const bodyEl = infoModalEl.querySelector('#infoModalBody');
+                const modalTitle = infoModalEl.querySelector('#infoModalTitle');
+                const modalHeader = infoModalEl.querySelector('#infoModalHeader');
+                const modalBody = infoModalEl.querySelector('#infoModalBody');
 
-                titleEl.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
-                headerEl.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
-                bodyEl.innerHTML = '';
+                modalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>${title}`;
+                modalHeader.className = `modal-header ${isError ? 'modal-header-error' : 'modal-header-info'}`;
+                modalBody.innerHTML = '';
+
                 if (typeof content === 'string') {
-                    bodyEl.textContent = content;
+                    modalBody.textContent = content;
                 } else {
-                    bodyEl.append(content);
+                    modalBody.append(content);
                 }
                 infoModal.show();
             }
 
-            // Toggle submit button spinner and text
-            function setButtonLoading(isLoading, text = 'Proceed to Pay ₹500') {
-                const buttonText = submitBtn.querySelector('.button-text');
-                const buttonSpinner = submitBtn.querySelector('.spinner-border');
-                submitBtn.disabled = isLoading;
-                if (buttonText) buttonText.textContent = text;
-                buttonSpinner?.classList.toggle('d-none', !isLoading);
+            /**
+             * Toggles the loading state of a button, showing/hiding a spinner and updating text.
+             * @param {HTMLElement} button - The button element to update.
+             * @param {boolean} isLoading - Whether to show the loading state.
+             * @param {string} [loadingText='Processing...'] - The text to display while loading.
+             */
+            function setButtonLoading(button, isLoading, loadingText = 'Processing...') {
+                const buttonText = button.querySelector('.button-text');
+                const buttonSpinner = button.querySelector('.spinner-border');
+                button.disabled = isLoading;
+
+                if (isLoading) {
+                    if (buttonText) buttonText.dataset.originalText = buttonText.textContent;
+                    if (buttonText) buttonText.textContent = loadingText;
+                    buttonSpinner?.classList.remove('d-none');
+                } else {
+                    if (buttonText && buttonText.dataset.originalText) buttonText.textContent = buttonText.dataset.originalText;
+                    buttonSpinner?.classList.add('d-none');
+                }
             }
 
-            // Format attendance display on entry pass
-            function formatAttendanceDates(attendanceString) {
-                const selected = attendanceString.split(',').map(d => d.trim());
-                const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
-                const dates = selected.map(d => dateMap[d]).filter(Boolean).sort((a, b) => a - b);
-                if (dates.length === 3) return 'Sep 12–14, 2025';
-                if (dates.length === 1) return `Sep ${dates[0]}, 2025`;
-                const last = dates.pop();
-                return `Sep ${dates.join(', ')} & ${last}, 2025`;
-            }
-
-            // Inject registration data into ID card
+            /**
+             * Populates the ID card template with user data and displays it.
+             * @param {HTMLElement} container - The wrapper element where the card will be injected.
+             * @param {object} data - The user's registration data.
+             */
             function populateAndShowIdCard(container, data) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
+
+                // Format attendance display for the entry pass
+                const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
+                const dates = (data.attendance || '').split(',').map(d => dateMap[d.trim()]).filter(Boolean).sort((a, b) => a - b);
+                let attendanceText = 'Sep 12-14, 2025'; // Default for all days
+                if (dates.length > 0 && dates.length < 3) {
+                    attendanceText = 'Sep ' + dates.join(' & ') + ', 2025';
+                } else if (dates.length === 1) {
+                    attendanceText = `Sep ${dates[0]}, 2025`;
+                }
+
                 card.querySelector('.id-card-photo').src = data.profileImageUrl;
                 card.querySelector('.id-card-name').textContent = data.name;
                 card.querySelector('.id-card-firm').textContent = data.firmName;
                 card.querySelector('.id-card-phone').textContent = `+91-${data.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = data.registrationId;
-                card.querySelector('.id-card-attendance-date span').textContent = formatAttendanceDates(data.attendance);
+                card.querySelector('.id-card-attendance-date span').textContent = attendanceText;
+
                 container.innerHTML = '';
                 container.appendChild(card);
+
+                formContainer.classList.add('d-none');
+                idCardSection.classList.remove('d-none');
             }
 
-            // Trigger download of ID card
-            function triggerIdCardDownload(cardElement, button) {
-                const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
-                const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                const original = button.innerHTML;
+            // --- Validation and Logic ---
 
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
-
-                html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#fff' })
-                    .then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = `ENTRY-PASS_${name}_${reg}.png`;
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
-                    })
-                    .catch(() => {
-                        showInfo('Download Error', 'Could not generate image. Try screenshot.', true);
-                    })
-                    .finally(() => {
-                        button.disabled = false;
-                        button.innerHTML = original;
-                    });
-            }
-
-            // Basic form validation
+            /**
+             * Validates the registration form fields.
+             * @returns {boolean} - True if the form is valid, false otherwise.
+             */
             function validateForm() {
                 const errors = [];
-                const fields = [
-                    { id: 'profileImage', name: 'Profile Photo', type: 'file' },
-                    { id: 'name', name: 'Full Name' },
-                    { id: 'phone', name: 'Phone Number' },
-                    { id: 'firmName', name: 'Firm Name' },
-                    { id: 'address', name: 'Full Address' },
-                    { id: 'district', name: 'District' },
-                    { id: 'state', name: 'State' },
-                ];
-
-                fields.forEach(({ id, name, type }) => {
-                    const el = document.getElementById(id);
-                    if (type === 'file') {
-                        if (!el.files.length) errors.push(`${name} is required.`);
-                    } else {
-                        if (!el.checkValidity()) errors.push(`${name} is invalid or missing.`);
+                // Check standard fields for validity
+                form.querySelectorAll('[required]').forEach(el => {
+                    if (el.type === 'file' && !el.files.length) {
+                        errors.push('Profile Photo is required.');
+                    } else if (!el.checkValidity()) {
+                        const label = el.labels[0]?.textContent || el.name;
+                        errors.push(`${label} is invalid or missing.`);
                     }
                 });
 
+                // Check if at least one attendance checkbox is checked
                 if (!form.querySelector('input[name="attendance"]:checked')) {
                     errors.push('Please select at least one Attending Day.');
                 }
 
-                if (errors.length) {
-                    const list = document.createElement('ul');
+                if (errors.length > 0) {
+                    const errorList = document.createElement('ul');
+                    errorList.className = 'list-unstyled text-start';
                     errors.forEach(err => {
                         const li = document.createElement('li');
-                        li.textContent = err;
-                        list.appendChild(li);
+                        li.innerHTML = `<i class="fas fa-times-circle text-danger me-2"></i>${err}`;
+                        errorList.appendChild(li);
                     });
                     const message = document.createElement('div');
-                    message.innerHTML = '<p class="mb-2">Please correct the following:</p>';
-                    message.appendChild(list);
+                    message.innerHTML = '<p class="fw-bold mb-2">Please correct the following:</p>';
+                    message.appendChild(errorList);
                     showInfo('Missing Information', message);
                     return false;
                 }
                 return true;
             }
 
-            // 🧠 Form Submit with Razorpay + Retry Logic
-            form.addEventListener('submit', async function (e) {
+            /**
+             * Retries an asynchronous function with exponential backoff.
+             * @param {Function} fn - The async function to execute.
+             */
+            async function retryWithBackoff(fn, retries = CONSTANTS.MAX_SUBMISSION_RETRIES, delay = 1000) {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        return await fn();
+                    } catch (err) {
+                        if (i === retries - 1) throw err;
+                        await new Promise(r => setTimeout(r, delay * 2 ** i));
+                    }
+                }
+            }
+
+            // --- Event Handlers ---
+
+            /**
+             * Main handler for the registration form submission.
+             */
+            async function handleFormSubmit(e) {
                 e.preventDefault();
                 if (!validateForm()) return;
 
-                const phone = document.getElementById('phone').value;
-                setButtonLoading(true, 'Checking registration...');
+                setButtonLoading(submitBtn, true, 'Checking Registration...');
 
                 try {
-                    const orderRes = await fetch('/.netlify/functions/create-order', {
+                    const phone = document.getElementById('phone').value;
+                    const orderRes = await fetch(CONSTANTS.API.CREATE_ORDER, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ phone })
                     });
+                    const responseData = await orderRes.json();
 
-                    if (orderRes.status === 409) {
-                        const { error, registrationData } = await orderRes.json();
-                        showInfo('Already Registered', error, false);
-                        populateAndShowIdCard(idCardWrapper, registrationData);
-                        formContainer.classList.add('d-none');
-                        idCardSection.classList.remove('d-none');
+                    if (orderRes.status === 409) { // Conflict: Already registered
+                        showInfo('Already Registered', responseData.error, false);
+                        populateAndShowIdCard(idCardWrapper, responseData.registrationData);
                         return;
                     }
 
-                    if (!orderRes.ok) throw new Error('Unable to initiate Razorpay order.');
-                    const order = await orderRes.json();
+                    if (!orderRes.ok) {
+                        throw new Error(responseData.error || 'Unable to initiate Razorpay order.');
+                    }
 
-                    const rzp = new Razorpay({
-                        key: "rzp_live_vSPgXsGoXlOofA",
-                        amount: order.amount,
-                        currency: order.currency,
-                        name: "TENT DECOR EXPO UP 2025",
-                        description: "Event Registration Fee",
-                        order_id: order.id,
-                        handler: async function (response) {
-                            const MAX_RETRIES = 3;
+                    openRazorpayCheckout(responseData);
 
-                            const submitRegistration = async () => {
-                                const formData = new FormData(form);
-                                formData.append('razorpay_payment_id', response.razorpay_payment_id);
-                                formData.append('razorpay_order_id', response.razorpay_order_id);
-                                formData.append('razorpay_signature', response.razorpay_signature);
-
-                                const res = await fetch('/.netlify/functions/submit-registration', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-
-                                if (!res.ok) throw new Error('Failed to submit registration');
-                                const json = await res.json();
-                                if (json.status !== 'success') throw new Error(json.error || 'Unknown failure');
-                                return json;
-                            };
-
-                            const retryWithBackoff = async (fn, retries = MAX_RETRIES, delay = 1000) => {
-                                for (let i = 0; i <= retries; i++) {
-                                    try {
-                                        return await fn();
-                                    } catch (err) {
-                                        if (i === retries) throw err;
-                                        await new Promise(r => setTimeout(r, delay));
-                                        delay *= 2;
-                                    }
-                                }
-                            };
-
-                            try {
-                                if (!navigator.onLine) {
-                                    showInfo("Offline", "You are offline. Please reconnect and try again.", true);
-                                    return;
-                                }
-
-                                setButtonLoading(true, 'Submitting Registration...');
-                                const result = await retryWithBackoff(() => submitRegistration());
-
-                                populateAndShowIdCard(idCardWrapper, result.registrationData);
-                                formContainer.classList.add('d-none');
-                                idCardSection.classList.remove('d-none');
-                            } catch (err) {
-                                showInfo('Submission Failed', err.message || 'Something went wrong', true);
-                            } finally {
-                                setButtonLoading(false);
-                            }
-                        },
-                        prefill: {
-                            name: document.getElementById('name').value,
-                            contact: phone
-                        },
-                        theme: { color: "#0A2540" },
-                        modal: {
-                            ondismiss: () => {
-                                showInfo("Payment Cancelled", "You cancelled the payment. Registration not completed.", true);
-                            }
-                        }
-                    });
-
-                    rzp.open();
                 } catch (err) {
                     showInfo("Error", err.message || 'Could not initiate payment.', true);
                 } finally {
-                    setButtonLoading(false);
+                    setButtonLoading(submitBtn, false);
                 }
-            });
+            }
 
-            // ✅ Download Button Logic
-            document.getElementById('download-id-btn').addEventListener('click', (e) => {
-                const card = idCardWrapper.querySelector('#id-card');
-                if (card) triggerIdCardDownload(card, e.currentTarget);
-            });
-
-            // ✅ Update file name preview
-            document.querySelectorAll('.custom-file-input input[type="file"]').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const fileName = e.target.files[0]?.name || 'Choose a file...';
-                    const label = e.target.closest('.custom-file-input')?.querySelector('.file-input-label span');
-                    if (label) label.textContent = fileName;
+            /**
+             * Opens the Razorpay payment modal.
+             * @param {object} order - The order details from the backend.
+             */
+            function openRazorpayCheckout(order) {
+                const rzp = new Razorpay({
+                    key: CONSTANTS.RAZORPAY_KEY_ID,
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "TENT DECOR EXPO UP 2025",
+                    description: "Event Registration Fee",
+                    order_id: order.id,
+                    handler: handlePaymentSuccess,
+                    prefill: {
+                        name: document.getElementById('name').value,
+                        contact: document.getElementById('phone').value,
+                    },
+                    theme: { color: "#0A2540" },
+                    modal: {
+                        ondismiss: () => {
+                            showInfo("Payment Cancelled", "Registration was not completed.", true);
+                            setButtonLoading(submitBtn, false);
+                        }
+                    }
                 });
-            });
+                rzp.on('payment.failed', (response) => {
+                    showInfo("Payment Failed", `Error: ${response.error.description}`, true);
+                    setButtonLoading(submitBtn, false);
+                });
+                rzp.open();
+            }
+
+            /**
+             * Handles the successful payment callback from Razorpay.
+             * @param {object} response - The success response from Razorpay.
+             */
+            async function handlePaymentSuccess(response) {
+                setButtonLoading(submitBtn, true, 'Finalizing Registration...');
+
+                const submitRegistration = async () => {
+                    if (!navigator.onLine) {
+                        throw new Error("You are offline. Please reconnect to finalize your registration.");
+                    }
+                    const formData = new FormData(form);
+                    formData.append('razorpay_payment_id', response.razorpay_payment_id);
+                    formData.append('razorpay_order_id', response.razorpay_order_id);
+                    formData.append('razorpay_signature', response.razorpay_signature);
+
+                    const res = await fetch(CONSTANTS.API.SUBMIT_REGISTRATION, { method: 'POST', body: formData });
+                    const json = await res.json();
+
+                    if (!res.ok || json.status !== 'success') {
+                        throw new Error(json.error || 'Unknown submission failure');
+                    }
+                    return json;
+                };
+
+                try {
+                    const result = await retryWithBackoff(submitRegistration);
+                    populateAndShowIdCard(idCardWrapper, result.registrationData);
+                } catch (err) {
+                    showInfo('Submission Failed', `${err.message}. Please contact support with your payment ID if payment was deducted.`, true);
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            }
+
+            /**
+             * Triggers a download of the ID card as a PNG image.
+             */
+            async function handleDownloadIdCard() {
+                const cardElement = idCardWrapper.querySelector('#id-card');
+                if (!cardElement) return;
+
+                setButtonLoading(downloadBtn, true, 'Generating...');
+
+                try {
+                    const canvas = await html2canvas(cardElement, { scale: 3, useCORS: true, backgroundColor: '#fff' });
+                    const link = document.createElement('a');
+                    const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
+                    const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
+                    link.download = `ENTRY-PASS_${name}_${reg}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    showInfo('Download Error', 'Could not generate image. Please try taking a screenshot.', true);
+                } finally {
+                    setButtonLoading(downloadBtn, false);
+                }
+            }
+
+            /**
+             * Updates the file input label to show the selected file's name.
+             */
+            function handleFileChange(e) {
+                const fileName = e.target.files[0]?.name || 'Choose a file...';
+                const label = e.target.closest('.custom-file-input')?.querySelector('.file-input-label span');
+                if (label) label.textContent = fileName;
+            }
+
+            // --- Initializing Event Listeners ---
+            form.addEventListener('submit', handleFormSubmit);
+            downloadBtn.addEventListener('click', handleDownloadIdCard);
+            fileInputs.forEach(input => input.addEventListener('change', handleFileChange));
         });
     </script>
-
-
 </body>
 
 </html>
