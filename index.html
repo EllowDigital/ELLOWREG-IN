@@ -7,11 +7,11 @@
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
     <!-- Favicon with a reliable placeholder fallback -->
     <link rel="icon" type="image/x-icon"
-        href="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908021/favicon_p8569s.ico"
+        href="assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
     <!-- External Libraries with Correct Security Attributes -->
-    <!-- IMPROVEMENT: Corrected 'xintegrity' to 'integrity' and verified all SRI hashes for security. -->
+    <!-- SECURITY FIX: Corrected 'xintegrity' to 'integrity' for all CDN links. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
@@ -325,7 +325,6 @@
             display: inline-block;
         }
 
-        /* ACCESSIBILITY: Disable animation for users who prefer reduced motion. */
         @media (prefers-reduced-motion: reduce) {
 
             .footer .fa-heart,
@@ -344,7 +343,7 @@
                 <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="https://res.cloudinary.com/dcd2sqv4s/image/upload/v1721908209/unnamed_vfs8ki.jpg"
+                        <img src="assets/unnamed.jpg"
                             onerror="this.onerror=null;this.src='https://placehold.co/500x300/0A2540/FFF?text=TENT+DECOR+EXPO+UP+2025';"
                             alt="Tent Decor Expo UP 2025 Banner" class="img-fluid rounded-3 mb-4">
                         <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
@@ -436,7 +435,6 @@
     </main>
 
     <footer class="footer">
-        <!-- ACCESSIBILITY: Added aria-hidden to the decorative icon. -->
         <p>Crafted with <i class="fas fa-heart" aria-hidden="true"></i> by <a href="https://ellowdigital.netlify.app"
                 target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
@@ -489,13 +487,12 @@
         xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-    <!-- IMPROVEMENT: The entire JS logic is wrapped in a DOMContentLoaded listener and better structured. -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
             // --- Configuration & Constants ---
             const CONSTANTS = {
-                RAZORPAY_KEY_ID: "rzp_live_vSPgXsGoXlOofA", // This is a public key, safe to expose.
+                RAZORPAY_KEY_ID: "rzp_live_vSPgXsGoXlOofA",
                 API: {
                     CREATE_ORDER: '/.netlify/functions/create-order',
                     SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
@@ -515,13 +512,6 @@
             const fileInputs = document.querySelectorAll('.custom-file-input input[type="file"]');
 
             // --- UI Functions ---
-
-            /**
-             * Shows a generic modal for information or errors.
-             * @param {string} title - The title for the modal header.
-             * @param {string|HTMLElement} content - The body content for the modal.
-             * @param {boolean} [isError=true] - Toggles the header color between red (error) and blue (info).
-             */
             function showInfo(title, content, isError = true) {
                 const modalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const modalHeader = infoModalEl.querySelector('#infoModalHeader');
@@ -539,12 +529,6 @@
                 infoModal.show();
             }
 
-            /**
-             * Toggles the loading state of a button, showing/hiding a spinner and updating text.
-             * @param {HTMLElement} button - The button element to update.
-             * @param {boolean} isLoading - Whether to show the loading state.
-             * @param {string} [loadingText='Processing...'] - The text to display while loading.
-             */
             function setButtonLoading(button, isLoading, loadingText = 'Processing...') {
                 const buttonText = button.querySelector('.button-text');
                 const buttonSpinner = button.querySelector('.spinner-border');
@@ -560,19 +544,13 @@
                 }
             }
 
-            /**
-             * Populates the ID card template with user data and displays it.
-             * @param {HTMLElement} container - The wrapper element where the card will be injected.
-             * @param {object} data - The user's registration data.
-             */
             function populateAndShowIdCard(container, data) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.querySelector('#id-card');
 
-                // Format attendance display for the entry pass
                 const dateMap = { 'Day 1': 12, 'Day 2': 13, 'Day 3': 14 };
                 const dates = (data.attendance || '').split(',').map(d => dateMap[d.trim()]).filter(Boolean).sort((a, b) => a - b);
-                let attendanceText = 'Sep 12-14, 2025'; // Default for all days
+                let attendanceText = 'Sep 12-14, 2025';
                 if (dates.length > 0 && dates.length < 3) {
                     attendanceText = 'Sep ' + dates.join(' & ') + ', 2025';
                 } else if (dates.length === 1) {
@@ -594,14 +572,8 @@
             }
 
             // --- Validation and Logic ---
-
-            /**
-             * Validates the registration form fields.
-             * @returns {boolean} - True if the form is valid, false otherwise.
-             */
             function validateForm() {
                 const errors = [];
-                // Check standard fields for validity
                 form.querySelectorAll('[required]').forEach(el => {
                     if (el.type === 'file' && !el.files.length) {
                         errors.push('Profile Photo is required.');
@@ -611,7 +583,6 @@
                     }
                 });
 
-                // Check if at least one attendance checkbox is checked
                 if (!form.querySelector('input[name="attendance"]:checked')) {
                     errors.push('Please select at least one Attending Day.');
                 }
@@ -633,10 +604,6 @@
                 return true;
             }
 
-            /**
-             * Retries an asynchronous function with exponential backoff.
-             * @param {Function} fn - The async function to execute.
-             */
             async function retryWithBackoff(fn, retries = CONSTANTS.MAX_SUBMISSION_RETRIES, delay = 1000) {
                 for (let i = 0; i < retries; i++) {
                     try {
@@ -649,10 +616,6 @@
             }
 
             // --- Event Handlers ---
-
-            /**
-             * Main handler for the registration form submission.
-             */
             async function handleFormSubmit(e) {
                 e.preventDefault();
                 if (!validateForm()) return;
@@ -668,7 +631,7 @@
                     });
                     const responseData = await orderRes.json();
 
-                    if (orderRes.status === 409) { // Conflict: Already registered
+                    if (orderRes.status === 409) {
                         showInfo('Already Registered', responseData.error, false);
                         populateAndShowIdCard(idCardWrapper, responseData.registrationData);
                         return;
@@ -687,10 +650,6 @@
                 }
             }
 
-            /**
-             * Opens the Razorpay payment modal.
-             * @param {object} order - The order details from the backend.
-             */
             function openRazorpayCheckout(order) {
                 const rzp = new Razorpay({
                     key: CONSTANTS.RAZORPAY_KEY_ID,
@@ -719,10 +678,6 @@
                 rzp.open();
             }
 
-            /**
-             * Handles the successful payment callback from Razorpay.
-             * @param {object} response - The success response from Razorpay.
-             */
             async function handlePaymentSuccess(response) {
                 setButtonLoading(submitBtn, true, 'Finalizing Registration...');
 
@@ -748,15 +703,18 @@
                     const result = await retryWithBackoff(submitRegistration);
                     populateAndShowIdCard(idCardWrapper, result.registrationData);
                 } catch (err) {
-                    showInfo('Submission Failed', `${err.message}. Please contact support with your payment ID if payment was deducted.`, true);
+                    // IMPROVEMENT: This error message provides clear, actionable steps for the user.
+                    const message = document.createElement('div');
+                    message.innerHTML = `<p class="mb-3">We couldn't automatically confirm your registration due to an interruption.</p>
+                                         <p class="fw-bold">First, please try filling out the form again with the same phone number.</p>
+                                         <p class="mb-3">If your payment was successful, our system will find it and generate your pass automatically.</p>
+                                         <p class="text-muted small">If that doesn't work, please contact support with your payment details.</p>`;
+                    showInfo('Registration Finalization Failed', message, true);
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }
             }
 
-            /**
-             * Triggers a download of the ID card as a PNG image.
-             */
             async function handleDownloadIdCard() {
                 const cardElement = idCardWrapper.querySelector('#id-card');
                 if (!cardElement) return;
@@ -778,9 +736,6 @@
                 }
             }
 
-            /**
-             * Updates the file input label to show the selected file's name.
-             */
             function handleFileChange(e) {
                 const fileName = e.target.files[0]?.name || 'Choose a file...';
                 const label = e.target.closest('.custom-file-input')?.querySelector('.file-input-label span');

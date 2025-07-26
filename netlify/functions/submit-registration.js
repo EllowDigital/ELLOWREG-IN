@@ -1,10 +1,11 @@
 // /netlify/functions/submit-registration.js
 
 // --- Dependencies ---
-const { google } = require("googleapis");
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
+// IMPROVEMENT: Import shared utilities instead of re-defining them.
+const { sheets, retryWithBackoff } = require("./lib/utils");
 
 // --- Constants ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
@@ -12,14 +13,6 @@ const SHEET_NAME = "Registrations";
 const CLOUDINARY_FOLDER = "expo-profile-images-2025";
 
 // --- Service Initializations ---
-
-// Setup Google Sheets API client.
-// **IMPROVEMENT**: The scope is 'spreadsheets' which allows both reading (to get row count) and writing (to append data).
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
-const sheets = google.sheets({ version: "v4", auth });
 
 // Configure Cloudinary client.
 cloudinary.config({
@@ -32,21 +25,7 @@ cloudinary.config({
 // --- Utility Functions ---
 
 /**
- * Retries an asynchronous function with exponential backoff.
- */
-const retryWithBackoff = async (fn, retries = 3, delay = 500) => {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (i === retries - 1) throw err;
-      await new Promise((res) => setTimeout(res, delay * 2 ** i));
-    }
-  }
-};
-
-/**
- * Parses a multipart/form-data request body.
+ * Parses a multipart/form-data request body from a Netlify function event.
  * @param {object} event The Netlify function event object.
  * @returns {Promise<{fields: object, files: object}>} The parsed form fields and files.
  */
@@ -81,7 +60,6 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   bb.on("close", () => resolve({ fields, files }));
   bb.on("error", (err) => reject(new Error(`Error parsing form data: ${err.message}`)));
 
-  // Busboy expects a Buffer, so we convert the body correctly based on its encoding.
   bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
 });
 
@@ -106,7 +84,7 @@ const uploadToCloudinary = (buffer, folder) => new Promise((resolve, reject) => 
 // --- Main Handler Function ---
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
   try {
@@ -119,7 +97,7 @@ exports.handler = async (event) => {
     const { profileImage } = files;
 
     // 2. Security Check: Verify the payment signature from Razorpay.
-    // This is critical to prevent anyone from calling this function without a valid payment.
+    // This is critical to prevent fraudulent submissions.
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -127,7 +105,8 @@ exports.handler = async (event) => {
 
     if (expectedSignature !== razorpay_signature) {
       return {
-        statusCode: 400, // Bad Request
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: "error", error: "Invalid Razorpay payment signature." }),
       };
     }
@@ -136,11 +115,11 @@ exports.handler = async (event) => {
     const requiredFields = { name, phone, firmName, address, district, state, attendance };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value || String(value).trim() === "") {
-        return { statusCode: 400, body: JSON.stringify({ status: "error", error: `Missing required field: ${key}` }) };
+        return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: "error", error: `Missing required field: ${key}` }) };
       }
     }
     if (!profileImage) {
-      return { statusCode: 400, body: JSON.stringify({ status: "error", error: "A profile photo is required." }) };
+      return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: "error", error: "A profile photo is required." }) };
     }
 
     // 4. Upload the profile image to Cloudinary.
@@ -149,8 +128,7 @@ exports.handler = async (event) => {
     );
 
     // 5. Generate a unique Registration ID.
-    // **IMPROVEMENT**: This approach is more robust. We get the current number of rows in the sheet
-    // to ensure the new ID is sequential, even with concurrent requests.
+    // IMPROVEMENT: This is more robust. It gets the current row count to ensure a sequential ID.
     const sheetData = await retryWithBackoff(() =>
       sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
@@ -187,6 +165,7 @@ exports.handler = async (event) => {
     // 7. Return a success response with the new registration data.
     return {
       statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         status: "success",
         registrationData: {
@@ -205,6 +184,7 @@ exports.handler = async (event) => {
     console.error("SUBMIT_REGISTRATION_ERROR:", err.message || err);
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         status: "error",
         error: "Registration failed due to a server error. Please contact support.",

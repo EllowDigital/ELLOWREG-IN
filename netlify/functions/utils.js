@@ -8,8 +8,7 @@ const { google } = require("googleapis");
 /**
  * A shared, authenticated Google Sheets API client.
  * By initializing this once, you avoid redundant setup in each function.
- * The scope can be adjusted based on the required permissions. For a utility
- * file used by functions that both read and write, 'spreadsheets' is appropriate.
+ * The scope is set to 'spreadsheets' which allows both reading and writing.
  */
 const auth = new google.auth.GoogleAuth({
     credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),

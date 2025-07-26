@@ -2,24 +2,17 @@
 
 // --- Dependencies ---
 const Razorpay = require("razorpay");
-const { google } = require("googleapis");
+// IMPROVEMENT: Import shared utilities instead of re-defining them.
+// This assumes you have a 'utils.js' file in a 'lib' folder inside 'functions'.
+const { sheets, retryWithBackoff } = require("./lib/utils");
 
 // --- Constants ---
-// It's good practice to keep environment-dependent variables and fixed values at the top.
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations"; // The name of the sheet within your Google Sheet document.
+const SHEET_NAME = "Registrations";
 const ORDER_AMOUNT = 100; // The amount in the smallest currency unit (e.g., 100 paise = ₹1).
 const RECEIPT_PREFIX = "receipt_order_";
 
 // --- Service Initializations ---
-
-// Setup Google Sheets API client with authentication.
-// The credentials are read from an environment variable for security.
-const auth = new google.auth.GoogleAuth({
-    credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"], // Scope limited to read-only as this function only checks for data.
-});
-const sheets = google.sheets({ version: "v4", auth });
 
 // Setup Razorpay client.
 // Keys are read from environment variables for security.
@@ -27,32 +20,6 @@ const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-
-
-// --- Utility Functions ---
-// NOTE: This helper function is excellent. In a larger project, you could move this
-// and the service initializations to a shared '/lib' directory to avoid code duplication
-// between your Netlify functions.
-
-/**
- * Retries an asynchronous function with exponential backoff.
- * @param {Function} fn The asynchronous function to execute.
- * @param {number} retries The maximum number of retries.
- * @param {number} delay The initial delay in milliseconds.
- * @returns {Promise<any>} The result of the successful function execution.
- */
-const retryWithBackoff = async (fn, retries = 3, delay = 500) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            return await fn();
-        } catch (err) {
-            // If it's the last retry, throw the error.
-            if (i === retries - 1) throw err;
-            // Otherwise, wait for an exponentially increasing amount of time.
-            await new Promise(res => setTimeout(res, delay * 2 ** i));
-        }
-    }
-};
 
 // --- Main Handler Function ---
 exports.handler = async (event) => {
@@ -69,7 +36,7 @@ exports.handler = async (event) => {
         // 2. Parse and validate the incoming request body.
         const { phone } = JSON.parse(event.body || "{}");
 
-        if (!phone || !/^\d{10}$/.test(phone.trim())) {
+        if (!phone || !/^[6-9]\d{9}$/.test(phone.trim())) {
             return {
                 statusCode: 400, // Bad Request
                 headers: { 'Content-Type': 'application/json' },
@@ -78,9 +45,8 @@ exports.handler = async (event) => {
         }
         const trimmedPhone = phone.trim();
 
-        // 3. Fetch all data from the Google Sheet.
-        // **IMPROVEMENT**: The range 'A:K' is used instead of a fixed range like 'A1:K1000'.
-        // This makes the function scalable and ensures it works for any number of registrations.
+        // 3. Fetch all data from the Google Sheet using the imported 'sheets' client.
+        // The range 'A:K' makes the function scalable to any number of registrations.
         const sheetData = await retryWithBackoff(() =>
             sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
@@ -90,8 +56,7 @@ exports.handler = async (event) => {
 
         const rows = sheetData.data.values || [];
 
-        // **IMPROVEMENT**: Dynamically find the column index for the phone number.
-        // This makes the code resilient if columns are added, removed, or reordered in the sheet.
+        // 4. Dynamically find the column index for the phone number.
         const headers = rows[0] || [];
         const phoneColumnIndex = headers.findIndex(header => header.toLowerCase().trim() === 'phone');
 
@@ -101,17 +66,16 @@ exports.handler = async (event) => {
             return {
                 statusCode: 500,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ error: "Server configuration error. Could not process registration check." }),
+                body: JSON.stringify({ error: "Server configuration error. Please contact support." }),
             };
         }
 
-        // 4. Check if the phone number is already registered.
-        // We start searching from the second row (index 1) to skip the header.
+        // 5. Check if the phone number is already registered.
+        // Search from the second row (index 1) to skip the header.
         const existingRow = rows.slice(1).find(row => row[phoneColumnIndex] === trimmedPhone);
 
         if (existingRow) {
-            // If the user is already registered, return their data immediately.
-            // This prevents them from paying again.
+            // If the user is already registered, return their data to prevent re-payment.
             const [
                 timestamp, registrationId, name, firmName, phoneNum,
                 address, district, state, attendance, razorpayId, profileImageUrl
@@ -122,7 +86,7 @@ exports.handler = async (event) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     error: "This phone number is already registered.",
-                    registrationData: { // Send existing data back to the client.
+                    registrationData: { // Send existing data back to the client for immediate recovery.
                         registrationId,
                         name,
                         phone: phoneNum,
@@ -134,7 +98,7 @@ exports.handler = async (event) => {
             };
         }
 
-        // 5. If the user is new, create a new Razorpay order.
+        // 6. If the user is new, create a new Razorpay order.
         const order = await retryWithBackoff(() =>
             razorpay.orders.create({
                 amount: ORDER_AMOUNT,
@@ -143,7 +107,7 @@ exports.handler = async (event) => {
             })
         );
 
-        // 6. Return the successfully created order details to the client.
+        // 7. Return the successfully created order details to the client.
         return {
             statusCode: 200, // OK
             headers: { "Content-Type": "application/json" },
@@ -151,14 +115,14 @@ exports.handler = async (event) => {
         };
 
     } catch (err) {
-        // 7. Generic error handler for any unexpected issues.
+        // 8. Generic error handler for any unexpected issues.
         console.error("CREATE_ORDER_ERROR:", err.message || err);
         return {
             statusCode: 500, // Internal Server Error
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 error: "Failed to create the Razorpay order. Please try again later.",
-                details: err.message, // Provide detail for easier debugging.
+                details: err.message,
             }),
         };
     }
