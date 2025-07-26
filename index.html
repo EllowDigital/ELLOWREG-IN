@@ -42,7 +42,6 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- Custom Styles -->
     <style>
         :root {
             --primary-color: #0A2540;
@@ -539,7 +538,7 @@
 
             // --- Configuration & Constants ---
             const CONSTANTS = {
-                RAZORPAY_KEY_ID: "rzp_test_rP89y3l3Y2aL7i", // Use your actual key here
+                // The key is now fetched from the server, so no need to store it here.
                 API: {
                     CREATE_ORDER: '/.netlify/functions/create-order',
                     SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
@@ -582,11 +581,15 @@
                 button.disabled = isLoading;
 
                 if (isLoading) {
-                    if (buttonText) buttonText.dataset.originalText = buttonText.textContent;
+                    if (buttonText && !button.dataset.originalText) {
+                        button.dataset.originalText = buttonText.textContent;
+                    }
                     if (buttonText) buttonText.textContent = loadingText;
                     buttonSpinner?.classList.remove('d-none');
                 } else {
-                    if (buttonText && buttonText.dataset.originalText) buttonText.textContent = buttonText.dataset.originalText;
+                    if (buttonText && button.dataset.originalText) {
+                        buttonText.textContent = button.dataset.originalText;
+                    }
                     buttonSpinner?.classList.add('d-none');
                 }
             }
@@ -675,7 +678,7 @@
                 e.preventDefault();
                 if (!validateForm()) return;
 
-                setButtonLoading(submitBtn, true, 'Checking Registration...');
+                setButtonLoading(submitBtn, true, 'Initializing Payment...');
 
                 try {
                     const phone = document.getElementById('phone').value;
@@ -689,7 +692,7 @@
                     if (orderRes.status === 409) { // User already exists
                         showInfo('Already Registered', 'We found an existing registration with this phone number. Your entry pass is displayed below.', false);
                         populateAndShowIdCard(idCardWrapper, responseData.registrationData);
-                        return; // Stop the process here
+                        return;
                     }
 
                     if (!orderRes.ok) {
@@ -706,8 +709,8 @@
             }
 
             function openRazorpayCheckout(order) {
-                const rzp = new Razorpay({
-                    key: CONSTANTS.RAZORPAY_KEY_ID,
+                const options = {
+                    key: order.key, // *** THIS IS THE FIX: Using the key from the server ***
                     amount: order.amount,
                     currency: order.currency,
                     name: "TENT DECOR EXPO UP 2025",
@@ -725,7 +728,9 @@
                             setButtonLoading(submitBtn, false);
                         }
                     }
-                });
+                };
+
+                const rzp = new Razorpay(options);
                 rzp.on('payment.failed', (response) => {
                     console.error('Razorpay payment failed:', response.error);
                     showInfo("Payment Failed", `Error: ${response.error.description}. Please try again.`, true);
