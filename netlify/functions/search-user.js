@@ -1,15 +1,13 @@
 // /netlify/functions/search-user.js
 
-// Import the shared database connection pool from the utils file.
 const { pool } = require("./utils");
 
 /**
- * Netlify serverless function to search for a registration by phone number.
+ * Netlify serverless function to search for registrations by phone number and/or registration ID.
  * This function is protected and intended for admin use only.
  */
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
     // 1. Security Check: Ensure the request includes the correct secret key.
-    // This prevents unauthorized access to user data.
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
@@ -30,45 +28,62 @@ exports.handler = async (event, context) => {
         };
     }
 
-    // 3. Input Validation: Check for the 'phone' query parameter.
-    const { phone } = event.queryStringParameters;
-    if (!phone || !/^[6-9]\d{9}$/.test(phone.trim())) {
+    // 3. Input Validation and Dynamic Query Building
+    const { phone, registrationId } = event.queryStringParameters;
+    const trimmedPhone = phone ? phone.trim() : null;
+    const trimmedRegId = registrationId ? registrationId.trim().toUpperCase() : null;
+
+    if (!trimmedPhone && !trimmedRegId) {
         return {
             statusCode: 400, // Bad Request
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "A valid 10-digit Indian mobile number is required." }),
+            body: JSON.stringify({ error: "Please provide a phone number or a registration ID to search." }),
         };
     }
 
-    const trimmedPhone = phone.trim();
+    let queryText = 'SELECT * FROM registrations WHERE';
+    const queryParams = [];
+    let conditions = [];
+    let paramIndex = 1;
+
+    // Build query conditions based on provided parameters to prevent SQL injection
+    if (trimmedPhone) {
+        conditions.push(`phone = $${paramIndex++}`);
+        queryParams.push(trimmedPhone);
+    }
+
+    if (trimmedRegId) {
+        conditions.push(`registration_id = $${paramIndex++}`);
+        queryParams.push(trimmedRegId);
+    }
+
+    // Join conditions with OR for flexible searching
+    queryText += ` ${conditions.join(' OR ')} ORDER BY timestamp DESC;`;
+
     let dbClient;
-
     try {
-        // 4. Database Query: Securely query the database for the user.
+        // 4. Database Query: Securely query the database.
         dbClient = await pool.connect();
+        const { rows } = await dbClient.query(queryText, queryParams);
 
-        const query = 'SELECT * FROM registrations WHERE phone = $1';
-        // CORRECTED: Use the connected client `dbClient` to query to ensure proper connection management
-        const { rows } = await dbClient.query(query, [trimmedPhone]);
-
-        // 5. Handle Response: Check if a user was found.
+        // 5. Handle Response: Check if any users were found.
         if (rows.length === 0) {
             return {
                 statusCode: 404, // Not Found
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "No registration found for this phone number." }),
+                body: JSON.stringify({ message: "No registration found for the provided details." }),
             };
         }
 
-        // Return the found registration data as a JSON object.
+        // Return all found registration data as a JSON array.
         return {
             statusCode: 200, // OK
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(rows[0]),
+            body: JSON.stringify(rows),
         };
 
     } catch (error) {
-        // 6. Generic Error Handling: Catch any other unexpected errors.
+        // 6. Generic Error Handling
         console.error("Error in search-user function:", error);
         return {
             statusCode: 500, // Internal Server Error
@@ -76,8 +91,7 @@ exports.handler = async (event, context) => {
             body: JSON.stringify({ error: "An internal server error occurred." }),
         };
     } finally {
-        // 7. Cleanup: Always release the database client back to the pool.
-        // This is crucial for preventing the server from running out of connections.
+        // 7. Cleanup: Always release the database client.
         if (dbClient) {
             dbClient.release();
         }
