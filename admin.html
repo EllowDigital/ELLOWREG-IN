@@ -137,6 +137,8 @@
             const regIdInput = document.getElementById('regIdInput');
             const searchStatus = document.getElementById('searchStatus');
             const searchResult = document.getElementById('searchResult');
+            const exportBtn = document.getElementById('exportBtn');
+            const exportStatus = document.getElementById('exportStatus');
 
             function setButtonLoading(button, isLoading, text = 'Loading...') {
                 const buttonText = button.querySelector('.button-text');
@@ -208,12 +210,6 @@
                     return;
                 }
 
-                if (phone && !/^\d{10}$/.test(phone)) {
-                    searchStatus.className = 'alert alert-warning';
-                    searchStatus.textContent = 'Please enter a valid 10-digit phone number.';
-                    return;
-                }
-
                 setButtonLoading(searchBtn, true, 'Searching...');
                 searchStatus.textContent = '';
                 searchResult.innerHTML = '';
@@ -227,23 +223,17 @@
                         headers: { 'x-admin-key': secretKey }
                     });
                     const result = await response.json();
-                    if (!response.ok) {
-                        throw new Error(result.message || result.error || 'Search failed.');
-                    }
+                    if (!response.ok) throw new Error(result.message || result.error || 'Search failed.');
                     displayUsers(result);
                 } catch (error) {
                     searchStatus.className = 'alert alert-danger';
                     searchStatus.textContent = error.message;
-                    console.error('Search failed:', error);
                 } finally {
                     setButtonLoading(searchBtn, false);
                 }
             });
 
-            // --- EXPORT BUTTON LOGIC ---
-            const exportBtn = document.getElementById('exportBtn');
-            const exportStatus = document.getElementById('exportStatus');
-
+            // --- THIS IS THE CORRECTED EXPORT LOGIC ---
             exportBtn.addEventListener('click', async () => {
                 const secretKey = secretKeyInput.value.trim();
                 setButtonLoading(exportBtn, true, 'Exporting...');
@@ -255,37 +245,25 @@
                         headers: { 'x-admin-key': secretKey }
                     });
 
+                    // Parse the response as JSON, not a file blob
+                    const result = await response.json();
+
                     if (!response.ok) {
-                        const errorData = await response.text();
-                        throw new Error(`Server responded with ${response.status}: ${errorData}`);
+                        throw new Error(result.error || result.details || 'Server responded with an error.');
                     }
 
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-
-                    const disposition = response.headers.get('content-disposition');
-                    let filename = `registrations_${new Date().toISOString()}.xlsx`;
-                    if (disposition && disposition.includes('attachment')) {
-                        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
-                        if (matches?.[1]) {
-                            filename = matches[1].replace(/['"]/g, '');
-                        }
+                    if (result.downloadUrl) {
+                        exportStatus.className = 'alert alert-success';
+                        exportStatus.textContent = 'File generated successfully! Your download will start now.';
+                        // Open the download URL from the server to start the download.
+                        window.open(result.downloadUrl, '_blank');
+                    } else {
+                        throw new Error('Server did not return a download URL.');
                     }
 
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-
-                    exportStatus.className = 'alert alert-success';
-                    exportStatus.textContent = 'Export successful! Your download has started.';
                 } catch (error) {
                     exportStatus.className = 'alert alert-danger';
-                    exportStatus.textContent = 'Export failed. See console for details.';
+                    exportStatus.textContent = `Export failed: ${error.message}`;
                     console.error('Export failed:', error);
                 } finally {
                     setButtonLoading(exportBtn, false);
