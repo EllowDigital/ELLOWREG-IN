@@ -6,200 +6,284 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
+    <!-- SEO Meta Tags -->
     <meta name="description"
-        content="Register now for TENT DECOR EXPO UP 2025, India's top B2B event for tent and decor professionals. Get your visitor pass today.">
+        content="Register now for TENT DECOR EXPO UP 2025, India's premier B2B trade show for the tent, decor, and event industry. Secure your free visitor pass today.">
     <meta name="keywords"
-        content="Tent Expo, Decor Expo, Lucknow Event, B2B Event, Registration, 2025 Expo, Visitor Pass">
+        content="Tent Expo, Decor Expo, Lucknow Event, B2B Trade Show, Event Registration, 2025 Expo, Visitor Pass, Tent Decor Expo UP">
     <meta name="author" content="TENT DECOR EXPO Team">
 
+    <!-- Open Graph / Social Sharing -->
     <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
-        content="Join India's premier tent and decor event in Lucknow. Register now and get your official visitor pass.">
-    <meta property="og:image" content="https://td-expoup25.netlify.app/assets/favicon.ico">
+        content="Join thousands of industry professionals in Lucknow. Register now to get your official visitor pass for India's leading tent and decor expo.">
+    <meta property="og:image" content="https://td-expoup25.netlify.app/assets/og-image.jpg">
     <meta property="og:url" content="https://td-expoup25.netlify.app/">
     <meta name="twitter:card" content="summary_large_image">
 
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css"
-        integrity="sha512-fw7f+TcMjTb7bpbLJZlP8g2Y4XcCyFZW8uy8HsRZsH/SwbMw0plKHFHr99DN3l04VsYNwvzicUX/6qurvIxbxw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@600&display=swap"
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-        integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Scripts for Image Generation & Compression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
-        integrity="sha512-AqNGerESFmfQYTtyWZDQv8WSi4ICG16z/O+8JyAD5Iaafp+fnAU4xbJipYZ0bU9DrhXAsx1Vylli0oebd9l55g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <!-- Page Styles -->
     <style>
         :root {
-            --primary-color: #0A2540;
-            --primary-light: #3c6e9e;
+            --primary-color: #0d2c4f;
+            --primary-dark: #0A2540;
             --accent-color: #FDB813;
-            --text-color: #1a1f36;
+            --accent-hover: #e4a60b;
+            --text-color: #333;
             --text-light: #6c757d;
             --card-bg: #ffffff;
-            --body-bg: #f0f2f5;
+            --body-bg: #f4f7fa;
             --border-color: #dee2e6;
-            --danger-color: #e74c3c;
-            --success-color: #20c997;
+            --success-color: #198754;
+            --danger-color: #dc3545;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             color: var(--text-color);
             background-color: var(--body-bg);
-            line-height: 1.6;
         }
 
-        .registration-container {
+        .main-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
+            padding: 2rem 1rem;
         }
 
-        .registration-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            border: none;
-            overflow: hidden;
-            width: 100%;
+        .registration-wrapper {
             max-width: 1200px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .info-panel {
-            background-color: var(--primary-color);
+            background-color: var(--primary-dark);
             color: #fff;
+            padding: 3rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 2rem;
+            justify-content: center;
+        }
+
+        .info-panel .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .info-panel .lead {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .event-detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .event-detail-item .icon {
+            font-size: 1.5rem;
+            width: 40px;
+            color: var(--accent-color);
         }
 
         .form-panel {
-            padding: 2rem;
+            padding: 3rem 4rem;
         }
 
-        @media (min-width: 992px) {
+        @media (max-width: 991.98px) {
             .form-panel {
-                padding: 3rem 4rem;
+                padding: 2rem;
             }
         }
 
         .form-panel .form-heading {
-            font-family: 'Lora', serif;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-            font-size: clamp(1.75rem, 5vw, 2.25rem);
-            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-dark);
+            font-size: clamp(2rem, 5vw, 2.5rem);
         }
 
-        .form-floating>.form-control {
-            height: calc(3.5rem + 2px);
+        .form-control,
+        .form-check-input {
+            border-radius: 8px;
         }
 
         .form-control:focus,
         .form-check-input:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 0.2rem rgba(10, 37, 64, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
         }
 
-        .btn-primary {
-            background-image: linear-gradient(45deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            border: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(10, 37, 64, 0.2);
-            font-weight: 600;
-            padding: 0.9rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(10, 37, 64, 0.3);
-        }
-
-        .custom-file-input {
+        /* --- Image Upload Customization --- */
+        .image-upload-wrapper {
             position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            width: 100%;
-            cursor: pointer;
-            transition: border-color 0.2s ease-in-out;
-            background-color: #fff;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem auto;
         }
 
-        .custom-file-input:hover {
-            border-color: var(--primary-light);
+        #imagePreview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--border-color);
+            background-color: #e9ecef;
+            transition: all 0.3s ease;
         }
 
-        .custom-file-input input[type="file"] {
+        #profileImage {
+            display: none;
+        }
+
+        #uploadLabel {
             position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            height: 100%;
-            width: 100%;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-dark);
+            color: white;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
         }
 
-        .custom-file-input .file-input-label {
-            display: flex;
-            align-items: center;
+        #uploadLabel:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- Checkbox Customization --- */
+        .day-selector .form-check {
+            padding-left: 0;
+        }
+
+        .day-selector .form-check-input {
+            display: none;
+        }
+
+        .day-selector .form-check-label {
+            display: block;
             padding: 0.75rem 1rem;
-            color: var(--text-light);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            font-weight: 500;
         }
 
-        .custom-file-input .file-input-label i {
-            margin-right: 0.75rem;
-            color: var(--primary-color);
+        .day-selector .form-check-input:checked+.form-check-label {
+            background-color: var(--primary-dark);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 5px 15px rgba(10, 37, 64, 0.2);
+            transform: translateY(-2px);
         }
 
-        #id-card {
-            width: 100%;
-            max-width: 400px;
-            /* Constrain width for better appearance */
-            margin: 0 auto;
+        .btn-submit {
+            background: var(--accent-color);
+            border: none;
+            color: var(--primary-dark);
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            color: var(--primary-dark);
+            box-shadow: 0 7px 20px rgba(228, 166, 11, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .success-view {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        #download-id-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* --- Visitor Pass Template --- */
+        #id-card-template {
+            display: none;
+        }
+
+        .id-card {
+            width: 380px;
+            font-family: 'Inter', sans-serif;
             background-color: var(--card-bg);
-            border-radius: 15px;
-            font-family: 'Poppins', sans-serif;
+            border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
             overflow: hidden;
             text-align: center;
+            border: 1px solid var(--border-color);
         }
 
         .id-card-header {
-            background-color: var(--primary-color);
-            padding: 1.5rem 1rem 4.5rem 1rem;
+            background: var(--primary-dark);
+            padding: 1.5rem 1rem;
         }
 
-        .id-card-header-text {
+        .id-card-header .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1.1;
+        }
+
+        .id-card-header .pass-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
             color: #fff;
-            opacity: 0.8;
-            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-top: 0.5rem;
         }
 
         .id-card-body {
             position: relative;
-            padding: 1rem;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            background-image: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .id-card-photo-wrapper {
+            margin-top: -65px;
+            position: relative;
+            z-index: 10;
         }
 
         .id-card-photo {
@@ -207,288 +291,222 @@
             height: 130px;
             object-fit: cover;
             border-radius: 50%;
-            border: 6px solid var(--card-bg);
+            border: 6px solid #fff;
+            background: var(--card-bg);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            margin-top: -80px;
-            background: #fff;
         }
 
         .id-card-name {
+            font-size: 1.7rem;
             font-weight: 700;
-            color: var(--primary-color);
-            font-size: clamp(1.5rem, 5vw, 1.9rem);
+            color: var(--primary-dark);
             margin-top: 1rem;
             line-height: 1.2;
-            word-wrap: break-word;
         }
 
         .id-card-firm {
-            font-size: clamp(1rem, 4vw, 1.1rem);
-            color: var(--text-color);
+            font-size: 1.1rem;
             font-weight: 500;
-            margin-bottom: 1.5rem;
-            word-wrap: break-word;
+            color: var(--text-color);
         }
 
-        .id-card-details {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        .id-card-details i {
-            color: var(--primary-light);
-            margin-right: 0.3rem;
-        }
-
-        .id-card-footer {
-            background-color: var(--body-bg);
-            padding: 1rem;
-            border-top: 1px solid var(--border-color);
+        .id-card-reg-wrapper {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed var(--border-color);
         }
 
         .id-card-footer-label {
             font-weight: 600;
             color: var(--text-light);
-            text-transform: uppercase;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .id-card-reg-number {
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
-            font-size: clamp(1.2rem, 5vw, 1.6rem);
-            color: var(--primary-color);
-            word-break: break-all;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
         }
 
-        .id-card-event-details {
-            border-top: 1px dashed var(--border-color);
-            margin-top: 1rem;
-            padding-top: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-color);
-        }
-
-        .id-card-event-details p {
-            margin-bottom: 0.25rem;
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        .id-card-event-details i {
-            width: 20px;
-            text-align: center;
-            color: var(--primary-light);
-            margin-right: 0.5rem;
-        }
-
-        .id-card-notice {
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .modal-header-error {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .modal-header-info {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
+        .id-card-footer {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
             color: var(--text-light);
+            font-size: 0.8rem;
         }
 
-        .footer a {
-            color: var(--primary-color);
-            font-weight: 500;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-
-        .footer a:hover {
-            color: var(--primary-light);
-            text-decoration: underline;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.15);
-            }
-        }
-
-        .footer .fa-heart {
-            color: var(--danger-color);
-            animation: pulse 1.5s ease-in-out infinite;
-            display: inline-block;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            .footer .fa-heart,
-            .btn-primary:hover {
-                animation: none;
-                transform: none;
-            }
+        .id-card-attendance-date {
+            font-weight: 600;
+            color: var(--primary-dark);
+            background-color: var(--accent-color);
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 
 <body>
-    <main class="registration-container">
-        <div class="card registration-card">
+    <div class="main-container">
+        <div class="registration-wrapper">
             <div class="row g-0">
+                <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
-                        <img src="assets/unnamed.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/500x300/0A2540/FFF?text=TENT+DECOR+EXPO+UP+2025';"
-                            alt="Tent Decor Expo UP 2025 Banner" class="img-fluid rounded-3 mb-4">
-                        <p class="lead mb-4 text-center">Join industry leaders and innovators at the premier expo for
-                            tent, catering, sound & SFX products.</p>
-                        <div class="text-center my-4">
-                            <h5 class="fw-bold mb-3" style="color: var(--accent-color);">Event Details</h5>
-                            <p class="mb-2 fs-5">
-                                <i class="fas fa-calendar-alt fa-fw me-2"></i>
-                                Sept 12 · 13 · 14, 2025
-                            </p>
-                            <p class="fs-5" style="line-height: 1.5;"><i
-                                    class="fas fa-map-marker-alt fa-fw me-2"></i>Indira Gandhi Pratishthan, Lucknow</p>
+                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner"
+                            class="img-fluid rounded-3 mb-4">
+                        <h1 class="expo-title">TENT DECOR EXPO UP 2025</h1>
+                        <p class="lead">India's premier B2B trade show for the tent, decor, and event management
+                            industry.</p>
+                        <hr class="my-4" style="opacity: 0.3;">
+                        <div class="event-details-list">
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-calendar-days icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Dates</h5>
+                                    <p class="mb-0">September 12, 13 & 14, 2025</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-location-dot icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Venue</h5>
+                                    <p class="mb-0">Indira Gandhi Pratishthan, Lucknow</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-phone-volume icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Enquiries</h5>
+                                    <a href="tel:+917905881922"
+                                        class="text-white text-decoration-none d-block">7905881922</a>
+                                    <a href="tel:+919953903330"
+                                        class="text-white text-decoration-none d-block">9953903330</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-center mt-4">
-                        <h5 class="fw-bold mb-2" style="color: var(--accent-color);">For Enquiries</h5>
-                        <p class="mb-1 fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+917905881922"
-                                class="text-white text-decoration-none">7905881922</a></p>
-                        <p class="fs-5"><i class="fas fa-phone-alt fa-fw me-2"></i><a href="tel:+919953903330"
-                                class="text-white text-decoration-none">9953903330</a></p>
                     </div>
                 </div>
 
-                <div class="col-lg-7 form-panel d-flex flex-column">
-                    <div id="id-card-section" class="d-none text-center my-auto">
-                        <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
-                            Confirmed!</h2>
-                        <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it.</p>
-                        <div id="id-card-wrapper" class="mb-4"></div>
-                        <button id="download-id-btn" class="btn btn-primary w-100">
-                            <span class="button-text"><i class="fas fa-download me-2"></i>Download Visitor Pass</span>
-                            <span class="spinner-border spinner-border-sm d-none" role="status"
-                                aria-hidden="true"></span>
-                        </button>
+                <!-- Right-side Form Panel -->
+                <div class="col-lg-7 form-panel">
+                    <!-- Success View (Initially hidden) -->
+                    <div id="success-view" class="d-none success-view">
+                        <i class="fa-solid fa-circle-check text-success fa-5x mb-4"></i>
+                        <h2 class="form-heading mb-3">Registration Confirmed!</h2>
+                        <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it for
+                            entry.</p>
+                        <div id="id-card-wrapper" class="d-flex justify-content-center mb-4"></div>
+                        <div class="d-grid">
+                            <button id="download-id-btn" class="btn btn-submit">
+                                <i class="fas fa-download me-2"></i>Download Visitor Pass
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- Form View (Initially visible) -->
                     <div id="form-container">
-                        <h2 class="form-heading">Get Your Visitor Pass</h2>
-                        <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Upload Your Photo <span
-                                        class="text-danger">*</span></label>
-                                <div class="custom-file-input">
-                                    <input type="file" id="profileImage" name="profileImage"
-                                        accept="image/png, image/jpeg, image/jpg" required>
-                                    <label class="file-input-label" for="profileImage"><i
-                                            class="fas fa-upload"></i><span>Choose a file... (Max 5MB)</span></label>
+                        <h2 class="form-heading mb-1">Get Your Free Visitor Pass</h2>
+                        <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
+                        <form id="registrationForm" novalidate>
+                            <div class="image-upload-wrapper">
+                                <img id="imagePreview" src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload"
+                                    alt="Profile image preview">
+                                <input type="file" id="profileImage" name="profileImage"
+                                    accept="image/png, image/jpeg, image/jpg" required>
+                                <label for="profileImage" id="uploadLabel" title="Upload Photo"><i
+                                        class="fa-solid fa-camera"></i></label>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required
+                                        minlength="3">
                                 </div>
-                            </div>
-                            <div class="col-md-6 form-floating">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
-                                    required minlength="3">
-                                <label for="name">Full Name</label>
-                            </div>
-                            <div class="col-md-6 form-floating">
-                                <input type="tel" class="form-control" id="phone" name="phone"
-                                    placeholder="Phone Number" required pattern="^[6-9]\d{9}$">
-                                <label for="phone">10-Digit Phone Number</label>
-                            </div>
-                            <div class="col-12 form-floating">
-                                <input type="text" class="form-control" id="firmName" name="firmName"
-                                    placeholder="Firm Name" required minlength="3">
-                                <label for="firmName">Firm Name</label>
-                            </div>
-                            <div class="col-12 form-floating">
-                                <textarea class="form-control" placeholder="Full Address" id="address" name="address"
-                                    style="height: 100px" required minlength="10"></textarea>
-                                <label for="address">Full Address</label>
-                            </div>
-                            <div class="col-md-6 form-floating">
-                                <input type="text" class="form-control" id="district" name="district"
-                                    placeholder="District" required>
-                                <label for="district">District</label>
-                            </div>
-                            <div class="col-md-6 form-floating">
-                                <input type="text" class="form-control" id="state" name="state" placeholder="State"
-                                    required>
-                                <label for="state">State</label>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Attending Days:<span
-                                        class="text-danger">*</span></label>
-                                <div>
-                                    <div class="form-check d-inline-block me-3">
-                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 1"
-                                            id="day1">
-                                        <label class="form-check-label" for="day1">Day 1 (Sept 12, 2025)</label>
-                                    </div>
-                                    <div class="form-check d-inline-block me-3">
-                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 2"
-                                            id="day2">
-                                        <label class="form-check-label" for="day2">Day 2 (Sept 13, 2025)</label>
-                                    </div>
-                                    <div class="form-check d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="attendance" value="Day 3"
-                                            id="day3">
-                                        <label class="form-check-label" for="day3">Day 3 (Sept 14, 2025)</label>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label fw-semibold">10-Digit Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required
+                                        pattern="^[6-9]\d{9}$">
+                                </div>
+                                <div class="col-12">
+                                    <label for="firmName" class="form-label fw-semibold">Firm Name</label>
+                                    <input type="text" class="form-control" id="firmName" name="firmName" required
+                                        minlength="3">
+                                </div>
+                                <div class="col-12">
+                                    <label for="address" class="form-label fw-semibold">Full Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="3" required
+                                        minlength="10"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="district" class="form-label fw-semibold">District</label>
+                                    <input type="text" class="form-control" id="district" name="district" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="state" class="form-label fw-semibold">State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Select Attending Days</label>
+                                    <div class="row g-2 day-selector">
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 1" id="day1">
+                                                <label class="form-check-label" for="day1">Day 1<br><small>Sep
+                                                        12</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 2" id="day2">
+                                                <label class="form-check-label" for="day2">Day 2<br><small>Sep
+                                                        13</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 3" id="day3">
+                                                <label class="form-check-label" for="day3">Day 3<br><small>Sep
+                                                        14</small></label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12 mt-4">
-                                <button class="btn btn-primary w-100" type="submit" id="submitBtn">
-                                    <span class="button-text">Get My Visitor Pass</span>
-                                    <span class="spinner-border spinner-border-sm d-none" role="status"
-                                        aria-hidden="true"></span>
-                                </button>
+                                <div class="col-12 mt-4 d-grid">
+                                    <button class="btn btn-submit" type="submit" id="submitBtn">
+                                        <span class="button-text">Register & Get Pass</span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="footer">
-        <p>Crafted with <i class="fas fa-heart" aria-hidden="true"></i> by <a href="https://ellowdigital.netlify.app"
-                target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
-    </footer>
-
+    <!-- Universal Info/Error Modal -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" id="infoModalHeader">
-                    <h5 class="modal-title" id="infoModalTitle"></h5>
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header text-white" id="infoModalHeader">
+                    <h5 class="modal-title fw-bold" id="infoModalTitle"></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="infoModalBody"></div>
+                <div class="modal-body p-4" id="infoModalBody">
+                    <!-- Dynamic content will be injected here -->
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -496,368 +514,273 @@
         </div>
     </div>
 
-    <div id="id-card-template" class="d-none">
-        <div id="id-card">
-            <div class="id-card-header" style="text-align: center; padding: 0.5rem 0;">
-                <div class="id-card-header-text"
-                    style="font-size: 2rem; font-weight: 900; color: #FDB813; line-height: 1;">TENT
-                    DECOR EXPO UP 2025</div>
-                <div class="id-card-subheading"
-                    style="font-size: 1.2rem; font-weight: 600; color: #333; margin-top: 0.25rem;">Visitor Pass</div>
+    <!-- "Already Registered" Modal -->
+    <div class="modal fade" id="alreadyRegisteredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-body text-center p-4">
+                    <i class="fa-solid fa-user-check fa-4x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="modal-title mb-2 fw-bold" id="modalLabel">You're Already Registered!</h5>
+                    <p class="text-muted">Welcome back, <strong id="registeredUserName"></strong>! We found a visitor
+                        pass linked to this phone number.</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="button" class="btn btn-submit" id="modalDownloadBtn">
+                            <i class="fas fa-download me-2"></i>Download Your Visitor Pass
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visitor Pass Template for generation -->
+    <div id="id-card-template">
+        <div class="id-card">
+            <div class="id-card-header">
+                <div class="expo-title">TENT DECOR EXPO UP 2025</div>
+                <div class="pass-subtitle">VISITOR PASS</div>
             </div>
             <div class="id-card-body">
-                <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
-                <h4 class="id-card-name"></h4>
+                <div class="id-card-photo-wrapper">
+                    <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
+                </div>
+                <h3 class="id-card-name"></h3>
                 <p class="id-card-firm"></p>
-                <div class="id-card-details">
-                    <span><i class="fas fa-phone"></i><span class="id-card-phone"></span></span>
+                <div class="id-card-attendance-date"></div>
+                <div class="id-card-reg-wrapper">
+                    <div class="id-card-footer-label">REGISTRATION NO.</div>
+                    <div class="id-card-reg-number"></div>
                 </div>
             </div>
             <div class="id-card-footer">
-                <small class="id-card-footer-label">REGISTRATION NO.</small>
-                <div class="id-card-reg-number"></div>
-                <div class="id-card-event-details">
-                    <p class="id-card-attendance-date"><i class="fas fa-calendar-alt fa-fw"></i> <span></span></p>
-                    <p><i class="fas fa-map-marker-alt fa-fw"></i> Indira Gandhi Pratishthan, Lucknow</p>
-                </div>
+                <i class="fa-solid fa-location-dot me-1"></i> Indira Gandhi Pratishthan, Lucknow
             </div>
-            <div class="id-card-notice">Please keep this pass safe. You are responsible if it is lost.</div>
         </div>
     </div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.min.js"
-        integrity="sha512-zKeerWHHuP3ar7kX2WKBSENzb+GJytFSBL6HrR2nPSR1kOX1qjm+oHooQtbDpDBSITgyl7QXZApvDfDWvKjkUw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             // --- Configuration & Constants ---
-            const CONSTANTS = {
-                API: {
-                    SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
-                },
-                MAX_SUBMISSION_RETRIES: 3,
-                MAX_FILE_SIZE_MB: 5,
-                FORM_DATA_KEY: 'tentExpoFormData'
-            };
+            const API_ENDPOINT = '/.netlify/functions/submit-registration';
 
-            // --- State ---
-            let compressedImageFile = null;
-
-            // --- DOM Element Caching ---
+            // --- DOM Elements ---
             const form = document.getElementById('registrationForm');
             const submitBtn = document.getElementById('submitBtn');
             const formContainer = document.getElementById('form-container');
-            const idCardSection = document.getElementById('id-card-section');
+            const successView = document.getElementById('success-view');
             const idCardWrapper = document.getElementById('id-card-wrapper');
             const downloadBtn = document.getElementById('download-id-btn');
+            const profileImageInput = document.getElementById('profileImage');
+            const imagePreview = document.getElementById('imagePreview');
+
+            // Modal elements
             const infoModalEl = document.getElementById('infoModal');
             const infoModal = new bootstrap.Modal(infoModalEl);
-            const profileImageInput = document.getElementById('profileImage');
-            const fileInputLabel = document.querySelector('.custom-file-input .file-input-label span');
+            const registeredModalEl = document.getElementById('alreadyRegisteredModal');
+            const registeredModal = new bootstrap.Modal(registeredModalEl);
+            const modalUserName = document.getElementById('registeredUserName');
+            const modalDownloadBtn = document.getElementById('modalDownloadBtn');
 
-            // --- UI Functions ---
-            function showInfo(title, content, isError = true) {
-                const modalTitle = infoModalEl.querySelector('#infoModalTitle');
+            // --- State ---
+            let compressedImageFile = null;
+            let existingUserData = null;
+
+            // --- UI & UX Functions ---
+            function setButtonLoading(button, isLoading) {
+                const buttonText = button.querySelector('.button-text');
+                const spinner = button.querySelector('.spinner-border');
+                if (!buttonText || !spinner) return;
+
+                button.disabled = isLoading;
+                buttonText.classList.toggle('d-none', isLoading);
+                spinner.classList.toggle('d-none', !isLoading);
+            }
+
+            function showInfoModal(title, content, type = 'error') {
                 const modalHeader = infoModalEl.querySelector('#infoModalHeader');
+                const modalTitle = infoModalEl.querySelector('#infoModalTitle');
                 const modalBody = infoModalEl.querySelector('#infoModalBody');
 
-                modalTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} me-2"></i>${title}`;
-                modalHeader.className = `modal-header text-white ${isError ? 'bg-danger' : 'bg-success'}`;
-                modalBody.innerHTML = '';
+                const typeConfig = {
+                    error: { bg: 'bg-danger', icon: 'fa-solid fa-circle-xmark' },
+                    success: { bg: 'bg-success', icon: 'fa-solid fa-circle-check' },
+                    info: { bg: 'bg-primary', icon: 'fa-solid fa-circle-info' }
+                };
+                const config = typeConfig[type] || typeConfig.error;
 
+                modalHeader.className = `modal-header text-white ${config.bg}`;
+                modalTitle.innerHTML = `<i class="${config.icon} me-2"></i> ${title}`;
+
+                modalBody.innerHTML = '';
                 if (typeof content === 'string') {
-                    modalBody.textContent = content;
+                    modalBody.innerHTML = content;
                 } else {
                     modalBody.appendChild(content);
                 }
                 infoModal.show();
             }
 
-            function setButtonLoading(button, isLoading, loadingText = 'Processing...') {
-                const buttonText = button.querySelector('.button-text');
-                const buttonSpinner = button.querySelector('.spinner-border');
-                button.disabled = isLoading;
+            async function generateAndDownloadPass(userData) {
+                const passElement = createPassElement(userData);
+                document.body.appendChild(passElement);
 
-                if (isLoading) {
-                    if (buttonText && !button.dataset.originalText) {
-                        button.dataset.originalText = buttonText.textContent;
-                    }
-                    if (buttonText) buttonText.textContent = loadingText;
-                    buttonSpinner?.classList.remove('d-none');
-                } else {
-                    if (buttonText && button.dataset.originalText) {
-                        buttonText.textContent = button.dataset.originalText;
-                    }
-                    buttonSpinner?.classList.add('d-none');
+                try {
+                    const canvas = await html2canvas(passElement, { scale: 3, useCORS: true, backgroundColor: null });
+                    const link = document.createElement('a');
+                    const name = userData.name.trim().replace(/\s+/g, '_');
+                    link.download = `Visitor-Pass_${name}_${userData.registrationId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    console.error('Download Error:', err);
+                    showInfoModal('Download Failed', 'Could not generate the pass image. Please try taking a screenshot instead.', 'error');
+                } finally {
+                    document.body.removeChild(passElement);
                 }
             }
 
-            function populateAndShowIdCard(container, data) {
+            // --- Visitor Pass Generation ---
+            function createPassElement(data) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
-                const card = template.querySelector('#id-card');
+                const card = template.firstElementChild;
 
-                const dateMap = {
-                    'Day 1': 'Sep 12',
-                    'Day 2': 'Sep 13',
-                    'Day 3': 'Sep 14'
-                };
+                const dateMap = { 'Day 1': 'Sep 12', 'Day 2': 'Sep 13', 'Day 3': 'Sep 14' };
                 const attendingDays = (data.attendance || '').split(',').map(d => d.trim()).filter(Boolean);
-                let attendanceText;
-
-                if (attendingDays.length >= 3 || attendingDays.length === 0) {
-                    attendanceText = 'All Days (Sep 12-14, 2025)';
-                } else if (attendingDays.length === 1) {
-                    attendanceText = `Attending On: ${dateMap[attendingDays[0]]}, 2025`;
-                } else {
-                    const formattedDates = attendingDays.map(d => dateMap[d]);
-                    attendanceText = `Attending On: ${formattedDates.join(' & ')}, 2025`;
-                }
+                let attendanceText = (attendingDays.length >= 3 || attendingDays.length === 0)
+                    ? 'All Days (Sep 12-14, 2025)'
+                    : `Attending: ${attendingDays.map(d => dateMap[d] || d).join(' & ')}, 2025`;
 
                 card.querySelector('.id-card-photo').src = data.profileImageUrl;
                 card.querySelector('.id-card-name').textContent = data.name;
                 card.querySelector('.id-card-firm').textContent = data.firmName;
-                card.querySelector('.id-card-phone').textContent = `+91-${data.phone}`;
                 card.querySelector('.id-card-reg-number').textContent = data.registrationId;
-                card.querySelector('.id-card-attendance-date span').textContent = attendanceText;
+                card.querySelector('.id-card-attendance-date').textContent = attendanceText;
 
-                container.innerHTML = '';
-                container.appendChild(card);
-
-                formContainer.classList.add('d-none');
-                idCardSection.classList.remove('d-none');
+                return card;
             }
 
-            // --- LocalStorage & Form Persistence ---
-            function saveFormData() {
-                const formData = new FormData(form);
-                const data = {};
-                for (const [key, value] of formData.entries()) {
-                    if (key === 'attendance') {
-                        if (!data[key]) data[key] = [];
-                        data[key].push(value);
-                    } else if (key !== 'profileImage') { // Don't save file input to localStorage
-                        data[key] = value;
+            // --- Form & Input Handling ---
+            profileImageInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const originalSizeMB = file.size / 1024 / 1024;
+
+                // Set a reasonable absolute max size to prevent browser issues
+                if (originalSizeMB > 15) {
+                    showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
+                    profileImageInput.value = ''; // Reset the input
+                    return;
+                }
+
+                imagePreview.src = URL.createObjectURL(file);
+
+                // Define dynamic compression options
+                const options = {
+                    maxWidthOrHeight: 800, // Guarantees resolution won't be excessively low
+                    useWebWorker: true,
+                    initialQuality: 0.8, // Try to preserve quality before resizing
+                };
+
+                // Apply specific target sizes based on original file size
+                if (originalSizeMB > 10) {
+                    options.maxSizeMB = 0.05; // Target ~50KB for files > 10MB
+                } else if (originalSizeMB >= 2 && originalSizeMB <= 5) {
+                    options.maxSizeMB = 0.02; // Target ~20KB for files from 2-5MB
+                } else {
+                    options.maxSizeMB = 0.3; // A more reasonable default for smaller files
+                }
+
+                try {
+                    console.log(`Original size: ${originalSizeMB.toFixed(2)}MB. Compressing with target size: ${options.maxSizeMB}MB`);
+                    compressedImageFile = await imageCompression(file, options);
+                    console.log(`Final compressed size: ${(compressedImageFile.size / 1024).toFixed(2)}KB`);
+                } catch (error) {
+                    console.error('Image compression error:', error);
+                    // Fallback to a safer compression if the aggressive one fails or is problematic
+                    try {
+                        console.warn('Aggressive compression failed. Falling back to safer default.');
+                        compressedImageFile = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1024 });
+                        showInfoModal('Image Note', 'The provided image was compressed to a standard size to ensure quality.', 'info');
+                    } catch (fallbackError) {
+                        console.error('Fallback compression also failed:', fallbackError);
+                        compressedImageFile = file; // Use original if all else fails
+                        showInfoModal('Compression Failed', 'Could not process the image. The original, uncompressed file will be used.', 'error');
                     }
                 }
-                localStorage.setItem(CONSTANTS.FORM_DATA_KEY, JSON.stringify(data));
-            }
+            });
 
-            function loadFormData() {
-                const savedData = localStorage.getItem(CONSTANTS.FORM_DATA_KEY);
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    Object.keys(data).forEach(key => {
-                        const element = form.elements[key];
-                        if (element) {
-                            if (key === 'attendance' && Array.isArray(data[key])) {
-                                data[key].forEach(value => {
-                                    const checkbox = document.querySelector(`input[name="attendance"][value="${value}"]`);
-                                    if (checkbox) checkbox.checked = true;
-                                });
-                            } else if (element.type !== 'file') {
-                                element.value = data[key];
-                            }
-                        }
-                    });
-                }
-            }
-
-            function clearFormData() {
-                localStorage.removeItem(CONSTANTS.FORM_DATA_KEY);
-            }
-
-            // --- Validation and Logic ---
             function validateForm() {
                 const errors = [];
-                if (!compressedImageFile && profileImageInput.files.length === 0) {
-                    errors.push('Profile Photo is required.');
-                }
-
-                form.querySelectorAll('[required]:not([type="file"])').forEach(el => {
-                    if (!el.checkValidity()) {
-                        const label = el.labels[0]?.textContent.replace('*', '').trim() || el.name;
-                        errors.push(`${label} is invalid or missing.`);
-                    }
-                });
-
-                if (form.querySelectorAll('input[name="attendance"]:checked').length === 0) {
-                    errors.push('Please select at least one Attending Day.');
-                }
+                if (profileImageInput.files.length === 0) errors.push('A profile photo is required.');
+                if (!form.elements.name.checkValidity()) errors.push('Please enter your full name (min. 3 characters).');
+                if (!form.elements.phone.checkValidity()) errors.push('Please enter a valid 10-digit phone number.');
+                if (!form.elements.firmName.checkValidity()) errors.push('Please enter your firm name (min. 3 characters).');
+                if (!form.elements.address.checkValidity()) errors.push('Please enter your full address (min. 10 characters).');
+                if (!form.elements.district.checkValidity()) errors.push('Please enter your district.');
+                if (!form.elements.state.checkValidity()) errors.push('Please enter your state.');
+                if (document.querySelectorAll('input[name="attendance"]:checked').length === 0) errors.push('Please select at least one attending day.');
 
                 if (errors.length > 0) {
                     const errorList = document.createElement('ul');
-                    errorList.className = 'list-unstyled text-start mb-0';
-                    errors.forEach(err => {
+                    errorList.className = 'list-unstyled text-start mb-0 ps-2';
+                    errors.forEach(errText => {
                         const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-times-circle text-danger me-2"></i>${err}`;
+                        li.innerHTML = `<i class="fa-solid fa-times-circle text-danger me-2"></i>${errText}`;
                         errorList.appendChild(li);
                     });
-                    const message = document.createElement('div');
-                    message.innerHTML = '<p class="fw-bold mb-2">Please correct the following:</p>';
-                    message.appendChild(errorList);
-                    showInfo('Missing Information', message, true);
+                    showInfoModal('Please Complete the Form', errorList, 'error');
                     return false;
                 }
                 return true;
             }
 
-            async function retryWithBackoff(fn, retries = CONSTANTS.MAX_SUBMISSION_RETRIES, delay = 1000) {
-                for (let i = 0; i < retries; i++) {
-                    try {
-                        return await fn();
-                    } catch (err) {
-                        if (i === retries - 1) throw err;
-                        await new Promise(r => setTimeout(r, delay * 2 ** i));
-                    }
-                }
-            }
-
-            // --- Event Handlers ---
-            async function handleFormSubmit(e) {
+            // --- Main Form Submission Logic ---
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (!validateForm()) return;
 
-                setButtonLoading(submitBtn, true, 'Finalizing Registration...');
-
-                const submitRegistration = async () => {
-                    if (!navigator.onLine) {
-                        throw new Error("You are offline. Please reconnect to finalize your registration.");
-                    }
-                    const formData = new FormData(form);
-
-                    // Replace original file with the compressed one if it exists
-                    if (compressedImageFile) {
-                        formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
-                    }
-
-                    const res = await fetch(CONSTANTS.API.SUBMIT_REGISTRATION, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const json = await res.json();
-
-                    // Handle existing user case
-                    if (res.status === 409) {
-                        showInfo('Already Registered', 'We found an existing registration with this phone number. Your visitor pass is displayed below.', false);
-                        populateAndShowIdCard(idCardWrapper, json.registrationData);
-                        clearFormData();
-                        return null; // Stop further processing
-                    }
-
-                    if (!res.ok || json.status !== 'success') {
-                        throw new Error(json.error || 'Unknown submission failure');
-                    }
-                    return json;
-                };
+                setButtonLoading(submitBtn, true);
+                const formData = new FormData(form);
+                if (compressedImageFile) {
+                    formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
+                }
 
                 try {
-                    const result = await retryWithBackoff(submitRegistration);
-                    // If result is null, it means the user was already registered and the UI has been handled.
-                    if (result) {
-                        populateAndShowIdCard(idCardWrapper, result.registrationData);
-                        clearFormData(); // Success, so clear the stored form data
+                    const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
+                    const result = await response.json();
+
+                    if (response.status === 409 && result.status === 'exists') {
+                        existingUserData = result.registrationData;
+                        modalUserName.textContent = result.registrationData.name;
+                        registeredModal.show();
+                    } else if (response.ok && result.status === 'success') {
+                        const newPassElement = createPassElement(result.registrationData);
+                        idCardWrapper.innerHTML = '';
+                        idCardWrapper.appendChild(newPassElement);
+                        formContainer.classList.add('d-none');
+                        successView.classList.remove('d-none');
+                        downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
+                    } else {
+                        throw new Error(result.error || 'An unknown server error occurred.');
                     }
-                } catch (err) {
-                    const message = document.createElement('div');
-                    message.innerHTML = `<p class="mb-3">We couldn't confirm your registration due to an interruption.</p>
-                                     <p class="fw-bold">Please try submitting the form again.</p>
-                                     <p class="text-muted small">If the problem persists, please contact support.</p>`;
-                    showInfo('Registration Failed', message, true);
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    showInfoModal('Registration Failed', `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please try again or contact support if the problem persists.</p>`, 'error');
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }
+            });
 
-            }
-
-            async function handleDownloadIdCard() {
-                const cardElement = idCardWrapper.querySelector('#id-card');
-                if (!cardElement) return;
-
-                setButtonLoading(downloadBtn, true, 'Generating...');
-
-                try {
-                    // Temporarily remove shadow for cleaner capture
-                    const originalShadow = cardElement.style.boxShadow;
-                    cardElement.style.boxShadow = 'none';
-
-                    const canvas = await html2canvas(cardElement, {
-                        scale: 3,
-                        useCORS: true,
-                        backgroundColor: null // Use transparent background for PNG
-                    });
-
-                    // Restore shadow after capture
-                    cardElement.style.boxShadow = originalShadow;
-
-                    const link = document.createElement('a');
-                    const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
-                    const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                    link.download = `Visitor-Pass_${name}_${reg}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                } catch (err) {
-                    console.error('Download Error:', err);
-                    showInfo('Download Error', 'Could not generate image. Please try taking a screenshot instead.', true);
-                } finally {
-                    setButtonLoading(downloadBtn, false);
+            modalDownloadBtn.addEventListener('click', () => {
+                if (existingUserData) {
+                    generateAndDownloadPass(existingUserData);
                 }
-            }
+            });
 
-            async function handleFileChange(e) {
-                const file = e.target.files[0];
-                if (!file) {
-                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
-                    compressedImageFile = null;
-                    return;
-                }
-
-                // Client-side file size validation
-                const fileSizeMB = file.size / 1024 / 1024;
-                if (fileSizeMB > CONSTANTS.MAX_FILE_SIZE_MB) {
-                    showInfo('File Too Large', `The selected file is too large (${fileSizeMB.toFixed(2)} MB). Please choose a file smaller than ${CONSTANTS.MAX_FILE_SIZE_MB} MB.`, true);
-                    e.target.value = ''; // Reset the input
-                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
-                    compressedImageFile = null;
-                    return;
-                }
-
-                fileInputLabel.textContent = 'Compressing image...';
-
-                // Image compression options
-                const options = {
-                    maxSizeMB: 0.2, // Target size ~200KB, a good balance for profile pics
-                    maxWidthOrHeight: 800,
-                    useWebWorker: true,
-                    initialQuality: 0.8
-                }
-
-                try {
-                    const compressedFile = await imageCompression(file, options);
-                    console.log(`Original size: ${(file.size / 1024).toFixed(2)} KB`);
-                    console.log(`Compressed size: ${(compressedFile.size / 1024).toFixed(2)} KB`);
-                    fileInputLabel.textContent = `${file.name} (Compressed)`;
-                    compressedImageFile = compressedFile; // Store the compressed file
-                } catch (error) {
-                    console.error('Image compression error:', error);
-                    showInfo('Compression Error', 'Could not compress the image. Please try another one.', true);
-                    e.target.value = '';
-                    fileInputLabel.textContent = 'Choose a file... (Max 5MB)';
-                    compressedImageFile = null;
-                }
-            }
-
-            // --- Initializing Event Listeners ---
-            form.addEventListener('submit', handleFormSubmit);
-            downloadBtn.addEventListener('click', handleDownloadIdCard);
-            profileImageInput.addEventListener('change', handleFileChange);
-
-            // Add listeners for saving form data to localStorage
-            form.addEventListener('input', saveFormData);
-
-            // Load any saved form data on page load
-            loadFormData();
         });
     </script>
 </body>
