@@ -72,6 +72,9 @@ exports.handler = async (event) => {
                 { header: "District / City", key: "city", width: 25 },
                 { header: "State", key: "state", width: 25 },
                 { header: "Attending Days", key: "day", width: 25 },
+                // --- ADD THIS LINE BACK ---
+                { header: "Payment ID", key: "payment_id", width: 30 },
+                // -------------------------
                 { header: "Registered On", key: "timestamp", width: 25, style: { numFmt: "dd-mmm-yyyy hh:mm:ss" } },
                 { header: "Profile Image URL", key: "image_url", width: 50 },
             ];
