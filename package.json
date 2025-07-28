@@ -12,12 +12,12 @@
     "build": "echo 'No build step required, deploying functions.'"
   },
   "dependencies": {
-    "busboy": "^1.8.0",
-    "cloudinary": "^1.41.0",
-    "exceljs": "^4.5.1",
-    "googleapis": "^133.0.0",
-    "pg": "^8.11.5",
-    "pg-query-stream": "^4.2.5",
-    "razorpay": "^2.11.0"
+    "busboy": "1.6.0",
+    "cloudinary": "1.37.0",
+    "exceljs": "4.4.0",
+    "googleapis": "128.0.0",
+    "pg": "8.11.3",
+    "pg-query-stream": "4.2.3",
+    "razorpay": "2.9.4"
   }
 }
