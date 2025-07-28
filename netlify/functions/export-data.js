@@ -14,14 +14,13 @@ cloudinary.config({
 });
 
 exports.handler = async (event) => {
-    // 1. Security Check
     const providedKey = event.headers["x-admin-key"];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
     if (!providedKey || providedKey !== secretKey) {
         return {
             statusCode: 401,
-            body: JSON.stringify({ error: "Unauthorized: Missing or invalid credentials." }),
+            body: JSON.stringify({ error: "Unauthorized." }),
         };
     }
 
@@ -31,9 +30,18 @@ exports.handler = async (event) => {
             dbClient = await pool.connect();
             console.log("Export started: Acquired database client.");
 
-            const query = new QueryStream("SELECT * FROM registrations ORDER BY timestamp ASC");
-            const dbStream = dbClient.query(query);
+            // --- THIS IS THE CORRECTED SQL QUERY ---
+            // Explicitly select only the columns needed for the export.
+            const sql = `
+                SELECT 
+                    registration_id, name, company, phone, address, 
+                    city, state, day, payment_id, timestamp, image_url 
+                FROM registrations ORDER BY timestamp ASC
+            `;
+            const query = new QueryStream(sql);
+            // -----------------------------------------
 
+            const dbStream = dbClient.query(query);
             const fileName = `expo-registrations-${new Date().toISOString().split("T")[0]}.xlsx`;
 
             const cloudinaryStream = cloudinary.uploader.upload_stream({
@@ -54,6 +62,8 @@ exports.handler = async (event) => {
                 useStyles: true,
             });
             const worksheet = workbook.addWorksheet("Registrations");
+
+            // This column list now perfectly matches the explicit SELECT statement.
             worksheet.columns = [
                 { header: "Registration ID", key: "registration_id", width: 22 },
                 { header: "Name", key: "name", width: 30 },
@@ -79,24 +89,19 @@ exports.handler = async (event) => {
                 reject(err);
             });
 
-            // --- THIS IS THE CORRECTED BLOCK ---
             dbStream.on('end', () => {
                 console.log("Database stream finished. Committing workbook to finalize.");
-                // We MUST wait for the commit promise to resolve.
                 workbook.commit()
                     .then(() => {
-                        console.log("Workbook commit successful. The upload stream is now closed.");
+                        console.log("Workbook commit successful.");
                     })
                     .catch((err) => {
                         console.error("Error committing workbook:", err);
                         reject(err);
                     });
             });
-            // ------------------------------------
         });
 
-        // 3. Return the successful response with the secure download URL.
-        console.log(`File available at: ${uploadResult.secure_url}`);
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
