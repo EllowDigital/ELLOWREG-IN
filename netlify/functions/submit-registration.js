@@ -36,7 +36,7 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
 
   const fields = {};
   const files = {};
-  const attendanceDays = []; // Array to hold multiple day selections
+  const attendanceDays = [];
 
   bb.on("file", (name, file, info) => {
     const chunks = [];
@@ -52,7 +52,6 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   });
 
   bb.on("field", (name, value) => {
-    // BUG FIX: Collect all 'attendance' values instead of overwriting.
     if (name === 'attendance') {
       attendanceDays.push(value);
     } else {
@@ -61,7 +60,6 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   });
 
   bb.on("close", () => {
-    // Join the collected days into a single comma-separated string for the DB.
     if (attendanceDays.length > 0) {
       fields.attendance = attendanceDays.join(', ');
     }
@@ -71,7 +69,6 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   bb.on("error", (err) => reject(new Error(`Error parsing form data: ${err.message}`)));
   bb.end(Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"));
 });
-
 
 /**
  * Uploads a file buffer to Cloudinary.
@@ -112,7 +109,10 @@ exports.handler = async (event) => {
     const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
 
     if (rows.length > 0) {
-      dbClient.release();
+      // **BUG FIX:** The `dbClient.release()` call was removed from this block.
+      // Releasing the client here and also in the `finally` block causes a
+      // "double release" error, which crashes the function and results in a 502 error.
+      // The `finally` block is the single source of truth for releasing the client.
       const registrationData = {
         registrationId: rows[0].registration_id,
         name: rows[0].name,
@@ -130,8 +130,6 @@ exports.handler = async (event) => {
         }),
       };
     }
-    dbClient.release();
-    dbClient = null;
 
     // Validation for new registration
     if (!name || !trimmedPhone || !firmName || !profileImage || !attendance) {
@@ -147,7 +145,6 @@ exports.handler = async (event) => {
     const registrationTimestamp = new Date();
 
     // Insert new record into the database
-    dbClient = await pool.connect();
     const insertQuery = `
             INSERT INTO registrations (registration_id, name, company, phone, address, city, state, day, payment_id, image_url, timestamp)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -211,6 +208,8 @@ exports.handler = async (event) => {
       }),
     };
   } finally {
+    // This `finally` block is the single, guaranteed place where the client is released.
+    // It runs regardless of whether the function returns successfully or throws an error.
     if (dbClient) {
       dbClient.release();
     }
