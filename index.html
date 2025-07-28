@@ -238,50 +238,57 @@
         /* --- Visitor Pass Template --- */
         #id-card-template {
             display: none;
+            /* Hide the template itself */
         }
 
         .id-card {
             width: 380px;
             font-family: 'Inter', sans-serif;
-            background-color: var(--card-bg);
+            background-color: #F4F7FA;
+            /* Match body background from image */
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             text-align: center;
-            border: 1px solid var(--border-color);
+            border: 1px solid #E0E0E0;
         }
 
         .id-card-header {
             background: var(--primary-dark);
             padding: 1.5rem 1rem;
+            padding-bottom: 75px;
+            /* Add padding to push content down below the overlapping photo */
         }
 
         .id-card-header .expo-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
+            font-size: 2rem;
+            /* Slightly increased font size */
             font-weight: 700;
             color: var(--accent-color);
             line-height: 1.1;
         }
 
         .id-card-header .pass-subtitle {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #fff;
             letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: 0.9;
+            opacity: 0.8;
             margin-top: 0.5rem;
         }
 
         .id-card-body {
             position: relative;
             padding: 1rem 1.5rem 1.5rem 1.5rem;
-            background-image: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+            background-color: transparent;
+            /* Remove gradient to match clean background */
         }
 
         .id-card-photo-wrapper {
             margin-top: -65px;
+            /* Pulls the photo up to overlap the header */
             position: relative;
             z-index: 10;
         }
@@ -291,16 +298,19 @@
             height: 130px;
             object-fit: cover;
             border-radius: 50%;
-            border: 6px solid #fff;
+            border: 6px solid #F4F7FA;
+            /* Border color matches the new card body bg */
             background: var(--card-bg);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .id-card-name {
-            font-size: 1.7rem;
+            font-size: 1.8rem;
+            /* Slightly larger for more impact */
             font-weight: 700;
             color: var(--primary-dark);
             margin-top: 1rem;
+            margin-bottom: 0.25rem;
             line-height: 1.2;
         }
 
@@ -308,18 +318,38 @@
             font-size: 1.1rem;
             font-weight: 500;
             color: var(--text-color);
+            margin-bottom: 1.5rem;
+            /* Add space below firm name */
+        }
+
+        /* NEW STYLES for the attendance date button */
+        .id-card-attendance-date {
+            display: inline-block;
+            /* Make it fit its content */
+            font-weight: 700;
+            color: var(--primary-dark);
+            background-color: var(--accent-color);
+            padding: 0.6rem 1.75rem;
+            /* Adjusted padding */
+            border-radius: 50px;
+            /* Pill shape */
+            margin-bottom: 1.5rem;
+            /* Space below the button */
+            font-size: 1rem;
+            text-transform: capitalize;
         }
 
         .id-card-reg-wrapper {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 2px dashed var(--border-color);
+            border-top: 2px dashed #CDD3D9;
+            /* Matched dashed line color */
         }
 
         .id-card-footer-label {
             font-weight: 600;
             color: var(--text-light);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -327,25 +357,18 @@
         .id-card-reg-number {
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            /* Increased size to match image */
             color: var(--primary-dark);
+            letter-spacing: 1px;
         }
 
         .id-card-footer {
-            background-color: #e9ecef;
+            background-color: transparent;
+            /* Make footer background transparent */
             padding: 1rem;
-            border-top: 1px solid var(--border-color);
+            padding-top: 0;
             color: var(--text-light);
-            font-size: 0.8rem;
-        }
-
-        .id-card-attendance-date {
-            font-weight: 600;
-            color: var(--primary-dark);
-            background-color: var(--accent-color);
-            padding: 0.5rem;
-            border-radius: 6px;
-            margin-top: 1rem;
             font-size: 0.9rem;
         }
     </style>
@@ -397,7 +420,6 @@
                 <div class="col-lg-7 form-panel">
                     <!-- Success View (Initially hidden) -->
                     <div id="success-view" class="d-none success-view">
-                        <i class="fa-solid fa-circle-check text-success fa-5x mb-4"></i>
                         <h2 class="form-heading mb-3">Registration Confirmed!</h2>
                         <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it for
                             entry.</p>
@@ -647,11 +669,18 @@
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.firstElementChild;
 
+                // UPDATED LOGIC to better match the provided pass design
                 const dateMap = { 'Day 1': 'Sep 12', 'Day 2': 'Sep 13', 'Day 3': 'Sep 14' };
                 const attendingDays = (data.attendance || '').split(',').map(d => d.trim()).filter(Boolean);
-                let attendanceText = (attendingDays.length >= 3 || attendingDays.length === 0)
-                    ? 'All Days (Sep 12-14, 2025)'
-                    : `Attending: ${attendingDays.map(d => dateMap[d] || d).join(' & ')}, 2025`;
+                let attendanceText;
+
+                if (attendingDays.length === 0 || attendingDays.length >= 3) {
+                    attendanceText = 'Attending: All Days';
+                } else if (attendingDays.length === 1) {
+                    attendanceText = `Attending: ${dateMap[attendingDays[0]]}, 2025`;
+                } else {
+                    attendanceText = `Attending: ${attendingDays.map(d => dateMap[d] || d).join(' & ')}`;
+                }
 
                 card.querySelector('.id-card-photo').src = data.profileImageUrl;
                 card.querySelector('.id-card-name').textContent = data.name;
@@ -669,7 +698,6 @@
 
                 const originalSizeMB = file.size / 1024 / 1024;
 
-                // Set a reasonable absolute max size to prevent browser issues
                 if (originalSizeMB > 15) {
                     showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
                     profileImageInput.value = ''; // Reset the input
@@ -678,21 +706,12 @@
 
                 imagePreview.src = URL.createObjectURL(file);
 
-                // Define dynamic compression options
                 const options = {
-                    maxWidthOrHeight: 800, // Guarantees resolution won't be excessively low
+                    maxWidthOrHeight: 800,
                     useWebWorker: true,
-                    initialQuality: 0.8, // Try to preserve quality before resizing
+                    initialQuality: 0.8,
+                    maxSizeMB: 0.3
                 };
-
-                // Apply specific target sizes based on original file size
-                if (originalSizeMB > 10) {
-                    options.maxSizeMB = 0.05; // Target ~50KB for files > 10MB
-                } else if (originalSizeMB >= 2 && originalSizeMB <= 5) {
-                    options.maxSizeMB = 0.02; // Target ~20KB for files from 2-5MB
-                } else {
-                    options.maxSizeMB = 0.3; // A more reasonable default for smaller files
-                }
 
                 try {
                     console.log(`Original size: ${originalSizeMB.toFixed(2)}MB. Compressing with target size: ${options.maxSizeMB}MB`);
@@ -700,15 +719,13 @@
                     console.log(`Final compressed size: ${(compressedImageFile.size / 1024).toFixed(2)}KB`);
                 } catch (error) {
                     console.error('Image compression error:', error);
-                    // Fallback to a safer compression if the aggressive one fails or is problematic
                     try {
-                        console.warn('Aggressive compression failed. Falling back to safer default.');
+                        console.warn('Compression failed. Falling back to safer default.');
                         compressedImageFile = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1024 });
-                        showInfoModal('Image Note', 'The provided image was compressed to a standard size to ensure quality.', 'info');
                     } catch (fallbackError) {
                         console.error('Fallback compression also failed:', fallbackError);
-                        compressedImageFile = file; // Use original if all else fails
-                        showInfoModal('Compression Failed', 'Could not process the image. The original, uncompressed file will be used.', 'error');
+                        compressedImageFile = file;
+                        showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'error');
                     }
                 }
             });
@@ -763,6 +780,7 @@
                         idCardWrapper.appendChild(newPassElement);
                         formContainer.classList.add('d-none');
                         successView.classList.remove('d-none');
+                        window.scrollTo(0, 0); // Scroll to top
                         downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
                     } else {
                         throw new Error(result.error || 'An unknown server error occurred.');
