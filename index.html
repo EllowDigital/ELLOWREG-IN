@@ -6,25 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description"
-        content="Register now for TENT DECOR EXPO UP 2025, India's top B2B event for tent and decor professionals. Get your entry pass today.">
-    <meta name="keywords" content="Tent Expo, Decor Expo, Lucknow Event, B2B Event, Registration, 2025 Expo">
+        content="Register now for TENT DECOR EXPO UP 2025, India's top B2B event for tent and decor professionals. Get your visitor pass today.">
+    <meta name="keywords" content="Tent Expo, Decor Expo, Lucknow Event, B2B Event, Registration, 2025 Expo, Visitor Pass">
     <meta name="author" content="TENT DECOR EXPO Team">
 
-    <!-- Open Graph / Social Sharing -->
     <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
-        content="Join India's premier tent and decor event in Lucknow. Register now and get your official entry pass.">
+        content="Join India's premier tent and decor event in Lucknow. Register now and get your official visitor pass.">
     <meta property="og:image" content="https://td-expoup25.netlify.app/assets/favicon.ico">
-    <meta property="og:url" content="https://td-expoup25.netlify.app/"> <!-- Replace with actual domain -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:url" content="https://td-expoup25.netlify.app/"> <meta name="twitter:card" content="summary_large_image">
 
-    <!-- Favicon with Fallback -->
     <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css"
         integrity="sha512-fw7f+TcMjTb7bpbLJZlP8g2Y4XcCyFZW8uy8HsRZsH/SwbMw0plKHFHr99DN3l04VsYNwvzicUX/6qurvIxbxw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -36,12 +31,9 @@
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Razorpay and html2canvas Scripts -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
         xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Image Compression Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
         integrity="sha512-AqNGerESFmfQYTtyWZDQv8WSi4ICG16z/O+8JyAD5Iaafp+fnAU4xbJipYZ0bU9DrhXAsx1Vylli0oebd9l55g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -364,7 +356,6 @@
     <main class="registration-container">
         <div class="card registration-card">
             <div class="row g-0">
-                <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
                         <img src="assets/unnamed.jpg"
@@ -391,24 +382,21 @@
                     </div>
                 </div>
 
-                <!-- Right-side Form Panel -->
                 <div class="col-lg-7 form-panel d-flex flex-column">
-                    <!-- Success View (Initially hidden) -->
                     <div id="id-card-section" class="d-none text-center my-auto">
                         <h2 class="h3 mb-2 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Registration
                             Confirmed!</h2>
-                        <p class="lead mb-4 text-secondary">Your entry pass is ready. Please download and save it.</p>
+                        <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it.</p>
                         <div id="id-card-wrapper" class="mb-4"></div>
                         <button id="download-id-btn" class="btn btn-primary w-100">
-                            <span class="button-text"><i class="fas fa-download me-2"></i>Download Entry Pass</span>
+                            <span class="button-text"><i class="fas fa-download me-2"></i>Download Visitor Pass</span>
                             <span class="spinner-border spinner-border-sm d-none" role="status"
                                 aria-hidden="true"></span>
                         </button>
                     </div>
 
-                    <!-- Form View (Initially visible) -->
                     <div id="form-container">
-                        <h2 class="form-heading">Get Your Entry Pass</h2>
+                        <h2 class="form-heading">Get Your Visitor Pass</h2>
                         <form class="row g-3 g-lg-4" id="registrationForm" novalidate>
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Upload Your Photo <span
@@ -473,7 +461,7 @@
                             </div>
                             <div class="col-12 mt-4">
                                 <button class="btn btn-primary w-100" type="submit" id="submitBtn">
-                                    <span class="button-text">Proceed to Pay ₹500</span>
+                                    <span class="button-text">Get My Visitor Pass</span>
                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                         aria-hidden="true"></span>
                                 </button>
@@ -490,7 +478,6 @@
                 target="_blank" rel="noopener noreferrer">EllowDigital</a></p>
     </footer>
 
-    <!-- Universal Modal for Info and Error Messages -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -507,7 +494,6 @@
         </div>
     </div>
 
-    <!-- Hidden Template for Generating the Entry Pass -->
     <div id="id-card-template" class="d-none">
         <div id="id-card">
             <div class="id-card-header">
@@ -536,7 +522,6 @@
     </div>
 
 
-    <!-- External and Page-Specific Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.min.js"
         integrity="sha512-zKeerWHHuP3ar7kX2WKBSENzb+GJytFSBL6HrR2nPSR1kOX1qjm+oHooQtbDpDBSITgyl7QXZApvDfDWvKjkUw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -547,7 +532,6 @@
             // --- Configuration & Constants ---
             const CONSTANTS = {
                 API: {
-                    CREATE_ORDER: '/.netlify/functions/create-order',
                     SUBMIT_REGISTRATION: '/.netlify/functions/submit-registration'
                 },
                 MAX_SUBMISSION_RETRIES: 3,
@@ -684,7 +668,6 @@
             // --- Validation and Logic ---
             function validateForm() {
                 const errors = [];
-                // Use compressedImageFile to validate image presence
                 if (!compressedImageFile && profileImageInput.files.length === 0) {
                     errors.push('Profile Photo is required.');
                 }
@@ -733,69 +716,6 @@
                 e.preventDefault();
                 if (!validateForm()) return;
 
-                setButtonLoading(submitBtn, true, 'Initializing Payment...');
-
-                try {
-                    const phone = document.getElementById('phone').value;
-                    const orderRes = await fetch(CONSTANTS.API.CREATE_ORDER, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ phone })
-                    });
-                    const responseData = await orderRes.json();
-
-                    if (orderRes.status === 409) { // User already exists
-                        showInfo('Already Registered', 'We found an existing registration with this phone number. Your entry pass is displayed below.', false);
-                        populateAndShowIdCard(idCardWrapper, responseData.registrationData);
-                        clearFormData(); // Clear form data as registration is complete
-                        return;
-                    }
-
-                    if (!orderRes.ok) {
-                        throw new Error(responseData.error || 'Unable to initiate payment.');
-                    }
-
-                    openRazorpayCheckout(responseData);
-
-                } catch (err) {
-                    showInfo("Error", err.message || 'Could not initiate payment. Please check your connection and try again.', true);
-                } finally {
-                    setButtonLoading(submitBtn, false);
-                }
-            }
-
-            function openRazorpayCheckout(order) {
-                const options = {
-                    key: order.key,
-                    amount: order.amount,
-                    currency: order.currency,
-                    name: "Tent Decor Expo UP 2025",
-                    description: "Entry Pass Fee",
-                    order_id: order.id,
-                    handler: handlePaymentSuccess,
-                    prefill: {
-                        name: document.getElementById('name').value,
-                        contact: document.getElementById('phone').value,
-                    },
-                    theme: { color: "#0A2540" },
-                    modal: {
-                        ondismiss: () => {
-                            showInfo("Payment Cancelled", "Registration was not completed because the payment was cancelled.", true);
-                            setButtonLoading(submitBtn, false);
-                        }
-                    }
-                };
-
-                const rzp = new Razorpay(options);
-                rzp.on('payment.failed', (response) => {
-                    console.error('Razorpay payment failed:', response.error);
-                    showInfo("Payment Failed", `Error: ${response.error.description}. Please try again.`, true);
-                    setButtonLoading(submitBtn, false);
-                });
-                rzp.open();
-            }
-
-            async function handlePaymentSuccess(response) {
                 setButtonLoading(submitBtn, true, 'Finalizing Registration...');
 
                 const submitRegistration = async () => {
@@ -806,16 +726,22 @@
 
                     // Replace original file with the compressed one if it exists
                     if (compressedImageFile) {
-                        // Use the original filename for Cloudinary
                         formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
                     }
 
-                    formData.append('razorpay_payment_id', response.razorpay_payment_id);
-                    formData.append('razorpay_order_id', response.razorpay_order_id);
-                    formData.append('razorpay_signature', response.razorpay_signature);
-
-                    const res = await fetch(CONSTANTS.API.SUBMIT_REGISTRATION, { method: 'POST', body: formData });
+                    const res = await fetch(CONSTANTS.API.SUBMIT_REGISTRATION, {
+                        method: 'POST',
+                        body: formData
+                    });
                     const json = await res.json();
+
+                    // Handle existing user case
+                    if (res.status === 409) {
+                        showInfo('Already Registered', 'We found an existing registration with this phone number. Your visitor pass is displayed below.', false);
+                        populateAndShowIdCard(idCardWrapper, json.registrationData);
+                        clearFormData();
+                        return null; // Stop further processing
+                    }
 
                     if (!res.ok || json.status !== 'success') {
                         throw new Error(json.error || 'Unknown submission failure');
@@ -825,18 +751,21 @@
 
                 try {
                     const result = await retryWithBackoff(submitRegistration);
-                    populateAndShowIdCard(idCardWrapper, result.registrationData);
-                    clearFormData(); // Success, so clear the stored form data
+                    // If result is null, it means the user was already registered and the UI has been handled.
+                    if (result) {
+                        populateAndShowIdCard(idCardWrapper, result.registrationData);
+                        clearFormData(); // Success, so clear the stored form data
+                    }
                 } catch (err) {
                     const message = document.createElement('div');
-                    message.innerHTML = `<p class="mb-3">We couldn't automatically confirm your registration due to an interruption.</p>
-                                         <p class="fw-bold">First, please try filling out the form again with the same phone number.</p>
-                                         <p class="mb-3">If your payment was successful, our system will find it and generate your pass automatically.</p>
-                                         <p class="text-muted small">If that doesn't work, please contact support with your payment details.</p>`;
-                    showInfo('Registration Finalization Failed', message, true);
+                    message.innerHTML = `<p class="mb-3">We couldn't confirm your registration due to an interruption.</p>
+                                     <p class="fw-bold">Please try submitting the form again.</p>
+                                     <p class="text-muted small">If the problem persists, please contact support.</p>`;
+                    showInfo('Registration Failed', message, true);
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }
+
             }
 
             async function handleDownloadIdCard() {
@@ -862,7 +791,7 @@
                     const link = document.createElement('a');
                     const name = cardElement.querySelector('.id-card-name').textContent.trim().replace(/\s+/g, '_');
                     const reg = cardElement.querySelector('.id-card-reg-number').textContent.trim();
-                    link.download = `Entry-Pass_${name}_${reg}.png`;
+                    link.download = `Visitor-Pass_${name}_${reg}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } catch (err) {

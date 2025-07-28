@@ -89,21 +89,40 @@ exports.handler = async (event) => {
     // 1. Parse multipart form data
     const { fields, files } = await parseMultipartForm(event);
     const {
-      name, phone, firmName, address, district, state, attendance,
-      razorpay_order_id, razorpay_payment_id, razorpay_signature
+      name, phone, firmName, address, district, state, attendance
     } = fields;
     const { profileImage } = files;
 
-    // 2. Security Check: Verify Razorpay signature
-    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const digest = shasum.digest("hex");
+    const trimmedPhone = phone ? phone.trim() : '';
 
-    if (digest !== razorpay_signature) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Invalid payment signature." }) };
+    // 2. Check if user is already registered with this phone number
+    dbClient = await pool.connect();
+    const existingUserQuery = 'SELECT registration_id, name, phone, company, day, image_url FROM registrations WHERE phone = $1';
+    const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
+
+    if (rows.length > 0) {
+      console.log(`[submit-registration] User with phone ${trimmedPhone} already exists.`);
+      const registrationData = {
+        registrationId: rows[0].registration_id,
+        name: rows[0].name,
+        phone: rows[0].phone,
+        firmName: rows[0].company,
+        attendance: rows[0].day,
+        profileImageUrl: rows[0].image_url,
+      };
+      return {
+        statusCode: 409, // Conflict
+        body: JSON.stringify({
+          error: "This phone number is already registered.",
+          registrationData: registrationData,
+        }),
+      };
     }
+    // Release client if we are proceeding with new registration
+    dbClient.release();
+    dbClient = null; // Nullify to prevent double-release in finally block
 
-    // 3. Validate input fields
+    // 3. Validate input fields for new registration
     const requiredFields = { name, phone, firmName, address, district, state, attendance };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value || String(value).trim() === "") {
@@ -133,30 +152,25 @@ exports.handler = async (event) => {
         RETURNING *;
       `;
       const values = [
-        registrationId, name.trim(), firmName.trim(), phone.trim(), address.trim(),
-        district.trim(), state.trim(), attendance, razorpay_payment_id,
+        registrationId, name.trim(), firmName.trim(), trimmedPhone, address.trim(),
+        district.trim(), state.trim(), attendance, null, // Set payment_id to NULL
         uploadResult.secure_url, registrationTimestamp
       ];
       const result = await dbClient.query(insertQuery, values);
       newRecord = result.rows[0];
-    } catch (error) {
-      // This specifically catches the unique constraint violation on the 'phone' column
-      if (error.code === '23505' && error.constraint === 'registrations_phone_key') {
+    } catch (dbError) {
+      // This is a fallback check, though the initial check should catch it.
+      if (dbError.code === '23505' && dbError.constraint === 'registrations_phone_key') {
         return {
           statusCode: 409, // Conflict
           body: JSON.stringify({ error: 'This phone number is already registered.' })
         };
       }
       // For any other database error, re-throw it to be caught by the main catch block
-      throw error;
-    } finally {
-      if (dbClient) {
-        dbClient.release(); // IMPORTANT: Release the client back to the pool
-      }
+      throw dbError;
     }
 
     // 7. Sync to Google Sheets (non-blocking "fire-and-forget")
-    // This runs in the background and does not delay the response to the user.
     (async () => {
       try {
         const sheets = await getGoogleSheetsClient();
@@ -169,7 +183,7 @@ exports.handler = async (event) => {
           newRecord.city,
           newRecord.state,
           newRecord.day,
-          newRecord.payment_id,
+          newRecord.payment_id || '', // Use empty string for null payment_id
           new Date(newRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
           newRecord.image_url,
         ];
@@ -177,18 +191,16 @@ exports.handler = async (event) => {
         await retryWithBackoff(() =>
           sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${SHEET_NAME}!A1`, // Appends to the first empty row of the specified sheet
+            range: `${SHEET_NAME}!A1`,
             valueInputOption: "USER_ENTERED",
             resource: { values: [newRowData] },
           })
         );
         console.log(`Successfully synced registration ${newRecord.registration_id} to Google Sheets.`);
       } catch (sheetsError) {
-        // Log the error for maintenance but do not fail the user's request
         console.error(`FAILED to sync registration ${newRecord.registration_id} to Google Sheets:`, sheetsError.message);
       }
     })();
-
 
     // 8. Prepare and send the success response to the client
     const responseData = {
@@ -210,15 +222,19 @@ exports.handler = async (event) => {
     };
 
   } catch (err) {
-    // 9. Catch-all error handler for logging and returning a generic error message.
+    // 9. Catch-all error handler
     console.error("SUBMIT_REGISTRATION_ERROR:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({
         status: "error",
-        error: "An internal server error occurred. Please try again or contact support if the problem persists.",
-        details: err.message, // This detail is helpful for debugging in Netlify logs
+        error: "An internal server error occurred. Please try again or contact support.",
+        details: err.message,
       }),
     };
+  } finally {
+    if (dbClient) {
+      dbClient.release();
+    }
   }
 };
