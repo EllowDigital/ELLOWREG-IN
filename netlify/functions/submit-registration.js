@@ -101,6 +101,7 @@ exports.handler = async (event) => {
     const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
 
     if (rows.length > 0) {
+      dbClient.release(); // Release client early
       console.log(`[submit-registration] User with phone ${trimmedPhone} already exists.`);
       const registrationData = {
         registrationId: rows[0].registration_id,
@@ -113,13 +114,14 @@ exports.handler = async (event) => {
       return {
         statusCode: 409, // Conflict
         body: JSON.stringify({
+          status: "exists",
           error: "This phone number is already registered.",
           registrationData: registrationData,
         }),
       };
     }
-    // Release client if we are proceeding with new registration
-    dbClient.release();
+    // Release client if not found, it will be reconnected for insertion.
+    dbClient.release(); 
     dbClient = null; // Nullify to prevent double-release in finally block
 
     // 3. Validate input fields for new registration
@@ -153,24 +155,27 @@ exports.handler = async (event) => {
       `;
       const values = [
         registrationId, name.trim(), firmName.trim(), trimmedPhone, address.trim(),
-        district.trim(), state.trim(), attendance, null, // Set payment_id to NULL
+        district.trim(), state.trim(), attendance, null, // Set payment_id to NULL for free registration
         uploadResult.secure_url, registrationTimestamp
       ];
       const result = await dbClient.query(insertQuery, values);
       newRecord = result.rows[0];
+      console.log(`Successfully inserted registration ${newRecord.registration_id} into the database.`);
+
     } catch (dbError) {
-      // This is a fallback check, though the initial check should catch it.
+      // This is a fallback check for a race condition, though the initial check should catch most cases.
       if (dbError.code === '23505' && dbError.constraint === 'registrations_phone_key') {
         return {
           statusCode: 409, // Conflict
-          body: JSON.stringify({ error: 'This phone number is already registered.' })
+          body: JSON.stringify({ status: "exists", error: 'This phone number is already registered.' })
         };
       }
       // For any other database error, re-throw it to be caught by the main catch block
       throw dbError;
     }
 
-    // 7. Sync to Google Sheets (non-blocking "fire-and-forget")
+    // 7. Sync to Google Sheets in the background (non-blocking "fire-and-forget")
+    // This runs after the database insertion is successful and does not make the user wait.
     (async () => {
       try {
         const sheets = await getGoogleSheetsClient();
@@ -183,7 +188,7 @@ exports.handler = async (event) => {
           newRecord.city,
           newRecord.state,
           newRecord.day,
-          newRecord.payment_id || '', // Use empty string for null payment_id
+          newRecord.payment_id || 'N/A', // Use 'N/A' for null payment_id in the sheet
           new Date(newRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
           newRecord.image_url,
         ];
@@ -198,11 +203,12 @@ exports.handler = async (event) => {
         );
         console.log(`Successfully synced registration ${newRecord.registration_id} to Google Sheets.`);
       } catch (sheetsError) {
-        console.error(`FAILED to sync registration ${newRecord.registration_id} to Google Sheets:`, sheetsError.message);
+        // Log the error for maintenance but do not fail the user's request, as the primary DB record is safe.
+        console.error(`CRITICAL: FAILED to sync registration ${newRecord.registration_id} to Google Sheets. Please check credentials and sheet permissions. Error:`, sheetsError.message);
       }
     })();
 
-    // 8. Prepare and send the success response to the client
+    // 8. Prepare and send the success response to the client immediately after DB write
     const responseData = {
       status: "success",
       registrationData: {
@@ -222,7 +228,7 @@ exports.handler = async (event) => {
     };
 
   } catch (err) {
-    // 9. Catch-all error handler
+    // 9. Catch-all error handler for unexpected issues
     console.error("SUBMIT_REGISTRATION_ERROR:", err);
     return {
       statusCode: 500,
@@ -233,6 +239,7 @@ exports.handler = async (event) => {
       }),
     };
   } finally {
+    // 10. Ensure the database client is always released.
     if (dbClient) {
       dbClient.release();
     }
