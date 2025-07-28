@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description"
         content="Register now for TENT DECOR EXPO UP 2025, India's premier B2B trade show for the tent, decor, and event industry. Secure your free visitor pass today.">
     <meta name="keywords"
         content="Tent Expo, Decor Expo, Lucknow Event, B2B Trade Show, Event Registration, 2025 Expo, Visitor Pass, Tent Decor Expo UP">
     <meta name="author" content="TENT DECOR EXPO Team">
 
-    <!-- Open Graph / Social Sharing -->
     <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
         content="Join thousands of industry professionals in Lucknow. Register now to get your official visitor pass for India's leading tent and decor expo.">
@@ -21,23 +19,24 @@
     <meta property="og:url" content="https://td-expoup25.netlify.app/">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
         onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <!-- External Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link
+    <link rel="preload"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap">
+    </noscript>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Scripts for Image Generation & Compression -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
+        defer></script>
 
-    <!-- Page Styles -->
     <style>
         :root {
             --primary-color: #0d2c4f;
@@ -53,10 +52,26 @@
             --danger-color: #dc3545;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-color);
             background-color: var(--body-bg);
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .main-container {
@@ -129,12 +144,19 @@
         .form-control,
         .form-check-input {
             border-radius: 8px;
+            transition: all 0.2s ease-in-out;
         }
 
         .form-control:focus,
         .form-check-input:focus {
             border-color: var(--accent-color);
             box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Style for invalid fields */
+        .form-control:invalid {
+            border-color: var(--danger-color);
         }
 
         /* --- Image Upload Customization --- */
@@ -235,17 +257,64 @@
             color: white;
         }
 
+        /* --- Scroll Prompt Toast Notification --- */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1060;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast-notification p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .toast-notification .btn-close-toast {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .toast-notification .btn-close-toast:hover {
+            opacity: 1;
+        }
+
         /* --- Visitor Pass Template --- */
         #id-card-template {
             display: none;
-            /* Hide the template itself */
         }
 
         .id-card {
             width: 380px;
             font-family: 'Inter', sans-serif;
             background-color: #F4F7FA;
-            /* Match body background from image */
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -257,13 +326,11 @@
             background: var(--primary-dark);
             padding: 1.5rem 1rem;
             padding-bottom: 75px;
-            /* Add padding to push content down below the overlapping photo */
         }
 
         .id-card-header .expo-title {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            /* Slightly increased font size */
             font-weight: 700;
             color: var(--accent-color);
             line-height: 1.1;
@@ -283,12 +350,10 @@
             position: relative;
             padding: 1rem 1.5rem 1.5rem 1.5rem;
             background-color: transparent;
-            /* Remove gradient to match clean background */
         }
 
         .id-card-photo-wrapper {
             margin-top: -65px;
-            /* Pulls the photo up to overlap the header */
             position: relative;
             z-index: 10;
         }
@@ -299,14 +364,12 @@
             object-fit: cover;
             border-radius: 50%;
             border: 6px solid #F4F7FA;
-            /* Border color matches the new card body bg */
             background: var(--card-bg);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .id-card-name {
             font-size: 1.8rem;
-            /* Slightly larger for more impact */
             font-weight: 700;
             color: var(--primary-dark);
             margin-top: 1rem;
@@ -319,22 +382,16 @@
             font-weight: 500;
             color: var(--text-color);
             margin-bottom: 1.5rem;
-            /* Add space below firm name */
         }
 
-        /* NEW STYLES for the attendance date button */
         .id-card-attendance-date {
             display: inline-block;
-            /* Make it fit its content */
             font-weight: 700;
             color: var(--primary-dark);
             background-color: var(--accent-color);
             padding: 0.6rem 1.75rem;
-            /* Adjusted padding */
             border-radius: 50px;
-            /* Pill shape */
             margin-bottom: 1.5rem;
-            /* Space below the button */
             font-size: 1rem;
             text-transform: capitalize;
         }
@@ -343,7 +400,6 @@
             margin-top: 1.5rem;
             padding-top: 1.5rem;
             border-top: 2px dashed #CDD3D9;
-            /* Matched dashed line color */
         }
 
         .id-card-footer-label {
@@ -358,14 +414,12 @@
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             font-size: 1.8rem;
-            /* Increased size to match image */
             color: var(--primary-dark);
             letter-spacing: 1px;
         }
 
         .id-card-footer {
             background-color: transparent;
-            /* Make footer background transparent */
             padding: 1rem;
             padding-top: 0;
             color: var(--text-light);
@@ -378,11 +432,10 @@
     <div class="main-container">
         <div class="registration-wrapper">
             <div class="row g-0">
-                <!-- Left-side Informational Panel -->
                 <div class="col-lg-5 info-panel">
                     <div>
                         <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner"
-                            class="img-fluid rounded-3 mb-4">
+                            class="img-fluid rounded-3 mb-4" loading="lazy" decoding="async">
                         <h1 class="expo-title">TENT DECOR EXPO UP 2025</h1>
                         <p class="lead">India's premier B2B trade show for the tent, decor, and event management
                             industry.</p>
@@ -416,10 +469,8 @@
                     </div>
                 </div>
 
-                <!-- Right-side Form Panel -->
                 <div class="col-lg-7 form-panel">
-                    <!-- Success View (Initially hidden) -->
-                    <div id="success-view" class="d-none success-view">
+                    <div id="success-view" class="d-none success-view" aria-live="polite">
                         <h2 class="form-heading mb-3">Registration Confirmed!</h2>
                         <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it for
                             entry.</p>
@@ -431,7 +482,6 @@
                         </div>
                     </div>
 
-                    <!-- Form View (Initially visible) -->
                     <div id="form-container">
                         <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
                         <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
@@ -517,7 +567,6 @@
         </div>
     </div>
 
-    <!-- Universal Info/Error Modal -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0" style="border-radius: 16px;">
@@ -526,8 +575,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" id="infoModalBody">
-                    <!-- Dynamic content will be injected here -->
+                <div class="modal-body p-4" id="infoModalBody" aria-live="polite">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -536,7 +584,6 @@
         </div>
     </div>
 
-    <!-- "Already Registered" Modal -->
     <div class="modal fade" id="alreadyRegisteredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0" style="border-radius: 16px;">
@@ -556,7 +603,6 @@
         </div>
     </div>
 
-    <!-- Visitor Pass Template for generation -->
     <div id="id-card-template">
         <div class="id-card">
             <div class="id-card-header">
@@ -581,12 +627,12 @@
         </div>
     </div>
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- Configuration & Constants ---
             const API_ENDPOINT = '/.netlify/functions/submit-registration';
+            const SCROLL_PROMPT_DELAY = 4500; // in milliseconds
 
             // --- DOM Elements ---
             const form = document.getElementById('registrationForm');
@@ -609,6 +655,33 @@
             // --- State ---
             let compressedImageFile = null;
             let existingUserData = null;
+
+            // --- NEW: Auto-scroll and one-time prompt ---
+            function showScrollPrompt() {
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.innerHTML = `
+                    <p>👇 Scroll down to get your visitor pass!</p>
+                    <button type="button" class="btn-close-toast">&times;</button>
+                `;
+                document.body.appendChild(toast);
+
+                toast.querySelector('.btn-close-toast').addEventListener('click', () => {
+                    toast.remove();
+                });
+
+                // Auto-remove after 7 seconds
+                setTimeout(() => toast.remove(), 7000);
+            }
+
+            // Check session storage to see if we've already scrolled
+            if (!sessionStorage.getItem('promptedToScroll')) {
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    showScrollPrompt();
+                    sessionStorage.setItem('promptedToScroll', 'true'); // Set flag
+                }, SCROLL_PROMPT_DELAY);
+            }
 
             // --- UI & UX Functions ---
             function setButtonLoading(button, isLoading) {
@@ -647,7 +720,7 @@
 
             async function generateAndDownloadPass(userData) {
                 const passElement = createPassElement(userData);
-                document.body.appendChild(passElement);
+                document.body.appendChild(passElement); // Must be in DOM for html2canvas
 
                 try {
                     const canvas = await html2canvas(passElement, { scale: 3, useCORS: true, backgroundColor: null });
@@ -668,8 +741,8 @@
             function createPassElement(data) {
                 const template = document.getElementById('id-card-template').cloneNode(true);
                 const card = template.firstElementChild;
+                card.style.display = 'block';
 
-                // UPDATED LOGIC to better match the provided pass design
                 const dateMap = { 'Day 1': 'Sep 12', 'Day 2': 'Sep 13', 'Day 3': 'Sep 14' };
                 const attendingDays = (data.attendance || '').split(',').map(d => d.trim()).filter(Boolean);
                 let attendanceText;
@@ -697,7 +770,6 @@
                 if (!file) return;
 
                 const originalSizeMB = file.size / 1024 / 1024;
-
                 if (originalSizeMB > 15) {
                     showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
                     profileImageInput.value = ''; // Reset the input
@@ -714,42 +786,47 @@
                 };
 
                 try {
-                    console.log(`Original size: ${originalSizeMB.toFixed(2)}MB. Compressing with target size: ${options.maxSizeMB}MB`);
                     compressedImageFile = await imageCompression(file, options);
-                    console.log(`Final compressed size: ${(compressedImageFile.size / 1024).toFixed(2)}KB`);
                 } catch (error) {
                     console.error('Image compression error:', error);
-                    try {
-                        console.warn('Compression failed. Falling back to safer default.');
-                        compressedImageFile = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1024 });
-                    } catch (fallbackError) {
-                        console.error('Fallback compression also failed:', fallbackError);
-                        compressedImageFile = file;
-                        showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'error');
-                    }
+                    compressedImageFile = file; // Fallback to original file
+                    showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'info');
                 }
             });
 
             function validateForm() {
+                // Remove previous invalid states
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
                 const errors = [];
-                if (profileImageInput.files.length === 0) errors.push('A profile photo is required.');
-                if (!form.elements.name.checkValidity()) errors.push('Please enter your full name (min. 3 characters).');
-                if (!form.elements.phone.checkValidity()) errors.push('Please enter a valid 10-digit phone number.');
-                if (!form.elements.firmName.checkValidity()) errors.push('Please enter your firm name (min. 3 characters).');
-                if (!form.elements.address.checkValidity()) errors.push('Please enter your full address (min. 10 characters).');
-                if (!form.elements.district.checkValidity()) errors.push('Please enter your district.');
-                if (!form.elements.state.checkValidity()) errors.push('Please enter your state.');
-                if (document.querySelectorAll('input[name="attendance"]:checked').length === 0) errors.push('Please select at least one attending day.');
+                const addError = (field, message) => {
+                    errors.push({ field, message });
+                    field.classList.add('is-invalid');
+                };
+
+                if (profileImageInput.files.length === 0) errors.push({ field: null, message: 'A profile photo is required.' });
+                if (!form.elements.name.checkValidity()) addError(form.elements.name, 'Please enter a valid full name (min. 3 characters).');
+                if (!form.elements.phone.checkValidity()) addError(form.elements.phone, 'Please enter a valid 10-digit Indian phone number.');
+                if (!form.elements.firmName.checkValidity()) addError(form.elements.firmName, 'Please enter your firm name (min. 3 characters).');
+                if (!form.elements.address.checkValidity()) addError(form.elements.address, 'Please enter your full address (min. 10 characters).');
+                if (!form.elements.district.checkValidity()) addError(form.elements.district, 'Please enter your district.');
+                if (!form.elements.state.checkValidity()) addError(form.elements.state, 'Please enter your state.');
+                if (document.querySelectorAll('input[name="attendance"]:checked').length === 0) errors.push({ field: null, message: 'Please select at least one attending day.' });
 
                 if (errors.length > 0) {
                     const errorList = document.createElement('ul');
                     errorList.className = 'list-unstyled text-start mb-0 ps-2';
-                    errors.forEach(errText => {
+                    errors.forEach(err => {
                         const li = document.createElement('li');
-                        li.innerHTML = `<i class="fa-solid fa-times-circle text-danger me-2"></i>${errText}`;
+                        li.innerHTML = `<i class="fa-solid fa-times-circle text-danger me-2"></i>${err.message}`;
                         errorList.appendChild(li);
                     });
                     showInfoModal('Please Complete the Form', errorList, 'error');
+                    // Focus the first invalid field when modal is closed
+                    infoModalEl.addEventListener('hidden.bs.modal', () => {
+                        const firstInvalidField = errors.find(e => e.field);
+                        if (firstInvalidField) firstInvalidField.field.focus();
+                    }, { once: true });
                     return false;
                 }
                 return true;
@@ -780,14 +857,14 @@
                         idCardWrapper.appendChild(newPassElement);
                         formContainer.classList.add('d-none');
                         successView.classList.remove('d-none');
-                        window.scrollTo(0, 0); // Scroll to top
+                        document.querySelector('.registration-wrapper').scrollIntoView();
                         downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
                     } else {
                         throw new Error(result.error || 'An unknown server error occurred.');
                     }
                 } catch (error) {
                     console.error('Submission Error:', error);
-                    showInfoModal('Registration Failed', `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please try again or contact support if the problem persists.</p>`, 'error');
+                    showInfoModal('Registration Failed', `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please try again or contact support.</p>`, 'error');
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }
@@ -798,7 +875,6 @@
                     generateAndDownloadPass(existingUserData);
                 }
             });
-
         });
     </script>
 </body>
