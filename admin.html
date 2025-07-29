@@ -192,8 +192,11 @@
                                 </div>
                                 <div class="tab-pane fade" id="regid-pane" role="tabpanel">
                                     <label for="regIdInput" class="form-label fw-semibold">Registration ID</label>
-                                    <input type="text" class="form-control form-control-lg" id="regIdInput"
-                                        placeholder="Enter ID" style="text-transform: uppercase;">
+                                    <div class="input-group">
+                                        <span class="input-group-text">TDEXPOUP-</span>
+                                        <input type="text" class="form-control form-control-lg" id="regIdInput"
+                                            placeholder="D4802C72" style="text-transform: uppercase;">
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-grid mt-4">
@@ -332,11 +335,9 @@
                         throw new Error(errorData.error || errorData.message || `Request failed: ${response.status}`);
                     }
                     if (response.headers.get("content-type")?.includes("application/json")) {
-                        const data = await response.json();
-                        return data;
+                        return response.json();
                     }
-                    // For non-json responses like export
-                    return await response.text();
+                    return response;
                 } catch (error) {
                     throw new Error(error.message || 'Network error.');
                 }
@@ -383,7 +384,7 @@
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
                 searchOutputWrapper.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('new-search-btn')) showSearchForm();
+                    if (e.target && e.target.classList.contains('new-search-btn')) showSearchForm();
                 });
                 phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
                 regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
@@ -435,27 +436,31 @@
                 e.preventDefault();
                 const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
                 if (!activeTab) {
-                    console.error("Could not find active search tab.");
+                    displayErrorMessage("Could not determine search type.");
                     return;
                 }
                 const phone = phoneInput.value.trim();
-                const regId = regIdInput.value.trim().toUpperCase();
+                let regId = regIdInput.value.trim().toUpperCase();
                 let query = '';
+
                 if (activeTab.id === 'phone-pane') {
                     if (!phone) { phoneInput.classList.add('is-invalid'); return; }
                     query = `phone=${encodeURIComponent(phone)}`;
                 } else {
+                    const prefix = "TDEXPOUP-";
+                    // Add the prefix automatically if the user didn't type it
+                    if (regId && !regId.startsWith(prefix)) {
+                        regId = prefix + regId;
+                    }
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
                 try {
-                    const users = await makeApiCall(`/.netlify/functions/search-user?${query}`);
+                    const users = await makeApiCall(`/netlify/functions/search-user?${query}`);
                     displayUsers(users);
                 } catch (err) {
-                    // The search-user function returns a 404 with a message for "not found", which makeApiCall treats as an error.
-                    // We can check the error message to distinguish between a true error and a "not found" case.
                     if (err.message && err.message.toLowerCase().includes("no registration found")) {
                         displayNoResults();
                     } else {
