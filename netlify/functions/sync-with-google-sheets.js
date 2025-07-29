@@ -2,60 +2,73 @@
 
 const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
 
+// --- Configuration ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
-const HEADERS = [
-    "Registration ID", "Name", "Company", "Phone", "Address",
-    "City", "State", "Days Attending", "Payment ID", "Timestamp", "Image URL"
-];
-// Define columns to fetch for comparison. Phone is the key. Reg ID detects re-registrations.
-const SHEET_RANGE = `${SHEET_NAME}!A:D`; // Fetch columns A (Reg ID) and D (Phone)
-const PHONE_COLUMN_INDEX = 3; // 'D'
-const REG_ID_COLUMN_INDEX = 0; // 'A'
+// Define columns to fetch for comparison. Phone is the primary key.
+// Fetching the entire row allows for more robust data comparison if needed later,
+// but for now, we'll primarily use phone and registration ID.
+const SHEET_RANGE = `${SHEET_NAME}!A:K`; // Fetch all columns defined in HEADERS
+const PHONE_COLUMN_INDEX = 3; // Column D
+const REG_ID_COLUMN_INDEX = 0; // Column A
 
 /**
- * A robust, automated serverless function to intelligently synchronize data from the
+ * A robust, automated serverless function to intelligently synchronize data from a
  * Neon PG database to a Google Sheet. It handles updates, insertions, and deletions
- * efficiently to ensure data consistency without a full rewrite.
+ * to ensure data consistency without rewriting the entire sheet on every run.
  */
 exports.handler = async () => {
     console.log("Starting intelligent Neon -> Google Sheets synchronization...");
 
     let dbClient;
     try {
-        // --- Step 1: Fetch Data from Both Sources ---
+        // --- Step 1: Fetch Data from Both Sources & Get Sheet Metadata ---
         dbClient = await pool.connect();
         const sheets = await getGoogleSheetsClient();
 
-        const { rows: dbRows } = await dbClient.query("SELECT * FROM registrations ORDER BY timestamp ASC");
+        // Fetch DB records and sheet data concurrently for efficiency
+        const [dbResult, sheetResponse, spreadsheetMeta] = await Promise.all([
+            dbClient.query("SELECT * FROM registrations ORDER BY timestamp ASC"),
+            retryWithBackoff(() => sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: SHEET_RANGE }), 'Google Sheets Get'),
+            retryWithBackoff(() => sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID }), 'Google Sheets Get Metadata')
+        ]);
+
+        const dbRows = dbResult.rows;
         console.log(`Found ${dbRows.length} records in the database.`);
 
-        const sheetResponse = await retryWithBackoff(() =>
-            sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: SHEET_RANGE }),
-            'Google Sheets Get'
-        );
-
         const sheetRows = sheetResponse.data.values || [];
-        const headerRow = sheetRows.length > 0 ? sheetRows.shift() : []; // Remove header
+        if (sheetRows.length > 0) {
+            sheetRows.shift(); // Remove header row
+        }
         console.log(`Found ${sheetRows.length} data records in Google Sheets.`);
+
+        // Find the numeric ID of our target sheet, required for delete operations
+        const sheet = spreadsheetMeta.data.sheets.find(s => s.properties.title === SHEET_NAME);
+        if (!sheet) {
+            throw new Error(`Sheet with name "${SHEET_NAME}" not found in the spreadsheet.`);
+        }
+        const sheetId = sheet.properties.sheetId;
+
 
         // --- Step 2: Create Maps for Efficient Lookups ---
         const dbMap = new Map(dbRows.map(row => [row.phone, row]));
         const sheetMap = new Map(sheetRows.map((row, index) => {
             const phone = row[PHONE_COLUMN_INDEX];
             const regId = row[REG_ID_COLUMN_INDEX];
+            // Key by phone number. Value contains all info needed for updates/deletes.
             // Sheet rows are 1-based, plus another 1 for the shifted header.
             return [phone, { regId, rowIndex: index + 2, isProcessed: false }];
         }));
 
-        // --- Step 3: Determine Changes (Inserts, Updates, Deletes) ---
+        // --- Step 3: Determine Changes (Inserts, Updates) ---
         const rowsToAppend = [];
-        const updateRequests = [];
+        const batchUpdateRequests = [];
 
         for (const dbRecord of dbRows) {
             const phone = dbRecord.phone;
             const sheetEntry = sheetMap.get(phone);
 
+            // Standardize row data for both inserts and updates
             const newRowData = [
                 dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
                 dbRecord.address, dbRecord.city, dbRecord.state, dbRecord.day,
@@ -65,13 +78,17 @@ exports.handler = async () => {
             ];
 
             if (sheetEntry) {
-                // RECORD EXISTS IN BOTH: Check if an update is needed.
+                // RECORD EXISTS IN BOTH: Mark as processed and check if an update is needed.
                 sheetEntry.isProcessed = true;
+                // An update is needed if the registration ID differs.
                 if (sheetEntry.regId !== dbRecord.registration_id) {
                     console.log(`Update detected for phone ${phone}. New RegID: ${dbRecord.registration_id}`);
-                    updateRequests.push({
-                        range: `${SHEET_NAME}!A${sheetEntry.rowIndex}`,
-                        values: [newRowData],
+                    batchUpdateRequests.push({
+                        updateCells: {
+                            start: { sheetId, rowIndex: sheetEntry.rowIndex - 1, columnIndex: 0 },
+                            rows: [{ values: newRowData.map(val => ({ userEnteredValue: { stringValue: String(val) } })) }],
+                            fields: "userEnteredValue"
+                        }
                     });
                 }
             } else {
@@ -81,7 +98,34 @@ exports.handler = async () => {
             }
         }
 
-        // --- Step 4: Execute Batch Operations ---
+        // --- Step 4: Determine Deletions ---
+        const rowsToDelete = [];
+        for (const sheetEntry of sheetMap.values()) {
+            if (!sheetEntry.isProcessed) {
+                // This record exists in the sheet but not the DB; it needs to be deleted.
+                rowsToDelete.push(sheetEntry);
+            }
+        }
+
+        // IMPORTANT: Sort rows to delete in descending order of their row index.
+        // This prevents the row indices from shifting during the batch delete operation.
+        rowsToDelete.sort((a, b) => b.rowIndex - a.rowIndex);
+
+        for (const entry of rowsToDelete) {
+            console.log(`Queuing row ${entry.rowIndex} for phone ${sheetMap.get(entry.phone)?.phone || '(phone not found)'} for deletion.`);
+            batchUpdateRequests.push({
+                deleteDimension: {
+                    range: {
+                        sheetId: sheetId,
+                        dimension: "ROWS",
+                        startIndex: entry.rowIndex - 1, // API is 0-indexed
+                        endIndex: entry.rowIndex
+                    }
+                }
+            });
+        }
+
+        // --- Step 5: Execute Batch Operations ---
         if (rowsToAppend.length > 0) {
             console.log(`Appending ${rowsToAppend.length} new rows...`);
             await retryWithBackoff(() => sheets.spreadsheets.values.append({
@@ -94,24 +138,28 @@ exports.handler = async () => {
             console.log("No new rows to append.");
         }
 
-        if (updateRequests.length > 0) {
-            console.log(`Batch updating ${updateRequests.length} existing rows...`);
-            await retryWithBackoff(() => sheets.spreadsheets.values.batchUpdate({
+        if (batchUpdateRequests.length > 0) {
+            const updateCount = batchUpdateRequests.filter(r => r.updateCells).length;
+            const deleteCount = batchUpdateRequests.filter(r => r.deleteDimension).length;
+            console.log(`Batch processing ${updateCount} updates and ${deleteCount} deletions...`);
+            await retryWithBackoff(() => sheets.spreadsheets.batchUpdate({
                 spreadsheetId: SPREADSHEET_ID,
-                resource: {
-                    valueInputOption: "USER_ENTERED",
-                    data: updateRequests,
-                },
-            }), 'Google Sheets Batch Update');
+                resource: { requests: batchUpdateRequests },
+            }), 'Google Sheets Batch Update/Delete');
         } else {
-            console.log("No rows to update.");
+            console.log("No rows to update or delete.");
         }
 
         console.log("Synchronization complete.");
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: `Sync successful. Appended: ${rowsToAppend.length}, Updated: ${updateRequests.length}.` }),
+            body: JSON.stringify({
+                message: "Sync successful.",
+                appended: rowsToAppend.length,
+                updated: batchUpdateRequests.filter(r => r.updateCells).length,
+                deleted: rowsToDelete.length
+            }),
         };
 
     } catch (error) {
