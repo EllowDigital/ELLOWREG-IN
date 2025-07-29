@@ -154,12 +154,10 @@
             transform: scale(1.02);
         }
 
-        /* Style for invalid fields */
         .form-control:invalid {
             border-color: var(--danger-color);
         }
 
-        /* --- Image Upload Customization --- */
         .image-upload-wrapper {
             position: relative;
             width: 150px;
@@ -201,7 +199,6 @@
             transform: scale(1.1);
         }
 
-        /* --- Checkbox Customization --- */
         .day-selector .form-check {
             padding-left: 0;
         }
@@ -257,56 +254,6 @@
             color: white;
         }
 
-        /* --- Scroll Prompt Toast Notification --- */
-        .toast-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--primary-dark);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 1060;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideInUp 0.5s ease-out forwards;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .toast-notification p {
-            margin: 0;
-            font-weight: 500;
-        }
-
-        .toast-notification .btn-close-toast {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .toast-notification .btn-close-toast:hover {
-            opacity: 1;
-        }
-
-        /* --- Visitor Pass Template --- */
         #id-card-template {
             display: none;
         }
@@ -635,7 +582,6 @@
         document.addEventListener('DOMContentLoaded', function () {
             // --- Configuration & Constants ---
             const API_ENDPOINT = '/.netlify/functions/submit-registration';
-            const SCROLL_PROMPT_DELAY = 4500; // in milliseconds
 
             // --- DOM Elements ---
             const form = document.getElementById('registrationForm');
@@ -658,33 +604,6 @@
             // --- State ---
             let compressedImageFile = null;
             let existingUserData = null;
-
-            // --- NEW: Auto-scroll and one-time prompt ---
-            function showScrollPrompt() {
-                const toast = document.createElement('div');
-                toast.className = 'toast-notification';
-                toast.innerHTML = `
-                    <p>👇 Scroll down to get your visitor pass!</p>
-                    <button type="button" class="btn-close-toast">&times;</button>
-                `;
-                document.body.appendChild(toast);
-
-                toast.querySelector('.btn-close-toast').addEventListener('click', () => {
-                    toast.remove();
-                });
-
-                // Auto-remove after 7 seconds
-                setTimeout(() => toast.remove(), 7000);
-            }
-
-            // Check session storage to see if we've already scrolled
-            if (!sessionStorage.getItem('promptedToScroll')) {
-                setTimeout(() => {
-                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    showScrollPrompt();
-                    sessionStorage.setItem('promptedToScroll', 'true'); // Set flag
-                }, SCROLL_PROMPT_DELAY);
-            }
 
             // --- UI & UX Functions ---
             function setButtonLoading(button, isLoading) {
@@ -723,7 +642,7 @@
 
             async function generateAndDownloadPass(userData) {
                 const passElement = createPassElement(userData);
-                document.body.appendChild(passElement); // Must be in DOM for html2canvas
+                document.body.appendChild(passElement);
 
                 try {
                     const canvas = await html2canvas(passElement, { scale: 3, useCORS: true, backgroundColor: null });
@@ -775,7 +694,7 @@
                 const originalSizeMB = file.size / 1024 / 1024;
                 if (originalSizeMB > 15) {
                     showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
-                    profileImageInput.value = ''; // Reset the input
+                    profileImageInput.value = '';
                     return;
                 }
 
@@ -792,13 +711,12 @@
                     compressedImageFile = await imageCompression(file, options);
                 } catch (error) {
                     console.error('Image compression error:', error);
-                    compressedImageFile = file; // Fallback to original file
+                    compressedImageFile = file;
                     showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'info');
                 }
             });
 
             function validateForm() {
-                // Remove previous invalid states
                 form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
                 const errors = [];
@@ -825,7 +743,6 @@
                         errorList.appendChild(li);
                     });
                     showInfoModal('Please Complete the Form', errorList, 'error');
-                    // Focus the first invalid field when modal is closed
                     infoModalEl.addEventListener('hidden.bs.modal', () => {
                         const firstInvalidField = errors.find(e => e.field);
                         if (firstInvalidField) firstInvalidField.field.focus();
@@ -835,7 +752,7 @@
                 return true;
             }
 
-            // --- Main Form Submission Logic ---
+            // --- Main Form Submission Logic with Improved Error Handling ---
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (!validateForm()) return;
@@ -847,7 +764,13 @@
                 }
 
                 try {
+                    // Check for network connection first
+                    if (!navigator.onLine) {
+                        throw new Error("You appear to be offline. Please check your internet connection.");
+                    }
                     const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
+
+                    // Always try to parse JSON, as even errors should have a JSON body
                     const result = await response.json();
 
                     if (response.status === 409 && result.status === 'exists') {
@@ -863,11 +786,29 @@
                         document.querySelector('.registration-wrapper').scrollIntoView();
                         downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
                     } else {
-                        throw new Error(result.error || 'An unknown server error occurred.');
+                        // Throw an error with the server-provided message, or a generic one
+                        const error = new Error(result.error || `A server error occurred (Status: ${response.status}).`);
+                        error.response = response; // Attach response for more context
+                        throw error;
                     }
                 } catch (error) {
                     console.error('Submission Error:', error);
-                    showInfoModal('Registration Failed', `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please try again or contact support.</p>`, 'error');
+
+                    let title = 'Registration Failed';
+                    let message = '';
+
+                    if (error.message.includes("offline")) {
+                        title = 'Connection Error';
+                        message = '<p>You seem to be offline. Please check your internet connection and try again.</p>';
+                    } else if (error.response?.status >= 500) {
+                        title = 'Server Error';
+                        message = '<p>We are currently experiencing issues on our end. Our team has been notified.</p><p>Please try again in a few minutes.</p>';
+                    } else {
+                        // Default message using the specific error from the server or catch block
+                        message = `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please review the form or contact support if the problem persists.</p>`;
+                    }
+
+                    showInfoModal(title, message, 'error');
                 } finally {
                     setButtonLoading(submitBtn, false);
                 }

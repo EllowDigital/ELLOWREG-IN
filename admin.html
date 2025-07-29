@@ -11,396 +11,354 @@
     <style>
         :root {
             --primary-color: #0A2540;
-            --secondary-color: #007bff;
-            --light-gray: #f8f9fa;
-            --border-color: #dee2e6;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --info-color: #0dcaf0;
+            --light-gray: #f4f7fa;
+            --text-muted: #6c757d;
         }
 
         body {
             background-color: var(--light-gray);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .container {
-            max-width: 1100px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         .card {
-            border: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e5ec;
             border-radius: 0.75rem;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
         .card-header {
             background-color: var(--primary-color);
             color: white;
             font-weight: 600;
-            border-top-left-radius: 0.75rem;
-            border-top-right-radius: 0.75rem;
+            border-bottom: none;
+            border-top-left-radius: calc(0.75rem - 1px);
+            border-top-right-radius: calc(0.75rem - 1px);
         }
 
-        /* Stat Card Styles */
-        .stat-card {
-            background-color: #fff;
-        }
-
-        .stat-card .card-body {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .stat-card .icon-wrapper {
-            font-size: 2rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            color: #fff;
-        }
-
-        .icon-total {
-            background-color: #17a2b8;
-        }
-
-        /* Info Blue */
-        .icon-time {
-            background-color: #28a745;
-        }
-
-        /* Success Green */
-        .stat-card .stat-value {
-            font-size: 2.25rem;
+        .status-badge {
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--primary-color);
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
         }
 
-        .stat-card .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .status-badge .spinner-border {
+            width: 0.8rem;
+            height: 0.8rem;
+            border-width: .15em;
         }
 
-        #searchResult img {
-            width: 120px;
-            height: 120px;
+        .search-result-card img {
+            width: 100px;
+            height: 100px;
             object-fit: cover;
             border-radius: 50%;
             border: 4px solid #fff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+        /* Responsive font sizes */
+        @media (max-width: 768px) {
+            .display-5 {
+                font-size: 2.5rem;
+            }
+
+            .fs-3 {
+                font-size: 1.5rem !important;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container py-5">
-        <div class="text-center mb-4">
+    <div class="container py-4 py-md-5">
+        <div class="text-center mb-5">
             <h1 class="display-5 fw-bold">Admin Dashboard</h1>
             <p class="lead text-muted">Tent Decor Expo UP 2025</p>
         </div>
 
-        <!-- Hidden Secret Key Input -->
-        <input type="password" class="form-control d-none" id="secretKey" value="TDEXPOUP2025">
-
-        <!-- Stats Overview Section -->
-        <div class="row mb-4 g-4">
-            <div class="col-md-6">
-                <div class="card stat-card">
-                    <div class="card-body p-4">
-                        <div class="icon-wrapper icon-total">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div>
-                            <div id="totalRegCount" class="stat-value">
-                                <div class="spinner-border spinner-border-sm" role="status"></div>
-                            </div>
-                            <div class="stat-label">Total Registrations</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card stat-card">
-                    <div class="card-body p-4">
-                        <div class="icon-wrapper icon-time">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div>
-                            <div id="lastRegTime" class="stat-value fs-5">
-                                <div class="spinner-border spinner-border-sm" role="status"></div>
-                            </div>
-                            <div class="stat-label">Last Registration Time</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Search & Export Panels -->
         <div class="row g-4">
-            <div class="col-lg-7">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3 text-info fs-2"><i class="fas fa-users fa-fw"></i></div>
+                                    <div>
+                                        <div id="totalRegCount" class="fs-3 fw-bold">
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </div>
+                                        <div class="text-muted small fw-semibold">TOTAL REGISTRATIONS</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3 text-success fs-2"><i class="fas fa-clock fa-fw"></i></div>
+                                    <div>
+                                        <div id="lastRegTime" class="fw-bold">
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </div>
+                                        <div class="text-muted small fw-semibold">LAST REGISTRATION</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card">
                     <h5 class="card-header">Find a Registration</h5>
                     <div class="card-body p-4">
                         <form id="searchForm">
                             <div class="row g-3 align-items-center">
-                                <div class="col-md-5">
-                                    <label for="phoneInput" class="form-label fw-semibold">Phone Number</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">+91</span>
-                                        <input type="tel" class="form-control" id="phoneInput"
-                                            placeholder="10-digit number" maxlength="10">
-                                    </div>
-                                </div>
-                                <div class="col-md-2 text-center pt-md-4">
-                                    <strong class="text-muted d-block my-2">OR</strong>
-                                </div>
-                                <div class="col-md-5">
-                                    <label for="regIdInput" class="form-label fw-semibold">Registration ID</label>
-                                    <input type="text" class="form-control" id="regIdInput"
-                                        placeholder="e.g., TDEXPOUP-..." style="text-transform: uppercase;">
-                                </div>
+                                <div class="col-12 col-md"><input type="tel" class="form-control" id="phoneInput"
+                                        placeholder="Phone Number" maxlength="10"></div>
+                                <div class="col-12 col-md-auto text-center"><strong
+                                        class="text-muted d-none d-md-block">OR</strong></div>
+                                <div class="col-12 col-md"><input type="text" class="form-control" id="regIdInput"
+                                        placeholder="Registration ID" style="text-transform: uppercase;"></div>
                             </div>
-                            <div class="d-grid mt-4">
-                                <button id="searchBtn" type="submit" class="btn btn-primary btn-lg">
+                            <div class="d-grid mt-3">
+                                <button id="searchBtn" type="submit" class="btn btn-primary">
                                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                                    <span class="button-text"><i class="fas fa-search me-2"></i>Search</span>
+                                    <span class="button-text"><i class="fas fa-search me-2"></i>Search
+                                        Registrations</span>
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-5">
-                <div class="card h-100">
-                    <h5 class="card-header">Export All Data</h5>
-                    <div class="card-body p-4 d-flex flex-column justify-content-center">
-                        <p class="card-text">Download the complete registration list as an Excel file (.xlsx).</p>
-                        <button id="exportBtn" class="btn btn-success btn-lg w-100 mt-auto">
+
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <h5 class="card-header">System Status</h5>
+                    <div class="card-body p-3">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-1">
+                                <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
+                                <span id="status-database" class="status-badge">
+                                    <div class="spinner-border" role="status"></div>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-1">
+                                <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
+                                <span id="status-cloudinary" class="status-badge">
+                                    <div class="spinner-border" role="status"></div>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-1">
+                                <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span>
+                                <span id="status-googleSheets" class="status-badge">
+                                    <div class="spinner-border" role="status"></div>
+                                </span>
+                            </li>
+                        </ul>
+                        <div class="d-grid mt-3">
+                            <button id="checkStatusBtn" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-sync-alt me-1"></i> Refresh Status
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h5 class="card-header">Export Data</h5>
+                    <div class="card-body p-3 text-center">
+                        <p class="card-text small mb-2">Download the complete registration list.</p>
+                        <button id="exportBtn" class="btn btn-success w-100">
                             <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                            <span class="button-text"><i class="fas fa-file-excel me-2"></i>Download Export</span>
+                            <span class="button-text"><i class="fas fa-download me-2"></i>Download as Excel</span>
                         </button>
-                        <div id="exportStatus" class="mt-3"></div>
+                        <div id="exportStatus" class="mt-2 small"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Search Results & Status -->
-        <div id="searchStatus" class="mt-4"></div>
+        <div id="status-container" class="mt-4"></div>
         <div id="searchResult" class="mt-4"></div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const secretKeyInput = document.getElementById('secretKey');
 
-            // Stat elements
+            // --- Hardcoded Admin Key ---
+            // WARNING: Exposing this key in client-side code is a major security risk.
+            // Replace the placeholder with the actual value from your Netlify environment variables.
+            const ADMIN_SECRET_KEY = "TDEXPOUP2025";
+
+            // --- Element Selectors ---
             const totalRegCountEl = document.getElementById('totalRegCount');
             const lastRegTimeEl = document.getElementById('lastRegTime');
-
-            // Search elements
             const searchForm = document.getElementById('searchForm');
             const searchBtn = document.getElementById('searchBtn');
             const phoneInput = document.getElementById('phoneInput');
             const regIdInput = document.getElementById('regIdInput');
-            const searchStatus = document.getElementById('searchStatus');
+            const statusContainer = document.getElementById('status-container');
             const searchResult = document.getElementById('searchResult');
-
-            // Export elements
             const exportBtn = document.getElementById('exportBtn');
             const exportStatus = document.getElementById('exportStatus');
+            const checkStatusBtn = document.getElementById('checkStatusBtn');
 
-            function setButtonLoading(button, isLoading, text = 'Loading...') {
-                const buttonText = button.querySelector('.button-text');
-                const spinner = button.querySelector('.spinner-border');
-                if (!buttonText || !spinner) return;
+            // --- Helper Functions ---
+            const setButtonLoading = (btn, isLoading) => {
+                const textEl = btn.querySelector('.button-text');
+                const spinnerEl = btn.querySelector('.spinner-border');
+                btn.disabled = isLoading;
+                if (textEl) textEl.classList.toggle('d-none', isLoading);
+                if (spinnerEl) spinnerEl.classList.toggle('d-none', !isLoading);
+            };
 
-                const originalText = button.dataset.originalText || buttonText.innerHTML;
-                button.disabled = isLoading;
+            const setStatusIndicator = (elementId, status) => {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                const config = {
+                    ok: { class: 'bg-success', text: 'Operational' },
+                    error: { class: 'bg-danger', text: 'Down' },
+                    loading: { class: 'bg-light text-dark', html: '<div class="spinner-border" role="status"></div>' }
+                };
+                const current = config[status] || { class: 'bg-warning', text: 'Unknown' };
+                el.className = `status-badge ${current.class}`;
+                el.innerHTML = current.html || current.text;
+            };
 
-                if (isLoading) {
-                    if (!button.dataset.originalText) button.dataset.originalText = originalText;
-                    buttonText.innerHTML = `<span class="me-2">${text}</span>`;
-                    spinner.classList.remove('d-none');
-                } else {
-                    buttonText.innerHTML = originalText;
-                    spinner.classList.add('d-none');
+            const showStatusMessage = (message, type = 'info') => {
+                statusContainer.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
+            };
+
+            const clearStatusMessages = () => {
+                statusContainer.innerHTML = '';
+                searchResult.innerHTML = '';
+            };
+
+            // --- API Call Wrapper ---
+            const makeApiCall = async (endpoint, options = {}) => {
+                if (!ADMIN_SECRET_KEY || ADMIN_SECRET_KEY === "YOUR_X_ADMIN_KEY_VALUE") {
+                    showStatusMessage("Admin Secret Key is not configured in the script. Please edit the HTML file and set the ADMIN_SECRET_KEY variable.", "danger");
+                    throw new Error("Missing/Unconfigured Secret Key");
                 }
-            }
+                const headers = { 'x-admin-key': ADMIN_SECRET_KEY, ...options.headers };
+                const response = await fetch(endpoint, { ...options, headers });
 
-            // NEW: Function to fetch dashboard stats
-            async function fetchDashboardStats() {
-                const secretKey = secretKeyInput.value.trim();
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'An unknown error occurred.' }));
+                    const errorMessage = errorData.error || errorData.message || `Request failed with status ${response.status}`;
+                    throw new Error(errorMessage);
+                }
+                // For 'export-data' which might not return JSON but triggers a download
+                if (response.headers.get("content-type")?.includes("application/json")) {
+                    return response.json();
+                }
+                return response; // Return the whole response for non-JSON cases
+            };
+
+            // --- Main Functions ---
+            const fetchDashboardStats = async () => {
                 try {
-                    const response = await fetch('/.netlify/functions/get-stats', {
-                        headers: { 'x-admin-key': secretKey }
-                    });
-                    if (!response.ok) throw new Error('Failed to load stats.');
-
-                    const data = await response.json();
-
+                    const data = await makeApiCall('/.netlify/functions/get-stats');
                     totalRegCountEl.textContent = data.totalRegistrations;
-
-                    if (data.lastRegistrationTime) {
-                        const date = new Date(data.lastRegistrationTime);
-                        lastRegTimeEl.textContent = date.toLocaleString('en-IN', {
-                            day: 'numeric', month: 'short', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit', hour12: true
-                        });
-                    } else {
-                        lastRegTimeEl.textContent = 'N/A';
-                    }
-
-                } catch (error) {
-                    console.error("Error fetching stats:", error);
+                    lastRegTimeEl.textContent = data.lastRegistrationTime ? new Date(data.lastRegistrationTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
+                } catch (err) {
                     totalRegCountEl.textContent = 'Error';
                     lastRegTimeEl.textContent = 'Error';
+                    console.error("Stats Fetch Error:", err.message);
                 }
-            }
+            };
 
-            function displayUsers(dataArray) {
-                searchResult.innerHTML = '';
-                searchStatus.className = '';
-                searchStatus.textContent = '';
-
-                if (!dataArray || dataArray.length === 0) {
-                    searchStatus.className = 'alert alert-info';
-                    searchStatus.textContent = 'No matching registrations found.';
-                    return;
+            const checkSystemStatus = async () => {
+                setStatusIndicator('status-database', 'loading');
+                setStatusIndicator('status-cloudinary', 'loading');
+                setStatusIndicator('status-googleSheets', 'loading');
+                try {
+                    const statuses = await makeApiCall('/.netlify/functions/check-status');
+                    setStatusIndicator('status-database', statuses.database.status);
+                    setStatusIndicator('status-cloudinary', statuses.cloudinary.status);
+                    setStatusIndicator('status-googleSheets', statuses.googleSheets.status);
+                } catch (err) {
+                    setStatusIndicator('status-database', 'error');
+                    setStatusIndicator('status-cloudinary', 'error');
+                    setStatusIndicator('status-googleSheets', 'error');
+                    console.error("Status Check Error:", err.message);
                 }
+            };
 
-                dataArray.forEach(data => {
-                    const registrationDate = new Date(data.timestamp).toLocaleString('en-IN', {
-                        day: '2-digit', month: 'long', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit', hour12: true
-                    });
-                    const cardHtml = `
-                        <div class="card mb-3">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center g-4">
-                                    <div class="col-md-3 text-center">
-                                        <img src="${data.image_url}" alt="Profile Photo" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h4 class="card-title fw-bold text-primary">${data.name}</h4>
-                                        <h6 class="card-subtitle mb-3 text-muted">${data.company}</h6>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item d-flex justify-content-between"><strong>Reg. ID:</strong> <span>${data.registration_id}</span></li>
-                                            <li class="list-group-item d-flex justify-content-between"><strong>Phone:</strong> <span>+91 ${data.phone}</span></li>
-                                            <li class="list-group-item d-flex justify-content-between"><strong>Address:</strong> <span class="text-end">${data.address}, ${data.city}, ${data.state}</span></li>
-                                            <li class="list-group-item d-flex justify-content-between"><strong>Attending:</strong> <span>${data.day}</span></li>
-                                            <li class="list-group-item d-flex justify-content-between"><strong>Registered On:</strong> <span>${registrationDate}</span></li>
-                                        </ul>
-                                    </div>
+            const displayUsers = (users) => {
+                searchResult.innerHTML = users.map(user => `
+                    <div class="card search-result-card mb-3">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="row align-items-center g-3 g-md-4">
+                                <div class="col-12 col-sm-3 text-center">
+                                    <img src="${user.image_url}" class="img-fluid" alt="Profile Photo for ${user.name}">
+                                </div>
+                                <div class="col-12 col-sm-9">
+                                    <h5 class="fw-bold text-primary mb-1">${user.name}</h5>
+                                    <p class="text-muted fw-semibold mb-2">${user.company}</p>
+                                    <ul class="list-unstyled small mb-0">
+                                        <li><strong>ID:</strong> ${user.registration_id}</li>
+                                        <li><strong>Phone:</strong> ${user.phone}</li>
+                                        <li><strong>Address:</strong> ${user.address}, ${user.city}, ${user.state}</li>
+                                        <li><strong>Attending:</strong> ${user.day}</li>
+                                    </ul>
                                 </div>
                             </div>
-                        </div>`;
-                    searchResult.insertAdjacentHTML('beforeend', cardHtml);
-                });
-            }
+                        </div>
+                    </div>`).join('');
+            };
 
+            // --- Event Listeners ---
             searchForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const phone = phoneInput.value.trim();
                 const registrationId = regIdInput.value.trim();
-                const secretKey = secretKeyInput.value.trim();
-
                 if (!phone && !registrationId) {
-                    searchStatus.className = 'alert alert-warning';
-                    searchStatus.textContent = 'Please enter a phone number or a registration ID.';
+                    showStatusMessage('Please enter a phone number or a registration ID to search.', 'warning');
                     return;
                 }
-
-                setButtonLoading(searchBtn, true, 'Searching...');
-                searchStatus.textContent = '';
-                searchResult.innerHTML = '';
-
-                const query = new URLSearchParams();
-                if (phone) query.append('phone', phone);
-                if (registrationId) query.append('registrationId', registrationId);
+                clearStatusMessages();
+                setButtonLoading(searchBtn, true);
 
                 try {
-                    const response = await fetch(`/.netlify/functions/search-user?${query.toString()}`, {
-                        headers: { 'x-admin-key': secretKey }
-                    });
-
-                    // Handle 404 specifically for better UX
-                    if (response.status === 404) {
-                        displayUsers([]);
-                        return;
+                    const users = await makeApiCall(`/.netlify/functions/search-user?phone=${phone}&registrationId=${registrationId}`);
+                    if (users.length === 0) {
+                        showStatusMessage('No matching registrations found.', 'info');
+                    } else {
+                        displayUsers(users);
                     }
-
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.message || result.error || 'Search failed.');
-
-                    displayUsers(Array.isArray(result) ? result : [result]);
-
-                } catch (error) {
-                    searchStatus.className = 'alert alert-danger';
-                    searchStatus.textContent = error.message;
+                } catch (err) {
+                    showStatusMessage(`Search Error: ${err.message}`, 'danger');
                 } finally {
                     setButtonLoading(searchBtn, false);
                 }
             });
 
             exportBtn.addEventListener('click', async () => {
-                const secretKey = secretKeyInput.value.trim();
-                setButtonLoading(exportBtn, true, 'Exporting...');
+                setButtonLoading(exportBtn, true);
                 exportStatus.textContent = '';
-                exportStatus.className = '';
-
                 try {
-                    const response = await fetch('/.netlify/functions/export-data', {
-                        headers: { 'x-admin-key': secretKey }
-                    });
-
-                    const result = await response.json();
-                    if (!response.ok) {
-                        throw new Error(result.error || result.details || 'Server responded with an error.');
-                    }
-
-                    if (result.downloadUrl) {
-                        // Use a small, temporary alert instead of a persistent one
-                        const alertEl = document.createElement('div');
-                        alertEl.className = 'alert alert-success mt-3';
-                        alertEl.textContent = 'File ready! Your download will start now.';
-                        exportStatus.appendChild(alertEl);
-                        setTimeout(() => alertEl.remove(), 4000);
-
-                        window.open(result.downloadUrl, '_blank');
-                    } else {
-                        throw new Error('Server did not return a download URL.');
-                    }
-
-                } catch (error) {
-                    exportStatus.className = 'alert alert-danger mt-3';
-                    exportStatus.textContent = `Export failed: ${error.message}`;
-                    console.error('Export failed:', error);
+                    const result = await makeApiCall('/.netlify/functions/export-data');
+                    window.open(result.downloadUrl, '_blank');
+                    exportStatus.textContent = 'Download started.';
+                } catch (err) {
+                    exportStatus.textContent = `Failed: ${err.message}`;
                 } finally {
                     setButtonLoading(exportBtn, false);
                 }
             });
 
-            setTimeout(() => {
-                document.getElementById('searchForm')?.scrollIntoView({ behavior: 'smooth' });
-            }, 5000);
+            checkStatusBtn.addEventListener('click', checkSystemStatus);
 
-
-            // Initial fetch of dashboard stats on page load
+            // --- Initial Page Load ---
+            checkSystemStatus();
             fetchDashboardStats();
         });
     </script>
