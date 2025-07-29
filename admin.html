@@ -15,8 +15,6 @@
             --text-light: #f8f9fa;
             --text-dark: #343a40;
             --text-muted: #6c757d;
-            --bg-start: #6a11cb;
-            --bg-end: #2575fc;
             --success: #198754;
             --danger: #dc3545;
             --info: #0dcaf0;
@@ -24,15 +22,17 @@
 
         body {
             background-color: #f4f7fa;
-            /* Simple light gray background */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             color: var(--text-dark);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .main-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
+            flex-grow: 1;
         }
 
         .glass-card {
@@ -74,18 +74,13 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* Prevents content overflow during animations */
         }
 
-        #search-form-wrapper {
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-        }
-
+        #search-form-wrapper,
         #search-output-wrapper {
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
         }
 
-        /* State management for search view */
         #search-container:not(.results-active) #search-output-wrapper {
             display: none;
         }
@@ -112,6 +107,30 @@
             border: 4px solid var(--primary-color);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
+        /* Footer Styles */
+        .footer-credit {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .heart-blink {
+            color: var(--danger);
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
     </style>
 </head>
 
@@ -119,7 +138,7 @@
     <div class="container main-container">
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold text-dark"><i class="fas fa-user-shield me-3"></i>Admin Panel</h1>
-<p class="lead text-muted">Tent Decor Expo UP 2025</p>
+            <p class="lead text-muted">Tent Decor Expo UP 2025</p>
         </div>
 
         <div class="row g-4">
@@ -239,13 +258,18 @@
         </div>
     </div>
 
+    <footer class="text-center py-4">
+        <p class="footer-credit mb-0">
+            Made with <span class="heart-blink">❤️</span> by
+            <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
+        </p>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Hardcoded Admin Key ---
-            // WARNING: Replace with your actual key from a secure source like Netlify environment variables.
-            // This is a placeholder and should be treated as a secret.
             const ADMIN_SECRET_KEY = "TDEXPOUP2025";
 
             // --- Element Selectors ---
@@ -278,7 +302,7 @@
                     ok: { class: 'bg-success text-white', text: 'Operational' },
                     error: { class: 'bg-danger text-white', text: 'Down' },
                 };
-                const current = config.hasOwnProperty(status) ? config : { class: 'bg-warning text-dark', text: 'Unknown' };
+                const current = config[status] || { class: 'bg-warning text-dark', text: 'Unknown' };
                 el.className = `badge ${current.class} p-2`;
                 el.textContent = current.text;
             };
@@ -291,7 +315,7 @@
                 regIdInput.value = '';
                 phoneInput.classList.remove('is-invalid');
                 regIdInput.classList.remove('is-invalid');
-                phoneTab.show(); // Reset to the first tab
+                phoneTab.show();
             };
 
             const showOutputView = (htmlContent) => {
@@ -375,7 +399,6 @@
                     }
                     return response;
                 } catch (error) {
-                    // Catches both network errors and errors thrown from non-ok responses
                     throw new Error(error.message || 'Network error. Check connection and API endpoint.');
                 }
             };
@@ -421,7 +444,6 @@
 
                 let query = '';
 
-                // Simple validation
                 if (activeTab.id === 'phone-pane') {
                     if (!phone) { phoneInput.classList.add('is-invalid'); return; }
                     query = `phone=${encodeURIComponent(phone)}`;
@@ -447,14 +469,12 @@
                 }
             });
 
-            // Event delegation for "New Search" buttons
             searchOutputWrapper.addEventListener('click', (e) => {
                 if (e.target && e.target.classList.contains('new-search-btn')) {
                     showSearchForm();
                 }
             });
 
-            // Remove validation error on input
             phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
             regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
 
