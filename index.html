@@ -372,6 +372,29 @@
             color: var(--text-light);
             font-size: 0.9rem;
         }
+
+        /* Footer Styles */
+        .footer-credit {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .heart-blink {
+            color: var(--danger);
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
     </style>
 </head>
 
@@ -576,6 +599,13 @@
             </div>
         </div>
     </div>
+
+    <footer class="text-center py-4">
+        <p class="footer-credit mb-0">
+            Made with <span class="heart-blink">❤️</span> by
+            <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
+        </p>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
     <script>
