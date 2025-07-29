@@ -68,35 +68,28 @@
             flex-shrink: 0;
         }
 
-        /* Unified Search Card Styling */
         #search-container {
             min-height: 420px;
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* Prevents content overflow during animations */
         }
 
-        #search-form-wrapper,
+        #search-form-wrapper {
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+        
         #search-output-wrapper {
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
         }
 
-        #search-output-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            transform: scale(0.95);
-            pointer-events: none;
-            overflow-y: auto;
+        /* State management for search view */
+        #search-container:not(.results-active) #search-output-wrapper {
+            display: none;
         }
-
-        #search-output-wrapper.active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-            position: relative;
+        
+        #search-container.results-active #search-form-wrapper {
+            display: none;
         }
         
         .nav-pills .nav-link {
@@ -168,7 +161,7 @@
                             </li>
                         </ul>
                         <form id="searchForm" class="flex-grow-1 d-flex flex-column">
-                           <div class="tab-content flex-grow-1">
+                            <div class="tab-content flex-grow-1" id="search-tab-content">
                                 <div class="tab-pane fade show active" id="phone-pane" role="tabpanel">
                                     <label for="phoneInput" class="form-label fw-semibold">Phone Number</label>
                                     <input type="tel" class="form-control form-control-lg" id="phoneInput" placeholder="Enter 10-digit number" maxlength="10">
@@ -186,41 +179,41 @@
                             </div>
                         </form>
                     </div>
-                    <div id="search-output-wrapper" class="p-3 d-flex flex-column"></div>
+                    <div id="search-output-wrapper" class="p-3 d-flex flex-column h-100"></div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-lg-6">
                  <div class="glass-card p-3 mb-4">
-                     <h5 class="card-header-custom p-2 mb-2 rounded text-center">System Status</h5>
-                     <ul class="list-group list-group-flush">
-                         <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                             <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
-                             <span id="status-database" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
-                         </li>
-                         <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                             <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
-                             <span id="status-cloudinary" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
-                         </li>
-                         <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                             <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span>
-                             <span id="status-googleSheets" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
-                         </li>
-                     </ul>
-                     <div class="d-grid mt-2">
-                          <button id="checkStatusBtn" class="btn btn-sm btn-outline-secondary">
+                      <h5 class="card-header-custom p-2 mb-2 rounded text-center">System Status</h5>
+                      <ul class="list-group list-group-flush">
+                           <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
+                               <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
+                               <span id="status-database" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+                           </li>
+                           <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
+                               <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
+                               <span id="status-cloudinary" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+                           </li>
+                           <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
+                               <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span>
+                               <span id="status-googleSheets" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+                           </li>
+                      </ul>
+                      <div class="d-grid mt-2">
+                          <button id="checkStatusBtn" class="btn btn-sm btn-outline-secondary bg-white">
                               <i class="fas fa-sync-alt me-1"></i> Refresh Status
                           </button>
                       </div>
                  </div>
                  <div class="glass-card p-3 text-center">
-                      <h5 class="card-header-custom p-2 mb-3 rounded">Export Data</h5>
-                      <p class="small mb-2">Download all registrations as an Excel file.</p>
-                      <button id="exportBtn" class="btn btn-success w-100">
-                          <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                          <span class="button-text"><i class="fas fa-download me-2"></i>Download</span>
-                      </button>
-                      <div id="exportStatus" class="mt-2 small"></div>
+                     <h5 class="card-header-custom p-2 mb-3 rounded">Export Data</h5>
+                     <p class="small mb-2">Download all registrations as an Excel file.</p>
+                     <button id="exportBtn" class="btn btn-success w-100">
+                         <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                         <span class="button-text"><i class="fas fa-download me-2"></i>Download</span>
+                     </button>
+                     <div id="exportStatus" class="mt-2 small"></div>
                  </div>
             </div>
         </div>
@@ -231,7 +224,9 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- Hardcoded Admin Key ---
-        const ADMIN_SECRET_KEY = "TDEXPOUP2025"; // WARNING: Replace with your actual key
+        // WARNING: Replace with your actual key from a secure source like Netlify environment variables.
+        // This is a placeholder and should be treated as a secret.
+        const ADMIN_SECRET_KEY = "TDEXPOUP2025"; 
 
         // --- Element Selectors ---
         const totalRegCountEl = document.getElementById('totalRegCount');
@@ -243,11 +238,9 @@
         const exportBtn = document.getElementById('exportBtn');
         const exportStatus = document.getElementById('exportStatus');
         const checkStatusBtn = document.getElementById('checkStatusBtn');
-        
-        // --- New UI Element Selectors ---
-        const searchFormWrapper = document.getElementById('search-form-wrapper');
+        const searchContainer = document.getElementById('search-container');
         const searchOutputWrapper = document.getElementById('search-output-wrapper');
-        const searchTab = new bootstrap.Tab(document.getElementById('phone-tab'));
+        const phoneTab = new bootstrap.Tab(document.getElementById('phone-tab'));
 
         // --- Helper Functions ---
         const setButtonLoading = (btn, isLoading) => {
@@ -270,62 +263,57 @@
             el.textContent = current.text;
         };
 
-        // --- UI State Management Functions ---
+        // --- UI State Management ---
         const showSearchForm = () => {
-            searchOutputWrapper.classList.remove('active');
+            searchContainer.classList.remove('results-active');
             searchOutputWrapper.innerHTML = '';
-            searchFormWrapper.style.opacity = '1';
-            searchFormWrapper.style.transform = 'scale(1)';
-            searchFormWrapper.style.pointerEvents = 'auto';
             phoneInput.value = '';
             regIdInput.value = '';
-            searchTab.show(); // Reset to the first tab
+            phoneInput.classList.remove('is-invalid');
+            regIdInput.classList.remove('is-invalid');
+            phoneTab.show(); // Reset to the first tab
         };
-        window.showSearchForm = showSearchForm; // Make it globally accessible for onclick
 
-        const showOutputView = () => {
-            searchFormWrapper.style.opacity = '0';
-            searchFormWrapper.style.transform = 'scale(0.95)';
-            searchFormWrapper.style.pointerEvents = 'none';
-            searchOutputWrapper.classList.add('active');
+        const showOutputView = (htmlContent) => {
+            searchOutputWrapper.innerHTML = htmlContent;
+            searchContainer.classList.add('results-active');
         };
         
         const displayLoadingState = () => {
-            showOutputView();
-            searchOutputWrapper.innerHTML = `
+            const loadingHTML = `
                 <div class="text-center m-auto">
                     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
                     <p class="mt-3 fw-bold">Searching...</p>
                 </div>`;
+            showOutputView(loadingHTML);
         };
         
         const displayErrorMessage = (message) => {
-            showOutputView();
-            searchOutputWrapper.innerHTML = `
+            const errorHTML = `
                 <div class="text-center m-auto">
                     <div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div>
                     <h5 class="fw-bold">Search Error</h5>
                     <p class="text-muted">${message}</p>
-                    <button class="btn btn-outline-secondary mt-3" onclick="showSearchForm()">New Search</button>
+                    <button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button>
                 </div>`;
+            showOutputView(errorHTML);
         };
 
         const displayNoResults = () => {
-            showOutputView();
-            searchOutputWrapper.innerHTML = `
+            const noResultsHTML = `
                 <div class="text-center m-auto">
                     <div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div>
                     <h5 class="fw-bold">No Registrations Found</h5>
                     <p class="text-muted">There are no records matching your search criteria.</p>
-                    <button class="btn btn-primary mt-3" onclick="window.showSearchForm()">Start a New Search</button>
+                    <button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button>
                 </div>`;
+            showOutputView(noResultsHTML);
         };
 
         const displayUsers = (users) => {
-            showOutputView();
             const userHTML = users.map(user => `
                 <div class="text-center">
-                    <img src="${user.image_url}" class="search-result-user-img mb-3" alt="Profile Photo">
+                    <img src="${user.image_url || 'assets/favicon.ico'}" class="search-result-user-img mb-3" alt="Profile Photo">
                     <h4 class="fw-bold text-primary mb-1">${user.name}</h4>
                     <p class="text-muted fw-semibold mb-3">${user.company}</p>
                 </div>
@@ -337,28 +325,28 @@
                 </ul>
             `).join('');
 
-            searchOutputWrapper.innerHTML = `
+            const resultsHTML = `
                 <div class="w-100 h-100 d-flex flex-column">
                     ${userHTML}
-                    <div class="d-grid mt-auto">
-                        <button class="btn btn-outline-secondary" onclick="window.showSearchForm()">
+                    <div class="d-grid mt-auto pt-3">
+                        <button class="btn btn-outline-secondary new-search-btn">
                             <i class="fas fa-arrow-left me-2"></i>New Search
                         </button>
                     </div>
                 </div>`;
+            showOutputView(resultsHTML);
         };
 
         // --- API Call Wrapper ---
         const makeApiCall = async (endpoint, options = {}) => {
             if (!ADMIN_SECRET_KEY || ADMIN_SECRET_KEY === "YOUR_X_ADMIN_KEY_VALUE") {
-                displayErrorMessage("Admin Secret Key is not configured in the script.");
-                throw new Error("Missing/Unconfigured Secret Key");
+                throw new Error("Admin Secret Key is not configured in the script. Please edit the HTML file.");
             }
             const headers = { 'x-admin-key': ADMIN_SECRET_KEY, ...options.headers };
             try {
                 const response = await fetch(endpoint, { ...options, headers });
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'An unknown error occurred.' }));
+                    const errorData = await response.json().catch(() => ({ error: 'An unknown API error occurred.' }));
                     const errorMessage = errorData.error || errorData.message || `Request failed with status ${response.status}`;
                     throw new Error(errorMessage);
                 }
@@ -367,7 +355,7 @@
                 }
                 return response;
             } catch (error) {
-                 // Catch network errors (e.g., CORS, DNS)
+                // Catches both network errors and errors thrown from non-ok responses
                  throw new Error(error.message || 'Network error. Check connection and API endpoint.');
             }
         };
@@ -386,10 +374,10 @@
         };
 
         const checkSystemStatus = async () => {
-            // Visually reset status to loading
             ['database', 'cloudinary', 'googleSheets'].forEach(id => {
-                 document.getElementById(`status-${id}`).innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
-                 document.getElementById(`status-${id}`).className = 'badge bg-light text-dark p-2';
+                 const el = document.getElementById(`status-${id}`);
+                 el.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
+                 el.className = 'badge bg-light text-dark p-2';
             });
             try {
                 const statuses = await makeApiCall('/.netlify/functions/check-status');
@@ -404,23 +392,22 @@
             }
         };
 
+        // --- Event Listeners ---
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
             const phone = phoneInput.value.trim();
-            const registrationId = regIdInput.value.trim();
+            const registrationId = regIdInput.value.trim().toUpperCase();
             
             let query = '';
-            let searchTerm = '';
             
+            // Simple validation
             if (activeTab.id === 'phone-pane') {
-                if (!phone) { alert('Please enter a phone number.'); return; }
-                query = `phone=${phone}`;
-                searchTerm = phone;
+                if (!phone) { phoneInput.classList.add('is-invalid'); return; }
+                query = `phone=${encodeURIComponent(phone)}`;
             } else {
-                if (!registrationId) { alert('Please enter a registration ID.'); return; }
-                query = `registrationId=${registrationId}`;
-                searchTerm = registrationId;
+                if (!registrationId) { regIdInput.classList.add('is-invalid'); return; }
+                query = `registrationId=${encodeURIComponent(registrationId)}`;
             }
 
             setButtonLoading(searchBtn, true);
@@ -439,6 +426,17 @@
                 setButtonLoading(searchBtn, false);
             }
         });
+
+        // Event delegation for "New Search" buttons
+        searchOutputWrapper.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('new-search-btn')) {
+                showSearchForm();
+            }
+        });
+
+        // Remove validation error on input
+        phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
+        regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
 
         exportBtn.addEventListener('click', async () => {
             setButtonLoading(exportBtn, true);
