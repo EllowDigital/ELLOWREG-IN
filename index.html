@@ -30,8 +30,8 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap">
     </noscript>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
@@ -373,28 +373,30 @@
             font-size: 0.9rem;
         }
 
-        /* Footer Styles */
-        .footer-credit {
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        .footer-custom {
+            background-color: #000;
+            /* Black background */
+            color: white;
         }
 
-        .heart-blink {
-            color: var(--danger);
-            animation: heartbeat 1.5s infinite;
-            display: inline-block;
+        .blinking-heart {
+            color: red;
+            animation: blink 1s infinite;
+            font-size: 1.2em;
+            margin-left: 5px;
         }
 
-        @keyframes heartbeat {
+        @keyframes blink {
 
             0%,
             100% {
-                transform: scale(1);
+                opacity: 1;
             }
 
             50% {
-                transform: scale(1.2);
+                opacity: 0;
             }
+        }
     </style>
 </head>
 
@@ -600,14 +602,22 @@
         </div>
     </div>
 
-    <footer class="text-center py-4">
-        <p class="footer-credit mb-0">
-            Made with <span class="heart-blink">❤️</span> by
-            <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
-        </p>
+    <footer class="footer-custom text-center py-4">
+        <div class="container">
+            <p class="mb-0">© 2025 TENT DECOR EXPO UP. All rights reserved.</p>
+            <p class="mb-0">
+                Designed by
+                <span class="blinking-heart">❤️</span>
+                <a href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer"
+                    class="text-white text-decoration-underline">
+                    EllowDigital
+                </a>
+            </p>
+        </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- Configuration & Constants ---
