@@ -1,6 +1,11 @@
 # netlify.toml
 
-# This schedules the sync-with-google-sheets function to run every 15 minutes.
-# You can adjust the cron schedule as needed.
+# Function schedule for Netlify
+
+# BEFORE: This runs the "sync-with-google-sheets" function every 15 minutes.
+# [functions."sync-with-google-sheets"]
+#   schedule = "*/15 * * * *"
+
+# AFTER (RECOMMENDED): This runs the function daily at 6:00 AM UTC.
 [functions."sync-with-google-sheets"]
-  schedule = "*/15 * * * *"
+  schedule = "0 6 * * *"
