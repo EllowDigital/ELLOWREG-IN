@@ -184,7 +184,7 @@
                                     Registration ID</button></li>
                         </ul>
                         <form id="searchForm" class="flex-grow-1 d-flex flex-column">
-                            <div class="tab-content flex-grow-1">
+                            <div class="tab-content flex-grow-1" id="search-tab-content">
                                 <div class="tab-pane fade show active" id="phone-pane" role="tabpanel">
                                     <label for="phoneInput" class="form-label fw-semibold">Phone Number</label>
                                     <input type="tel" class="form-control form-control-lg" id="phoneInput"
@@ -289,10 +289,10 @@
             const showSearchForm = () => {
                 searchContainer.classList.remove('results-active');
                 searchOutputWrapper.innerHTML = '';
-                phoneInput.value = '';
-                regIdInput.value = '';
-                phoneInput.classList.remove('is-invalid');
-                regIdInput.classList.remove('is-invalid');
+                if (phoneInput) phoneInput.value = '';
+                if (regIdInput) regIdInput.value = '';
+                if (phoneInput) phoneInput.classList.remove('is-invalid');
+                if (regIdInput) regIdInput.classList.remove('is-invalid');
                 if (phoneTab) phoneTab.show();
             };
 
@@ -331,7 +331,12 @@
                         const errorData = await response.json().catch(() => ({ error: 'An API error occurred.' }));
                         throw new Error(errorData.error || errorData.message || `Request failed: ${response.status}`);
                     }
-                    return response.headers.get("content-type")?.includes("application/json") ? response.json() : response;
+                    if (response.headers.get("content-type")?.includes("application/json")) {
+                        const data = await response.json();
+                        return data;
+                    }
+                    // For non-json responses like export
+                    return await response.text();
                 } catch (error) {
                     throw new Error(error.message || 'Network error.');
                 }
@@ -429,6 +434,10 @@
             const handleSearch = async (e) => {
                 e.preventDefault();
                 const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
+                if (!activeTab) {
+                    console.error("Could not find active search tab.");
+                    return;
+                }
                 const phone = phoneInput.value.trim();
                 const regId = regIdInput.value.trim().toUpperCase();
                 let query = '';
@@ -443,13 +452,15 @@
                 displayLoadingState();
                 try {
                     const users = await makeApiCall(`/.netlify/functions/search-user?${query}`);
-                    if (users.length === 0) {
+                    displayUsers(users);
+                } catch (err) {
+                    // The search-user function returns a 404 with a message for "not found", which makeApiCall treats as an error.
+                    // We can check the error message to distinguish between a true error and a "not found" case.
+                    if (err.message && err.message.toLowerCase().includes("no registration found")) {
                         displayNoResults();
                     } else {
-                        displayUsers(users);
+                        displayErrorMessage(err.message);
                     }
-                } catch (err) {
-                    displayErrorMessage(err.message);
                 } finally {
                     setButtonLoading(searchBtn, false);
                 }
