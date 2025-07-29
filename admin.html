@@ -11,22 +11,23 @@
     <style>
         :root {
             --primary-color: #0A2540;
-            --secondary-color: #5469d4;
-            --text-light: #f8f9fa;
-            --text-dark: #343a40;
-            --text-muted: #6c757d;
-            --success: #198754;
             --danger: #dc3545;
-            --info: #0dcaf0;
+            --text-muted: #6c757d;
         }
 
         body {
             background-color: #f4f7fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: var(--text-dark);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .center-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .main-container {
@@ -37,23 +38,10 @@
 
         .glass-card {
             background: rgba(255, 255, 255, 0.5);
-            -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 1rem;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
-        }
-
-        .card-header-custom {
-            background: rgba(255, 255, 255, 0.7);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            font-weight: 600;
         }
 
         .widget-icon {
@@ -76,16 +64,11 @@
             overflow: hidden;
         }
 
-        #search-form-wrapper,
-        #search-output-wrapper {
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-        }
-
-        #search-container:not(.results-active) #search-output-wrapper {
+        #search-container.results-active #search-form-wrapper {
             display: none;
         }
 
-        #search-container.results-active #search-form-wrapper {
+        #search-container:not(.results-active) #search-output-wrapper {
             display: none;
         }
 
@@ -95,7 +78,7 @@
 
         .nav-pills .nav-link.active {
             background-color: var(--primary-color);
-            color: var(--text-light);
+            color: white;
             box-shadow: 0 4px 15px rgba(10, 37, 64, 0.3);
         }
 
@@ -108,7 +91,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Footer Styles */
         .footer-credit {
             color: var(--text-muted);
             font-size: 0.9rem;
@@ -117,7 +99,6 @@
         .heart-blink {
             color: var(--danger);
             animation: heartbeat 1.5s infinite;
-            display: inline-block;
         }
 
         @keyframes heartbeat {
@@ -135,20 +116,39 @@
 </head>
 
 <body>
-    <div class="container main-container">
+
+    <div id="login-container" class="center-container">
+        <div class="card shadow-sm" style="width: 24rem;">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Admin Panel Login</h3>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="passwordInput" class="form-label fw-semibold">Password</label>
+                        <input type="password" class="form-control form-control-lg" id="passwordInput" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                            <span class="button-text">Login</span>
+                            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        </button>
+                    </div>
+                </form>
+                <div id="loginError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container main-container d-none" id="dashboard-container">
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold text-dark"><i class="fas fa-user-shield me-3"></i>Admin Panel</h1>
             <p class="lead text-muted">Tent Decor Expo UP 2025</p>
         </div>
-
         <div class="row g-4">
             <div class="col-xl-3 col-lg-6">
                 <div class="glass-card h-100 d-flex flex-column">
                     <div class="p-3">
                         <div class="d-flex align-items-center">
-                            <div class="widget-icon me-3">
-                                <i class="fas fa-users"></i>
-                            </div>
+                            <div class="widget-icon me-3"><i class="fas fa-users"></i></div>
                             <div>
                                 <div class="fs-4 fw-bold" id="totalRegCount">
                                     <div class="spinner-border spinner-border-sm"></div>
@@ -160,9 +160,7 @@
                     <hr class="my-0">
                     <div class="p-3">
                         <div class="d-flex align-items-center">
-                            <div class="widget-icon me-3">
-                                <i class="fas fa-clock"></i>
-                            </div>
+                            <div class="widget-icon me-3"><i class="fas fa-clock"></i></div>
                             <div>
                                 <div class="fw-bold" id="lastRegTime">
                                     <div class="spinner-border spinner-border-sm"></div>
@@ -173,23 +171,20 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-6">
                 <div id="search-container" class="glass-card position-relative p-4">
                     <div id="search-form-wrapper" class="d-flex flex-column h-100">
                         <h4 class="fw-bold text-center mb-3">Find a Registration</h4>
                         <ul class="nav nav-pills nav-fill mb-4" id="search-tab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="phone-tab" data-bs-toggle="tab"
-                                    data-bs-target="#phone-pane" type="button" role="tab">By Phone</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="regid-tab" data-bs-toggle="tab"
-                                    data-bs-target="#regid-pane" type="button" role="tab">By Registration ID</button>
-                            </li>
+                            <li class="nav-item" role="presentation"><button class="nav-link active" id="phone-tab"
+                                    data-bs-toggle="tab" data-bs-target="#phone-pane" type="button" role="tab">By
+                                    Phone</button></li>
+                            <li class="nav-item" role="presentation"><button class="nav-link" id="regid-tab"
+                                    data-bs-toggle="tab" data-bs-target="#regid-pane" type="button" role="tab">By
+                                    Registration ID</button></li>
                         </ul>
                         <form id="searchForm" class="flex-grow-1 d-flex flex-column">
-                            <div class="tab-content flex-grow-1" id="search-tab-content">
+                            <div class="tab-content flex-grow-1">
                                 <div class="tab-pane fade show active" id="phone-pane" role="tabpanel">
                                     <label for="phoneInput" class="form-label fw-semibold">Phone Number</label>
                                     <input type="tel" class="form-control form-control-lg" id="phoneInput"
@@ -212,38 +207,32 @@
                     <div id="search-output-wrapper" class="p-3 d-flex flex-column h-100"></div>
                 </div>
             </div>
-
             <div class="col-xl-3 col-lg-6">
                 <div class="glass-card p-3 mb-4">
                     <h5 class="card-header-custom p-2 mb-2 rounded text-center">System Status</h5>
                     <ul class="list-group list-group-flush">
                         <li
                             class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                            <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
-                            <span id="status-database" class="badge bg-light text-dark">
+                            <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span><span
+                                id="status-database" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span>
-                        </li>
+                            </span></li>
                         <li
                             class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                            <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
-                            <span id="status-cloudinary" class="badge bg-light text-dark">
+                            <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span><span
+                                id="status-cloudinary" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span>
-                        </li>
+                            </span></li>
                         <li
                             class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
-                            <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span>
-                            <span id="status-googleSheets" class="badge bg-light text-dark">
+                            <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span><span
+                                id="status-googleSheets" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span>
-                        </li>
+                            </span></li>
                     </ul>
-                    <div class="d-grid mt-2">
-                        <button id="checkStatusBtn" class="btn btn-sm btn-outline-secondary bg-white">
-                            <i class="fas fa-sync-alt me-1"></i> Refresh Status
-                        </button>
-                    </div>
+                    <div class="d-grid mt-2"><button id="checkStatusBtn"
+                            class="btn btn-sm btn-outline-secondary bg-white"><i class="fas fa-sync-alt me-1"></i>
+                            Refresh Status</button></div>
                 </div>
                 <div class="glass-card p-3 text-center">
                     <h5 class="card-header-custom p-2 mb-3 rounded">Export Data</h5>
@@ -257,37 +246,30 @@
             </div>
         </div>
     </div>
-
     <footer class="text-center py-4">
-        <p class="footer-credit mb-0">
-            Made with <span class="heart-blink">❤️</span> by
-            <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
-        </p>
+        <p class="footer-credit mb-0">Made with <span class="heart-blink">❤️</span> by <a href="https://ellow.in/"
+                target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a></p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- Hardcoded Admin Key ---
-            const ADMIN_SECRET_KEY = "TDEXPOUP2025";
+            let ADMIN_SECRET_KEY = null;
 
             // --- Element Selectors ---
-            const totalRegCountEl = document.getElementById('totalRegCount');
-            const lastRegTimeEl = document.getElementById('lastRegTime');
-            const searchForm = document.getElementById('searchForm');
-            const searchBtn = document.getElementById('searchBtn');
-            const phoneInput = document.getElementById('phoneInput');
-            const regIdInput = document.getElementById('regIdInput');
-            const exportBtn = document.getElementById('exportBtn');
-            const exportStatus = document.getElementById('exportStatus');
-            const checkStatusBtn = document.getElementById('checkStatusBtn');
-            const searchContainer = document.getElementById('search-container');
-            const searchOutputWrapper = document.getElementById('search-output-wrapper');
-            const phoneTab = new bootstrap.Tab(document.getElementById('phone-tab'));
+            const loginContainer = document.getElementById('login-container');
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginError = document.getElementById('loginError');
+
+            let totalRegCountEl, lastRegTimeEl, searchForm, searchBtn, phoneInput, regIdInput, exportBtn, exportStatus, checkStatusBtn, searchContainer, searchOutputWrapper, phoneTab;
 
             // --- Helper Functions ---
             const setButtonLoading = (btn, isLoading) => {
+                if (!btn) return;
                 const textEl = btn.querySelector('.button-text');
                 const spinnerEl = btn.querySelector('.spinner-border');
                 btn.disabled = isLoading;
@@ -298,16 +280,12 @@
             const setStatusIndicator = (elementId, status) => {
                 const el = document.getElementById(elementId);
                 if (!el) return;
-                const config = {
-                    ok: { class: 'bg-success text-white', text: 'Operational' },
-                    error: { class: 'bg-danger text-white', text: 'Down' },
-                };
+                const config = { ok: { class: 'bg-success text-white', text: 'Operational' }, error: { class: 'bg-danger text-white', text: 'Down' } };
                 const current = config[status] || { class: 'bg-warning text-dark', text: 'Unknown' };
                 el.className = `badge ${current.class} p-2`;
                 el.textContent = current.text;
             };
 
-            // --- UI State Management ---
             const showSearchForm = () => {
                 searchContainer.classList.remove('results-active');
                 searchOutputWrapper.innerHTML = '';
@@ -315,7 +293,7 @@
                 regIdInput.value = '';
                 phoneInput.classList.remove('is-invalid');
                 regIdInput.classList.remove('is-invalid');
-                phoneTab.show();
+                if (phoneTab) phoneTab.show();
             };
 
             const showOutputView = (htmlContent) => {
@@ -323,36 +301,9 @@
                 searchContainer.classList.add('results-active');
             };
 
-            const displayLoadingState = () => {
-                const loadingHTML = `
-                <div class="text-center m-auto">
-                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-                    <p class="mt-3 fw-bold">Searching...</p>
-                </div>`;
-                showOutputView(loadingHTML);
-            };
-
-            const displayErrorMessage = (message) => {
-                const errorHTML = `
-                <div class="text-center m-auto">
-                    <div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div>
-                    <h5 class="fw-bold">Search Error</h5>
-                    <p class="text-muted">${message}</p>
-                    <button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button>
-                </div>`;
-                showOutputView(errorHTML);
-            };
-
-            const displayNoResults = () => {
-                const noResultsHTML = `
-                <div class="text-center m-auto">
-                    <div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div>
-                    <h5 class="fw-bold">No Registrations Found</h5>
-                    <p class="text-muted">There are no records matching your search criteria.</p>
-                    <button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button>
-                </div>`;
-                showOutputView(noResultsHTML);
-            };
+            const displayLoadingState = () => showOutputView(`<div class="text-center m-auto"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div><p class="mt-3 fw-bold">Searching...</p></div>`);
+            const displayErrorMessage = (message) => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`);
+            const displayNoResults = () => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`);
 
             const displayUsers = (users) => {
                 const userHTML = users.map(user => `
@@ -366,44 +317,76 @@
                     <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Phone:</strong> <span class="text-end">${user.phone}</span></li>
                     <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Address:</strong> <span class="text-end">${user.address}, ${user.city}</span></li>
                     <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Attending:</strong> <span class="text-end">${user.day}</span></li>
-                </ul>
-            `).join('');
-
-                const resultsHTML = `
-                <div class="w-100 h-100 d-flex flex-column">
-                    ${userHTML}
-                    <div class="d-grid mt-auto pt-3">
-                        <button class="btn btn-outline-secondary new-search-btn">
-                            <i class="fas fa-arrow-left me-2"></i>New Search
-                        </button>
-                    </div>
-                </div>`;
+                </ul>`).join('');
+                const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
 
-            // --- API Call Wrapper ---
             const makeApiCall = async (endpoint, options = {}) => {
-                if (!ADMIN_SECRET_KEY || ADMIN_SECRET_KEY === "YOUR_X_ADMIN_KEY_VALUE") {
-                    throw new Error("Admin Secret Key is not configured in the script. Please edit the HTML file.");
-                }
+                if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, ...options.headers };
                 try {
                     const response = await fetch(endpoint, { ...options, headers });
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ error: 'An unknown API error occurred.' }));
-                        const errorMessage = errorData.error || errorData.message || `Request failed with status ${response.status}`;
-                        throw new Error(errorMessage);
+                        const errorData = await response.json().catch(() => ({ error: 'An API error occurred.' }));
+                        throw new Error(errorData.error || errorData.message || `Request failed: ${response.status}`);
                     }
-                    if (response.headers.get("content-type")?.includes("application/json")) {
-                        return response.json();
-                    }
-                    return response;
+                    return response.headers.get("content-type")?.includes("application/json") ? response.json() : response;
                 } catch (error) {
-                    throw new Error(error.message || 'Network error. Check connection and API endpoint.');
+                    throw new Error(error.message || 'Network error.');
                 }
             };
 
-            // --- Main Functions ---
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setButtonLoading(loginBtn, true);
+                loginError.classList.add('d-none');
+                try {
+                    const response = await fetch('/.netlify/functions/admin-login', {
+                        method: 'POST',
+                        body: JSON.stringify({ password: passwordInput.value }),
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error);
+
+                    ADMIN_SECRET_KEY = result.secretKey;
+                    loginContainer.classList.add('d-none');
+                    dashboardContainer.classList.remove('d-none');
+                    initializeDashboard();
+                } catch (err) {
+                    loginError.textContent = err.message;
+                    loginError.classList.remove('d-none');
+                    setButtonLoading(loginBtn, false);
+                }
+            });
+
+            function initializeDashboard() {
+                totalRegCountEl = document.getElementById('totalRegCount');
+                lastRegTimeEl = document.getElementById('lastRegTime');
+                searchForm = document.getElementById('searchForm');
+                searchBtn = document.getElementById('searchBtn');
+                phoneInput = document.getElementById('phoneInput');
+                regIdInput = document.getElementById('regIdInput');
+                exportBtn = document.getElementById('exportBtn');
+                exportStatus = document.getElementById('exportStatus');
+                checkStatusBtn = document.getElementById('checkStatusBtn');
+                searchContainer = document.getElementById('search-container');
+                searchOutputWrapper = document.getElementById('search-output-wrapper');
+                phoneTab = new bootstrap.Tab(document.getElementById('phone-tab'));
+
+                checkStatusBtn.addEventListener('click', checkSystemStatus);
+                exportBtn.addEventListener('click', handleExport);
+                searchForm.addEventListener('submit', handleSearch);
+                searchOutputWrapper.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('new-search-btn')) showSearchForm();
+                });
+                phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
+                regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
+
+                fetchDashboardStats();
+                checkSystemStatus();
+            }
+
             const fetchDashboardStats = async () => {
                 try {
                     const data = await makeApiCall('/.netlify/functions/get-stats');
@@ -412,49 +395,52 @@
                 } catch (err) {
                     totalRegCountEl.textContent = 'Error';
                     lastRegTimeEl.textContent = 'Error';
-                    console.error("Stats Fetch Error:", err.message);
+                    console.error("Stats Fetch Error:", err);
                 }
             };
 
             const checkSystemStatus = async () => {
-                ['database', 'cloudinary', 'googleSheets'].forEach(id => {
-                    const el = document.getElementById(`status-${id}`);
-                    el.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
-                    el.className = 'badge bg-light text-dark p-2';
-                });
+                ['database', 'cloudinary', 'googleSheets'].forEach(id => document.getElementById(`status-${id}`).innerHTML = '<div class="spinner-border spinner-border-sm"></div>');
                 try {
                     const statuses = await makeApiCall('/.netlify/functions/check-status');
                     setStatusIndicator('status-database', statuses.database.status);
                     setStatusIndicator('status-cloudinary', statuses.cloudinary.status);
                     setStatusIndicator('status-googleSheets', statuses.googleSheets.status);
                 } catch (err) {
-                    setStatusIndicator('status-database', 'error');
-                    setStatusIndicator('status-cloudinary', 'error');
-                    setStatusIndicator('status-googleSheets', 'error');
-                    console.error("Status Check Error:", err.message);
+                    ['database', 'cloudinary', 'googleSheets'].forEach(id => setStatusIndicator(`status-${id}`, 'error'));
+                    console.error("Status check error:", err);
                 }
             };
 
-            // --- Event Listeners ---
-            searchForm.addEventListener('submit', async (e) => {
+            const handleExport = async () => {
+                setButtonLoading(exportBtn, true);
+                exportStatus.textContent = 'Preparing download...';
+                try {
+                    const result = await makeApiCall('/.netlify/functions/export-data');
+                    window.open(result.downloadUrl, '_blank');
+                    exportStatus.textContent = 'Download started!';
+                } catch (err) {
+                    exportStatus.textContent = `Failed: ${err.message}`;
+                } finally {
+                    setButtonLoading(exportBtn, false);
+                }
+            };
+
+            const handleSearch = async (e) => {
                 e.preventDefault();
                 const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
                 const phone = phoneInput.value.trim();
-                const registrationId = regIdInput.value.trim().toUpperCase();
-
+                const regId = regIdInput.value.trim().toUpperCase();
                 let query = '';
-
                 if (activeTab.id === 'phone-pane') {
                     if (!phone) { phoneInput.classList.add('is-invalid'); return; }
                     query = `phone=${encodeURIComponent(phone)}`;
                 } else {
-                    if (!registrationId) { regIdInput.classList.add('is-invalid'); return; }
-                    query = `registrationId=${encodeURIComponent(registrationId)}`;
+                    if (!regId) { regIdInput.classList.add('is-invalid'); return; }
+                    query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
-
                 try {
                     const users = await makeApiCall(`/.netlify/functions/search-user?${query}`);
                     if (users.length === 0) {
@@ -467,36 +453,7 @@
                 } finally {
                     setButtonLoading(searchBtn, false);
                 }
-            });
-
-            searchOutputWrapper.addEventListener('click', (e) => {
-                if (e.target && e.target.classList.contains('new-search-btn')) {
-                    showSearchForm();
-                }
-            });
-
-            phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
-            regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
-
-            exportBtn.addEventListener('click', async () => {
-                setButtonLoading(exportBtn, true);
-                exportStatus.textContent = 'Preparing download...';
-                try {
-                    const result = await makeApiCall('/.netlify/functions/export-data');
-                    window.open(result.downloadUrl, '_blank');
-                    exportStatus.textContent = 'Download started!';
-                } catch (err) {
-                    exportStatus.textContent = `Failed: ${err.message}`;
-                } finally {
-                    setButtonLoading(exportBtn, false);
-                }
-            });
-
-            checkStatusBtn.addEventListener('click', checkSystemStatus);
-
-            // --- Initial Page Load ---
-            checkSystemStatus();
-            fetchDashboardStats();
+            };
         });
     </script>
 </body>
