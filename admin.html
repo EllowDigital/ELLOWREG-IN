@@ -448,7 +448,6 @@
                     query = `phone=${encodeURIComponent(phone)}`;
                 } else {
                     const prefix = "TDEXPOUP-";
-                    // Add the prefix automatically if the user didn't type it
                     if (regId && !regId.startsWith(prefix)) {
                         regId = prefix + regId;
                     }
