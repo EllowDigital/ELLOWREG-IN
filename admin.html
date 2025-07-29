@@ -297,6 +297,7 @@
                 if (phoneInput) phoneInput.classList.remove('is-invalid');
                 if (regIdInput) regIdInput.classList.remove('is-invalid');
                 if (phoneTab) phoneTab.show();
+                if (phoneInput) phoneInput.focus();
             };
 
             const showOutputView = (htmlContent) => {
@@ -457,7 +458,7 @@
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
                 try {
-                    const users = await makeApiCall(`/netlify/functions/search-user?${query}`);
+                    const users = await makeApiCall(`/.netlify/functions/search-user?${query}`);
                     displayUsers(users);
                 } catch (err) {
                     if (err.message && err.message.toLowerCase().includes("no registration found")) {
