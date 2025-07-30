@@ -373,6 +373,16 @@
             font-size: 0.9rem;
         }
 
+        .lost-pass-link {
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .lost-pass-link:hover {
+            color: #0d6efd;
+            transform: scale(1.05);
+            text-decoration: underline;
+        }
+
         .footer-custom {
             background-color: var(--primary-dark);
             /* #000000 background */
@@ -544,10 +554,13 @@
                             </div>
                         </form>
                         <!-- NEW: Lost Pass Link -->
-                        <div class="text-center mt-3">
-                            <a href="#" id="lostPassLink" class="text-decoration-none text-muted">Lost your pass? Click
-                                here to find it.</a>
+                        <div class="text-center mt-4">
+                            <a href="#" id="lostPassLink"
+                                class="fw-semibold text-decoration-none text-primary-emphasis lost-pass-link">
+                                <i class="bi bi-search me-1"></i>Lost your visitor pass?
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -950,15 +963,11 @@
                     setButtonLoading(findPassBtn, false);
                 }
             });
-        });
-    </script>
-    <script>
-        // Hide the info alert after 6 seconds
-        document.addEventListener('DOMContentLoaded', () => {
+            // Hide the info alert after a few seconds
             setTimeout(() => {
                 const alertEl = document.querySelector('.alert.alert-info');
-                if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
-            }, 5000); // 6000 ms = 6 s
+                if (alertEl) alertEl.style.display = 'none';
+            }, 8000);
         });
     </script>
 
