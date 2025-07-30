@@ -3,7 +3,7 @@
 const cloudinary = require("cloudinary").v2;
 const busboy = require("busboy");
 const crypto = require("crypto");
-const { pool } = require("./utils"); // Note: getGoogleSheetsClient is no longer needed here
+const { pool } = require("./utils");
 
 // --- Constants ---
 const CLOUDINARY_FOLDER = "expo-profile-images-2025";
@@ -17,7 +17,7 @@ cloudinary.config({
 });
 
 /**
- * Parses a multipart/form-data request from a Netlify function event.
+ * Parses a multipart/form-data request and validates the file type on the server.
  * @param {object} event The Netlify function event object.
  * @returns {Promise<{fields: object, files: object}>} The parsed form fields and files.
  */
@@ -30,7 +30,16 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
   const fields = {};
   const files = {};
   const attendanceDays = [];
+
   bb.on("file", (name, file, info) => {
+    // --- SERVER-SIDE FILE VALIDATION ---
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(info.mimeType)) {
+      // If the file type is not allowed, stop processing and reject the promise.
+      return reject(new Error(`Invalid file type. Only JPG and PNG are allowed.`));
+    }
+    // --- END VALIDATION ---
+
     const chunks = [];
     file.on("data", (chunk) => chunks.push(chunk));
     file.on("limit", () => reject(new Error(`File '${info.filename}' exceeds the 5MB limit.`)));
@@ -38,6 +47,7 @@ const parseMultipartForm = (event) => new Promise((resolve, reject) => {
       files[name] = { filename: info.filename, content: Buffer.concat(chunks), contentType: info.mimeType };
     });
   });
+
   bb.on("field", (name, value) => {
     if (name === 'attendance') { attendanceDays.push(value); } else { fields[name] = value; }
   });
@@ -83,11 +93,9 @@ exports.handler = async (event) => {
     const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
 
     if (rows.length > 0) {
-      // If user exists, their details might have changed. Mark them for a re-sync.
-      // This is for the advanced "Delta Sync" system.
+      // If user exists, mark them for a re-sync for the "Delta Sync" system.
       await dbClient.query('UPDATE registrations SET needs_sync = true WHERE phone = $1', [trimmedPhone]);
 
-      // Return the existing user's data.
       const registrationData = {
         registrationId: rows[0].registration_id, name: rows[0].name, phone: rows[0].phone,
         firmName: rows[0].company, attendance: rows[0].day, profileImageUrl: rows[0].image_url,
@@ -108,17 +116,12 @@ exports.handler = async (event) => {
     const registrationId = `TDEXPOUP-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
     const registrationTimestamp = new Date();
 
-    // The 'needs_sync' column will automatically be set to 'true' by the database default.
     const insertQuery = `INSERT INTO registrations (registration_id, name, company, phone, address, city, state, day, payment_id, image_url, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *;`;
     const values = [registrationId, name.trim(), firmName.trim(), trimmedPhone, address.trim(), district.trim(), state.trim(), attendance, null, uploadResult.secure_url, registrationTimestamp];
     const result = await dbClient.query(insertQuery, values);
     const newRecord = result.rows[0];
 
-    // --- Step 4: Live Sync Block (Intentionally Removed for Performance) ---
-    // The live sync logic has been removed to ensure fast registration.
-    // The scheduled 'sync-with-google-sheets' function will handle this.
-
-    // --- Step 5: Return Success to the User ---
+    // --- Step 4: Return Success to the User ---
     return {
       statusCode: 200, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
