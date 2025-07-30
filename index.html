@@ -460,6 +460,11 @@
                     <div id="form-container">
                         <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
                         <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
+                        <div class="alert alert-info rounded-3" role="alert">
+                            <strong>Note:</strong> If you have already registered and lost your visitor pass, please
+                            fill the form again using the <strong>same mobile number</strong> and other identical
+                            details. Your original pass will be retrieved automatically.
+                        </div>
                         <form id="registrationForm" novalidate>
                             <div class="image-upload-wrapper">
                                 <img id="imagePreview" src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload"
@@ -862,6 +867,16 @@
             });
         });
     </script>
+    <script>
+        // Hide the info alert after 6 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const alertEl = document.querySelector('.alert.alert-info');
+                if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
+            }, 8000); // 6000 ms = 6 s
+        });
+    </script>
+
 </body>
 
 </html>
