@@ -458,13 +458,15 @@
                     </div>
 
                     <div id="form-container">
+                        <div class="alert alert-info rounded-3" role="alert">
+                            <strong>नोट:</strong> पास खो गया? <strong>वही मोबाइल नंबर</strong> से फॉर्म भरें या नीचे दिए
+                            लिंक पर क्लिक करें।
+                            <br>
+                            <strong>Note:</strong> Lost your pass? Fill the form with the <strong>same mobile
+                                number</strong> or click the link below.
+                        </div>
                         <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
                         <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
-                        <div class="alert alert-info rounded-3" role="alert">
-                            <strong>Note:</strong> If you have already registered and lost your visitor pass, please
-                            fill the form again using the <strong>same mobile number</strong> and other identical
-                            details. Your original pass will be retrieved automatically.
-                        </div>
                         <form id="registrationForm" novalidate>
                             <div class="image-upload-wrapper">
                                 <img id="imagePreview" src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload"
@@ -541,6 +543,11 @@
                                 </div>
                             </div>
                         </form>
+                        <!-- NEW: Lost Pass Link -->
+                        <div class="text-center mt-3">
+                            <a href="#" id="lostPassLink" class="text-decoration-none text-muted">Lost your pass? Click
+                                here to find it.</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -582,6 +589,35 @@
             </div>
         </div>
     </div>
+
+    <!-- NEW: Lost Pass Modal -->
+    <div class="modal fade" id="lostPassModal" tabindex="-1" aria-labelledby="lostPassModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="lostPassModalLabel">Find Your Visitor Pass</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted">Enter the 10-digit phone number you used to register.</p>
+                    <form id="lostPassForm">
+                        <div class="mb-3">
+                            <label for="lostPhoneInput" class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel" class="form-control" id="lostPhoneInput" required pattern="^[6-9]\d{9}$">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="findPassBtn">
+                                <span class="button-text">Find My Pass</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="lostPassError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div id="id-card-template">
         <div class="id-card">
@@ -628,6 +664,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             // --- Configuration & Constants ---
             const API_ENDPOINT = '/.netlify/functions/submit-registration';
+            const FIND_PASS_ENDPOINT = '/.netlify/functions/find-pass'; // New endpoint
 
             // --- DOM Elements ---
             const form = document.getElementById('registrationForm');
@@ -638,6 +675,13 @@
             const downloadBtn = document.getElementById('download-id-btn');
             const profileImageInput = document.getElementById('profileImage');
             const imagePreview = document.getElementById('imagePreview');
+            const lostPassLink = document.getElementById('lostPassLink');
+            const lostPassModalEl = document.getElementById('lostPassModal');
+            const lostPassModal = new bootstrap.Modal(lostPassModalEl);
+            const lostPassForm = document.getElementById('lostPassForm');
+            const findPassBtn = document.getElementById('findPassBtn');
+            const lostPhoneInput = document.getElementById('lostPhoneInput');
+            const lostPassError = document.getElementById('lostPassError');
 
             // Modal elements
             const infoModalEl = document.getElementById('infoModal');
@@ -865,15 +909,55 @@
                     generateAndDownloadPass(existingUserData);
                 }
             });
-        });
-    </script>
-    <script>
-        // Hide the info alert after 6 seconds
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const alertEl = document.querySelector('.alert.alert-info');
-                if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
-            }, 8000); // 6000 ms = 6 s
+
+            // --- NEW: Lost Pass Logic ---
+            lostPassLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                lostPassModal.show();
+            });
+
+            lostPassForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setButtonLoading(findPassBtn, true);
+                lostPassError.classList.add('d-none');
+
+                const phone = lostPhoneInput.value.trim();
+                if (!/^[6-9]\d{9}$/.test(phone)) {
+                    lostPassError.textContent = 'Please enter a valid 10-digit phone number.';
+                    lostPassError.classList.remove('d-none');
+                    setButtonLoading(findPassBtn, false);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${FIND_PASS_ENDPOINT}?phone=${phone}`);
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Could not find registration.');
+                    }
+
+                    // Success! Show the 'already registered' modal with the found data
+                    existingUserData = result;
+                    modalUserName.textContent = result.name;
+                    lostPassModal.hide();
+                    registeredModal.show();
+
+                } catch (err) {
+                    lostPassError.textContent = err.message;
+                    lostPassError.classList.remove('d-none');
+                } finally {
+                    setButtonLoading(findPassBtn, false);
+                }
+            });
+
+            // Hide the info alert after 6 seconds
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const alertEl = document.querySelector('.alert.alert-info');
+                    if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
+                }, 5000); // 6000 ms = 6 s
+            });
         });
     </script>
 
