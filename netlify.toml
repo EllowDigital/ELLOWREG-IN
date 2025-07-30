@@ -1,6 +1,6 @@
 # netlify.toml
 
 # This is a custom schedule to test the sync function.
-# It is set to run at 3:10 AM UTC, which corresponds to 8:40 AM in India (IST).
+# It is set to run at 3:20 AM UTC, which corresponds to 8:50 AM in India (IST).
 [functions."sync-with-google-sheets"]
-  schedule = "10 3 * * *"
+  schedule = "20 3 * * *"

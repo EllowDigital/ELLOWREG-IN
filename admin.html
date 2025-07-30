@@ -219,19 +219,22 @@
                             <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span><span
                                 id="status-database" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span></li>
+                            </span>
+                        </li>
                         <li
                             class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
                             <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span><span
                                 id="status-cloudinary" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span></li>
+                            </span>
+                        </li>
                         <li
                             class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2">
                             <span><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google Sheets</span><span
                                 id="status-googleSheets" class="badge bg-light text-dark">
                                 <div class="spinner-border spinner-border-sm"></div>
-                            </span></li>
+                            </span>
+                        </li>
                     </ul>
                     <div class="d-grid mt-2"><button id="checkStatusBtn"
                             class="btn btn-sm btn-outline-secondary bg-white"><i class="fas fa-sync-alt me-1"></i>
@@ -240,12 +243,15 @@
                 <div class="glass-card p-3 text-center">
                     <h5 class="card-header-custom p-2 mb-3 rounded">Export Data</h5>
                     <p class="small mb-2">Download all registrations as an Excel file.</p>
+                    <p class="text-warning small mb-3"><strong>Note:</strong> Please allow pop-ups in your browser to
+                        enable Excel file download.</p>
                     <button id="exportBtn" class="btn btn-success w-100">
                         <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                         <span class="button-text"><i class="fas fa-download me-2"></i>Download</span>
                     </button>
                     <div id="exportStatus" class="mt-2 small"></div>
                 </div>
+
             </div>
         </div>
     </div>
