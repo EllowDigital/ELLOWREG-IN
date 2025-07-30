@@ -1,6 +1,9 @@
 # netlify.toml
 
-# This is a custom schedule to test the sync function.
-# It is set to run at 3:20 AM UTC, which corresponds to 8:50 AM in India (IST).
+# This is the final, recommended schedule for the project.
+# It runs the "sync-with-google-sheets" function once daily at 12:30 AM UTC,
+# which corresponds to 6:00 AM in India (IST).
+# This schedule conserves Neon database compute hours by allowing the database
+# to sleep for long periods.
 [functions."sync-with-google-sheets"]
-  schedule = "20 3 * * *"
+  schedule = "30 0 * * *"
