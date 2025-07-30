@@ -144,3 +144,50 @@ exports.handler = async (event) => {
     }
   }
 };
+
+ // --- Step 4: Perform LIVE Sync with Google Sheets to handle updates/inserts ---
+    // console.log(`Live syncing registration ${newRecord.registration_id} to Google Sheets...`);
+    // try {
+    //   const sheets = await getGoogleSheetsClient();
+    //   // Fetch only the phone number column for efficiency
+    //   const sheetResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!D:D` }), 'Google Sheets Get Phones');
+    //   const phoneColumn = sheetResponse.data.values || [];
+
+    //   // Find the row index of the matching phone number.
+    //   let targetRowIndex = -1;
+    //   for (let i = 0; i < phoneColumn.length; i++) {
+    //     if (phoneColumn[i][0] === newRecord.phone) {
+    //       // Sheet row numbers are 1-based.
+    //       targetRowIndex = i + 1;
+    //       break;
+    //     }
+    //   }
+
+    //   const newRowData = [
+    //     newRecord.registration_id, newRecord.name, newRecord.company, newRecord.phone,
+    //     newRecord.address, newRecord.city, newRecord.state, newRecord.day,
+    //     newRecord.payment_id || 'N/A',
+    //     new Date(newRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    //     newRecord.image_url,
+    //   ];
+
+    //   if (targetRowIndex !== -1) {
+    //     // Phone found: Update the existing row to prevent duplicates.
+    //     console.log(`Phone ${newRecord.phone} found in Sheet at row ${targetRowIndex}. Updating.`);
+    //     await retryWithBackoff(() => sheets.spreadsheets.values.update({
+    //       spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A${targetRowIndex}`,
+    //       valueInputOption: "USER_ENTERED", resource: { values: [newRowData] },
+    //     }), 'Google Sheets Update');
+    //   } else {
+    //     // Phone not found: Append a new row for the new user.
+    //     console.log(`Phone ${newRecord.phone} not found in Sheet. Appending new row.`);
+    //     await retryWithBackoff(() => sheets.spreadsheets.values.append({
+    //       spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A1`,
+    //       valueInputOption: "USER_ENTERED", resource: { values: [newRowData] },
+    //     }), 'Google Sheets Append');
+    //   }
+    //   console.log(`Successfully live synced registration ${newRecord.registration_id}.`);
+    // } catch (sheetsError) {
+    //   // If live sync fails, log it. The scheduled sync job will eventually correct it.
+    //   console.error(`CRITICAL: LIVE sync to Google Sheets failed for ${newRecord.registration_id}. The scheduled sync will fix this later.`, sheetsError);
+    // }
