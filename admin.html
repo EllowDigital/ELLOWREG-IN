@@ -250,6 +250,8 @@
                         <span class="button-text"><i class="fas fa-download me-2"></i>Download</span>
                     </button>
                     <div id="exportStatus" class="mt-2 small"></div>
+
+                    <div id="lastExportTime" class="mt-1 small text-muted"></div>
                 </div>
 
             </div>
@@ -274,7 +276,7 @@
             const passwordInput = document.getElementById('passwordInput');
             const loginError = document.getElementById('loginError');
 
-            let totalRegCountEl, lastRegTimeEl, searchForm, searchBtn, phoneInput, regIdInput, exportBtn, exportStatus, checkStatusBtn, searchContainer, searchOutputWrapper, phoneTab;
+            let totalRegCountEl, lastRegTimeEl, searchForm, searchBtn, phoneInput, regIdInput, exportBtn, exportStatus, checkStatusBtn, searchContainer, searchOutputWrapper, phoneTab, lastExportTimeEl;
 
             // --- Helper Functions ---
             const setButtonLoading = (btn, isLoading) => {
@@ -284,6 +286,18 @@
                 btn.disabled = isLoading;
                 if (textEl) textEl.classList.toggle('d-none', isLoading);
                 if (spinnerEl) spinnerEl.classList.toggle('d-none', !isLoading);
+            };
+
+            // NEW: Function to display the last export time
+            const displayLastExportTime = () => {
+                if (!lastExportTimeEl) lastExportTimeEl = document.getElementById('lastExportTime');
+                const lastExportTimestamp = localStorage.getItem('lastExportTimestamp');
+                if (lastExportTimestamp) {
+                    const date = new Date(lastExportTimestamp);
+                    lastExportTimeEl.textContent = `Last downloaded: ${date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}`;
+                } else {
+                    lastExportTimeEl.textContent = 'Last downloaded: Never';
+                }
             };
 
             const setStatusIndicator = (elementId, status) => {
@@ -398,6 +412,7 @@
 
                 fetchDashboardStats();
                 checkSystemStatus();
+                displayLastExportTime(); // Call the new function on load
             }
 
             const fetchDashboardStats = async () => {
@@ -432,6 +447,13 @@
                     const result = await makeApiCall('/.netlify/functions/export-data');
                     window.open(result.downloadUrl, '_blank');
                     exportStatus.textContent = 'Download started!';
+
+                    // --- NEW CODE to save and display timestamp ---
+                    const now = new Date();
+                    localStorage.setItem('lastExportTimestamp', now.toISOString());
+                    displayLastExportTime(); // Update the display immediately
+                    // --- END NEW CODE ---
+
                 } catch (err) {
                     exportStatus.textContent = `Failed: ${err.message}`;
                 } finally {
@@ -478,6 +500,7 @@
             };
         });
     </script>
+
 </body>
 
 </html>
