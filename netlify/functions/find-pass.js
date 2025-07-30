@@ -11,6 +11,7 @@ exports.handler = async (event) => {
     if (event.httpMethod !== "GET") {
         return {
             statusCode: 405, // Method Not Allowed
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Method Not Allowed" })
         };
     }
@@ -22,6 +23,7 @@ exports.handler = async (event) => {
     if (!trimmedPhone || !/^[6-9]\d{9}$/.test(trimmedPhone)) {
         return {
             statusCode: 400, // Bad Request
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Please provide a valid 10-digit phone number." }),
         };
     }
@@ -29,12 +31,15 @@ exports.handler = async (event) => {
     let dbClient;
     try {
         dbClient = await pool.connect();
-        const { rows } = await db.query('SELECT * FROM registrations WHERE phone = $1', [trimmedPhone]);
+
+        // This line was corrected. It now correctly uses 'dbClient.query'.
+        const { rows } = await dbClient.query('SELECT * FROM registrations WHERE phone = $1', [trimmedPhone]);
 
         // If no user is found, return a 404 error.
         if (rows.length === 0) {
             return {
                 statusCode: 404, // Not Found
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ error: "No registration was found for this phone number." }),
             };
         }
@@ -61,6 +66,7 @@ exports.handler = async (event) => {
         console.error("Error in find-pass function:", error);
         return {
             statusCode: 500, // Internal Server Error
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "An internal server error occurred." }),
         };
     } finally {

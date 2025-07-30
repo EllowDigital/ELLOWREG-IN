@@ -950,14 +950,15 @@
                     setButtonLoading(findPassBtn, false);
                 }
             });
-
-            // Hide the info alert after 6 seconds
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => {
-                    const alertEl = document.querySelector('.alert.alert-info');
-                    if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
-                }, 5000); // 6000 ms = 6 s
-            });
+        });
+    </script>
+    <script>
+        // Hide the info alert after 6 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const alertEl = document.querySelector('.alert.alert-info');
+                if (alertEl) alertEl.style.display = 'none';   // or alertEl.remove();
+            }, 5000); // 6000 ms = 6 s
         });
     </script>
 
