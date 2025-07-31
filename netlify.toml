@@ -5,5 +5,6 @@
 # which corresponds to 6:00 AM in India (IST).
 # This schedule conserves Neon database compute hours by allowing the database
 # to sleep for long periods.
+# Runs daily at 5:38 PM India Time (Lucknow). IST = UTC+5:30 → 17:38 IST = 12:08 UTC.
 [functions."sync-with-google-sheets"]
-  schedule = "30 0 * * *"
+  schedule = "8 12 * * *"
