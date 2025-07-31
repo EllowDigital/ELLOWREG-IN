@@ -1,4 +1,4 @@
-# Runs daily at 5:42 PM India Time (Lucknow, IST = UTC+5:30)
-# Converted to 12:12 UTC for Netlify
+# netlify.toml
+# This schedule runs the "sync-with-google-sheets" function daily at 5:45 AM IST (12:15 AM UTC).
 [functions."sync-with-google-sheets"]
-  schedule = "12 12 * * *"
+  schedule = "15 0 * * *"
