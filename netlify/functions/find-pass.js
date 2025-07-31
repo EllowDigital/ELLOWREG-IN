@@ -2,49 +2,52 @@
 
 const { pool } = require("./utils");
 
-/**
- * A public-facing serverless function to find a registered user by their phone number
- * and return their data so they can re-download their visitor pass.
- */
+// --- Caching ---
+// A simple in-memory cache for frequently requested phone numbers.
+// This uses a Map to store multiple cached entries.
+const userCache = new Map();
+const CACHE_DURATION_MS = 2 * 60 * 1000; // 2 minutes
+
 exports.handler = async (event) => {
-    // This function should only respond to GET requests.
     if (event.httpMethod !== "GET") {
-        return {
-            statusCode: 405, // Method Not Allowed
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "Method Not Allowed" })
-        };
+        return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
     }
 
     const { phone } = event.queryStringParameters;
     const trimmedPhone = phone ? phone.trim() : null;
 
-    // Validate that a phone number was provided.
     if (!trimmedPhone || !/^[6-9]\d{9}$/.test(trimmedPhone)) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Please provide a valid 10-digit phone number." }) };
+    }
+
+    // --- IMPROVEMENT: Check the cache first ---
+    const cachedEntry = userCache.get(trimmedPhone);
+    if (cachedEntry && (Date.now() - cachedEntry.timestamp < CACHE_DURATION_MS)) {
+        console.log(`[CACHE HIT] Serving pass for phone ${trimmedPhone} from cache.`);
         return {
-            statusCode: 400, // Bad Request
+            statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "Please provide a valid 10-digit phone number." }),
+            body: JSON.stringify(cachedEntry.data),
         };
     }
+    console.log(`[CACHE MISS] Fetching pass for phone ${trimmedPhone} from the database.`);
+    // --- End Cache Check ---
 
     let dbClient;
     try {
         dbClient = await pool.connect();
 
-        // This line was corrected. It now correctly uses 'dbClient.query'.
-        const { rows } = await dbClient.query('SELECT * FROM registrations WHERE phone = $1', [trimmedPhone]);
+        // --- IMPROVEMENT: Select only the required columns instead of SELECT * ---
+        const queryText = `
+            SELECT registration_id, name, phone, company, day, image_url
+            FROM registrations WHERE phone = $1
+        `;
+        const { rows } = await dbClient.query(queryText, [trimmedPhone]);
 
-        // If no user is found, return a 404 error.
         if (rows.length === 0) {
-            return {
-                statusCode: 404, // Not Found
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ error: "No registration was found for this phone number." }),
-            };
+            return { statusCode: 404, body: JSON.stringify({ error: "No registration was found for this phone number." }) };
         }
 
-        // IMPORTANT: Only return the data needed for the pass, not sensitive info.
         const userData = rows[0];
         const registrationData = {
             registrationId: userData.registration_id,
@@ -55,20 +58,22 @@ exports.handler = async (event) => {
             profileImageUrl: userData.image_url,
         };
 
-        // Return the found user's data.
+        // --- IMPROVEMENT: Update the cache ---
+        userCache.set(trimmedPhone, {
+            data: registrationData,
+            timestamp: Date.now()
+        });
+        // --- End Cache Update ---
+
         return {
-            statusCode: 200, // OK
+            statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(registrationData),
         };
 
     } catch (error) {
         console.error("Error in find-pass function:", error);
-        return {
-            statusCode: 500, // Internal Server Error
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "An internal server error occurred." }),
-        };
+        return { statusCode: 500, body: JSON.stringify({ error: "An internal server error occurred." }) };
     } finally {
         if (dbClient) {
             dbClient.release();

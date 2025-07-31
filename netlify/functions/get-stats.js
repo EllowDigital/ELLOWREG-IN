@@ -2,36 +2,35 @@
 
 const { pool } = require("./utils");
 
-/**
- * Netlify serverless function to fetch dashboard statistics, such as total
- * registrations and the timestamp of the last registration.
- * This function is protected and intended for admin use only.
- */
+// --- Caching ---
+// This simple in-memory cache will store the stats for a short period.
+// The cache is reset every time the serverless function instance restarts.
+let cachedStats = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
 exports.handler = async (event) => {
-    // 1. Security Check: Ensure the request includes the correct secret key.
+    // 1. Security Check
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
-
     if (!providedKey || providedKey !== secretKey) {
-        return {
-            statusCode: 401, // Unauthorized
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "Unauthorized: Missing or invalid secret key." }),
-        };
+        return { statusCode: 401, body: JSON.stringify({ error: "Unauthorized" }) };
     }
 
-    // 2. Method Check: This function should only respond to GET requests.
-    if (event.httpMethod !== "GET") {
+    // --- IMPROVEMENT: Check the cache first ---
+    if (cachedStats && (Date.now() - cacheTimestamp < CACHE_DURATION_MS)) {
+        console.log("[CACHE HIT] Serving stats from cache.");
         return {
-            statusCode: 405, // Method Not Allowed
+            statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "Method Not Allowed" })
+            body: JSON.stringify(cachedStats),
         };
     }
+    console.log("[CACHE MISS] Fetching fresh stats from the database.");
+    // --- End Cache Check ---
 
     let dbClient;
     try {
-        // 3. Database Query: Use a single, efficient query to get both stats.
         dbClient = await pool.connect();
         const statsQuery = `
             SELECT
@@ -39,28 +38,26 @@ exports.handler = async (event) => {
                 (SELECT MAX(timestamp) FROM registrations) AS last_registration_time;
         `;
         const { rows } = await dbClient.query(statsQuery);
-        const stats = rows[0];
+        const stats = {
+            totalRegistrations: parseInt(rows[0].total_registrations, 10),
+            lastRegistrationTime: rows[0].last_registration_time
+        };
 
-        // 4. Return Response
+        // --- IMPROVEMENT: Update the cache ---
+        cachedStats = stats;
+        cacheTimestamp = Date.now();
+        // --- End Cache Update ---
+
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                totalRegistrations: parseInt(stats.total_registrations, 10),
-                lastRegistrationTime: stats.last_registration_time // This will be an ISO-formatted string or null
-            }),
+            body: JSON.stringify(stats),
         };
 
     } catch (error) {
-        // 5. Generic Error Handling
         console.error("Error in get-stats function:", error);
-        return {
-            statusCode: 500, // Internal Server Error
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "An internal server error occurred." }),
-        };
+        return { statusCode: 500, body: JSON.stringify({ error: "An internal server error occurred." }) };
     } finally {
-        // 6. Cleanup: Always release the database client.
         if (dbClient) {
             dbClient.release();
         }
