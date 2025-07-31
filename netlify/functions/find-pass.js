@@ -2,13 +2,53 @@
 
 const { pool } = require("./utils");
 
-// --- Caching ---
+// --- Caching Configuration ---
 // A simple in-memory cache for frequently requested phone numbers.
-// This uses a Map to store multiple cached entries.
+// This uses a Map to store multiple cached entries for a short duration.
 const userCache = new Map();
-const CACHE_DURATION_MS = 2 * 60 * 1000; // 2 minutes
+const CACHE_DURATION_MS = 2 * 60 * 1000; // Cache each result for 2 minutes
 
+// --- Rate Limiting Configuration ---
+// This prevents abuse by limiting requests from a single IP address.
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute window
+const RATE_LIMIT_MAX_REQUESTS = 10; // Max 10 requests per IP per minute
+
+/**
+ * A professional, public-facing serverless function that allows users to find
+ * their visitor pass using their phone number. It is optimized for performance
+ * with caching and secured against abuse with rate limiting.
+ */
 exports.handler = async (event) => {
+    // --- 1. Rate Limiting Logic ---
+    // This block protects the function from being called too many times by a single user.
+    try {
+        const clientIp = event.headers['x-nf-client-connection-ip'] || 'unknown';
+        const now = Date.now();
+
+        // Get the request timestamps for this IP, filtering out any that are outside the current window.
+        const requests = (rateLimitStore.get(clientIp) || []).filter(
+            timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS
+        );
+
+        if (requests.length >= RATE_LIMIT_MAX_REQUESTS) {
+            console.warn(`[RATE LIMIT] IP ${clientIp} has been rate-limited.`);
+            return {
+                statusCode: 429, // "Too Many Requests"
+                body: JSON.stringify({ error: "You have made too many requests. Please try again in a minute." }),
+            };
+        }
+
+        // Add the current request's timestamp to the store for this IP.
+        requests.push(now);
+        rateLimitStore.set(clientIp, requests);
+    } catch (error) {
+        // If rate limiting fails for any reason, log it but allow the request to proceed.
+        console.error("Error during rate limiting:", error);
+    }
+    // --- End Rate Limiting Logic ---
+
+    // 2. Basic Request Validation
     if (event.httpMethod !== "GET") {
         return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
     }
@@ -20,7 +60,8 @@ exports.handler = async (event) => {
         return { statusCode: 400, body: JSON.stringify({ error: "Please provide a valid 10-digit phone number." }) };
     }
 
-    // --- IMPROVEMENT: Check the cache first ---
+    // --- 3. Caching Logic ---
+    // Before querying the database, check if a recent result for this phone number is already in memory.
     const cachedEntry = userCache.get(trimmedPhone);
     if (cachedEntry && (Date.now() - cachedEntry.timestamp < CACHE_DURATION_MS)) {
         console.log(`[CACHE HIT] Serving pass for phone ${trimmedPhone} from cache.`);
@@ -31,13 +72,13 @@ exports.handler = async (event) => {
         };
     }
     console.log(`[CACHE MISS] Fetching pass for phone ${trimmedPhone} from the database.`);
-    // --- End Cache Check ---
 
+    // --- 4. Database Query ---
     let dbClient;
     try {
         dbClient = await pool.connect();
 
-        // --- IMPROVEMENT: Select only the required columns instead of SELECT * ---
+        // Optimized Query: Select only the columns needed for the visitor pass.
         const queryText = `
             SELECT registration_id, name, phone, company, day, image_url
             FROM registrations WHERE phone = $1
@@ -58,12 +99,11 @@ exports.handler = async (event) => {
             profileImageUrl: userData.image_url,
         };
 
-        // --- IMPROVEMENT: Update the cache ---
+        // Store the fresh result in the cache for future requests.
         userCache.set(trimmedPhone, {
             data: registrationData,
             timestamp: Date.now()
         });
-        // --- End Cache Update ---
 
         return {
             statusCode: 200,
