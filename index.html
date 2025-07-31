@@ -468,18 +468,23 @@
                     </div>
 
                     <div id="form-container">
-                        <div class="alert alert-info rounded-3" role="alert">
-                            <strong>नोट:</strong> पास खो गया? <strong>वही मोबाइल नंबर</strong> से फॉर्म भरें या नीचे दिए
-                            लिंक पर क्लिक करें।
+                        <!-- Lost Pass Notice -->
+                        <div class="alert alert-info rounded-3 text-start mb-4" role="alert">
+                            <strong>नोट:</strong> अगर आपका विज़िटर पास खो गया है, तो <strong>उसी मोबाइल नंबर</strong> और
+                            जानकारी के साथ यह फॉर्म फिर से भरें या नीचे दिए गए लिंक पर क्लिक करें। आपका पुराना पास स्वतः
+                            मिल जाएगा।
                             <br>
-                            <strong>Note:</strong> Lost your pass? Fill the form with the <strong>same mobile
-                                number</strong> or click the link below.
+                            <strong>Note:</strong> If you’ve lost your visitor pass, simply fill out this form again
+                            using the <strong>same mobile number</strong> and details, or click the link below. Your
+                            original pass will be retrieved automatically.
                         </div>
+
                         <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
                         <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
                         <form id="registrationForm" novalidate>
                             <div class="image-upload-wrapper">
-                                <img id="imagePreview" src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload"
+                                <img id="imagePreview"
+                                    src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload+Photo"
                                     alt="Profile image preview">
                                 <input type="file" id="profileImage" name="profileImage"
                                     accept="image/png, image/jpeg, image/jpg" required>
@@ -496,7 +501,7 @@
                                 <div class="col-md-6">
                                     <label for="phone" class="form-label fw-semibold">10-Digit Phone</label>
                                     <input type="tel" class="form-control" id="phone" name="phone" required
-                                        pattern="^[6-9]\d{9}$">
+                                        pattern="^[6-9]\d{9}$" placeholder="e.g., 9876543210">
                                 </div>
                                 <div class="col-12">
                                     <label for="firmName" class="form-label fw-semibold">Firm Name</label>
@@ -554,12 +559,15 @@
                             </div>
                         </form>
                         <!-- NEW: Lost Pass Link -->
-                        <div class="text-center mt-4">
-                            <a href="#" id="lostPassLink"
-                                class="fw-semibold text-decoration-none text-primary-emphasis lost-pass-link">
-                                <i class="bi bi-search me-1"></i>Lost your visitor pass?
+                        <div class="text-center mt-3">
+                            <small class="text-muted d-block mb-1">Already registered but lost your pass?</small>
+                            <a href="#" id="lostPassLink" role="button" aria-label="Find lost visitor pass"
+                                class="btn btn-outline-primary mt-2">
+                                <i class="bi bi-search me-1"></i>Find your lost visitor pass
                             </a>
+
                         </div>
+
 
                     </div>
                 </div>
