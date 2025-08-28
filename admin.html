@@ -91,20 +91,16 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- NEW CSS FOR THE CHECK-IN BUTTON --- */
         .check-in-btn {
             transition: all 0.2s ease-in-out;
         }
 
         .check-in-btn.checked-in {
             background-color: #198754;
-            /* Success green */
             color: white;
             cursor: not-allowed;
             opacity: 0.8;
         }
-
-        /* --- END NEW CSS --- */
 
         .footer-credit {
             color: var(--text-muted);
@@ -343,11 +339,9 @@
             const displayErrorMessage = (message) => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`);
             const displayNoResults = () => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`);
 
-            // --- UPDATED displayUsers function to include the check-in button ---
             const displayUsers = (users) => {
                 const userHTML = users.map(user => {
-                    // Determine button state based on whether checked_in_at is null or has a date
-                    const isCheckedIn = user.checked_in_at !== null;
+                    const isCheckedIn = !!user.checked_in_at;
                     const buttonText = isCheckedIn ? `Checked In @ ${new Date(user.checked_in_at).toLocaleTimeString('en-IN')}` : 'Mark as Checked-In';
                     const buttonClass = isCheckedIn ? 'btn-success checked-in' : 'btn-primary';
                     const buttonDisabled = isCheckedIn ? 'disabled' : '';
@@ -417,7 +411,6 @@
                 }
             });
 
-            // --- NEW handleCheckIn function to call the new endpoint ---
             const handleCheckIn = async (e) => {
                 const button = e.target.closest('.check-in-btn');
                 if (!button || button.disabled) return;
@@ -431,7 +424,6 @@
                         body: JSON.stringify({ registrationId })
                     });
 
-                    // Update the button's appearance and text to show the successful check-in
                     button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-success', 'checked-in');
@@ -462,7 +454,6 @@
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
 
-                // --- UPDATED event listener to handle clicks on the new check-in button ---
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
@@ -521,6 +512,7 @@
                 }
             };
 
+            // --- FINAL, CORRECTED handleSearch function ---
             const handleSearch = async (e) => {
                 e.preventDefault();
                 const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
@@ -543,11 +535,14 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
+
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
+
                 try {
                     const users = await makeApiCall(`/.netlify/functions/search-user?${query}`);
                     displayUsers(users);
+
                 } catch (err) {
                     if (err.message && err.message.toLowerCase().includes("no registration found")) {
                         displayNoResults();

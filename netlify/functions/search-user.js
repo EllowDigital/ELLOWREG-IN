@@ -7,14 +7,13 @@ const { pool } = require("./utils");
  * This function is protected and intended for admin use only.
  */
 exports.handler = async (event) => {
-    // 1. Security Check: Ensure the request includes the correct secret key.
+    // 1. Security Check
     const providedKey = event.headers['x-admin-key'];
     const secretKey = process.env.EXPORT_SECRET_KEY;
 
     if (!providedKey || providedKey !== secretKey) {
         return {
             statusCode: 401,
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Unauthorized: Missing or invalid secret key." }),
         };
     }
@@ -23,7 +22,6 @@ exports.handler = async (event) => {
     if (event.httpMethod !== "GET") {
         return {
             statusCode: 405,
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Method Not Allowed" })
         };
     }
@@ -40,9 +38,7 @@ exports.handler = async (event) => {
         };
     }
 
-    // --- FINAL, CORRECTED QUERY ---
-    // Explicitly select all columns, including the new 'checked_in_at' field.
-    // This is more robust than SELECT * and ensures the frontend always gets the data it needs.
+    // Explicitly select all columns to ensure consistent data structure.
     let queryText = `
         SELECT 
             id, timestamp, registration_id, name, company, phone, 
@@ -72,13 +68,17 @@ exports.handler = async (event) => {
         dbClient = await pool.connect();
         const { rows } = await dbClient.query(queryText, queryParams);
 
+        // --- FINAL, CORRECTED RESPONSE LOGIC ---
+        // If no users are found, return a 404 with a clear error message.
+        // The frontend will handle this correctly.
         if (rows.length === 0) {
             return {
                 statusCode: 404,
-                body: JSON.stringify({ message: "No registration found for the provided details." }),
+                body: JSON.stringify({ error: "No registration found for the provided details." }),
             };
         }
 
+        // If users are found, always return the data as a JSON array.
         return {
             statusCode: 200,
             body: JSON.stringify(rows),
