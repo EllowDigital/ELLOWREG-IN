@@ -1,6 +1,6 @@
 {
   "name": "expo-registration-form",
-  "version": "2.3.0",
+  "version": "4.0.0",
   "description": "Handles submissions for the TENT DECOR EXPO UP 2025 registration form with a database, cloud storage, and Google Sheets sync.",
   "private": true,
   "author": "Sarwan Yadav",
