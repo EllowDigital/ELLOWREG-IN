@@ -370,11 +370,11 @@
                     </div>
                     `;
                 }).join('');
-
+                
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
-
+            
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
@@ -428,7 +428,7 @@
                         method: 'POST',
                         body: JSON.stringify({ registrationId })
                     });
-
+                    
                     button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-success', 'checked-in');
@@ -458,7 +458,7 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
-
+                
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
@@ -539,7 +539,7 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-
+                
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
 
