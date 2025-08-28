@@ -1,4 +1,3 @@
-<!-- VERSION: 4.0 - FINAL RE-ENGINEERED & CORRECTED - 29 AUG 2025 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -99,8 +98,7 @@
         .check-in-btn.checked-in {
             background-color: #198754;
             color: white;
-            cursor: not-allowed;
-            opacity: 0.8;
+            cursor: default;
         }
 
         .footer-credit {
@@ -128,7 +126,6 @@
 </head>
 
 <body>
-
     <div id="login-container" class="center-container">
         <div class="card shadow-sm" style="width: 24rem;">
             <div class="card-body p-4">
@@ -289,6 +286,7 @@
             const loginError = document.getElementById('loginError');
 
             let totalRegCountEl, lastRegTimeEl, searchForm, searchBtn, phoneInput, regIdInput, exportBtn, exportStatus, checkStatusBtn, searchContainer, searchOutputWrapper, phoneTab, lastExportTimeEl;
+            let currentUserData = null; // Store the current user's data
 
             // --- Helper Functions ---
             const setButtonLoading = (btn, isLoading) => {
@@ -323,6 +321,7 @@
             const showSearchForm = () => {
                 searchContainer.classList.remove('results-active');
                 searchOutputWrapper.innerHTML = '';
+                currentUserData = null;
                 if (phoneInput) phoneInput.value = '';
                 if (regIdInput) regIdInput.value = '';
                 if (phoneInput) phoneInput.classList.remove('is-invalid');
@@ -343,16 +342,13 @@
             // --- FINAL, RE-ENGINEERED displayUsers function ---
             const displayUsers = (data) => {
                 const users = Array.isArray(data) ? data : [data];
-                console.log("Displaying data:", users);
+                currentUserData = users[0];
 
                 const userHTML = users.map(user => {
-                    if (!user || !user.registration_id) {
-                        console.error("Invalid user object found:", user);
-                        return ''; 
-                    }
+                    if (!user || !user.registration_id) return '';
 
                     const isCheckedIn = !!user.checked_in_at;
-                    
+
                     let checkInStatusHTML;
                     if (isCheckedIn) {
                         const checkInTime = new Date(user.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -364,6 +360,12 @@
                     const buttonText = isCheckedIn ? `Already Checked In` : 'Mark as Checked-In';
                     const buttonClass = isCheckedIn ? 'btn-success checked-in' : 'btn-primary';
                     const buttonDisabled = isCheckedIn ? 'disabled' : '';
+
+                    const undoButtonHTML = isCheckedIn ? `
+                        <button class="btn btn-sm btn-outline-danger mt-2 undo-check-in-btn" data-regid="${user.registration_id}">
+                            <i class="fas fa-undo me-2"></i> Mark as Not Attended
+                        </button>
+                    ` : '';
 
                     return `
                     <div class="text-center">
@@ -382,32 +384,30 @@
                         <button class="btn ${buttonClass} check-in-btn" data-regid="${user.registration_id}" ${buttonDisabled}>
                             <i class="fas fa-check-circle me-2"></i> ${buttonText}
                         </button>
+                        ${undoButtonHTML}
                     </div>
                     `;
                 }).join('');
-                
+
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
-            
+
             // --- FINAL, CORRECTED makeApiCall function ---
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
                 try {
                     const response = await fetch(endpoint, { ...options, headers });
-                    const responseData = await response.json(); // Always parse the JSON body
+                    const responseData = await response.json();
 
                     if (!response.ok) {
-                        // Throw an error using the message from the parsed JSON body
                         throw new Error(responseData.error || responseData.message || `Request failed: ${response.status}`);
                     }
-                    
-                    // If successful, return the parsed JSON data
+
                     return responseData;
 
                 } catch (error) {
-                    // This will catch network errors and errors thrown from the block above
                     throw new Error(error.message || 'A network error occurred.');
                 }
             };
@@ -447,20 +447,40 @@
                         method: 'POST',
                         body: JSON.stringify({ registrationId })
                     });
-                    
-                    button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
-                    button.classList.remove('btn-primary');
-                    button.classList.add('btn-success', 'checked-in');
-                    button.disabled = true;
 
-                    // Also update the status text in the list
-                    const statusEl = document.querySelector(`li strong:contains('Status:')`).nextElementSibling;
-                    if(statusEl){
-                         statusEl.innerHTML = `<span class="text-success fw-bold">Checked-In on ${new Date(result.data.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>`;
-                    }
+                    currentUserData.checked_in_at = result.data.checked_in_at;
+                    displayUsers(currentUserData);
 
                 } catch (err) {
                     alert(`Check-in failed: ${err.message}`);
+                } finally {
+                    setButtonLoading(button, false);
+                }
+            };
+
+            // --- NEW handleUndoCheckIn function ---
+            const handleUndoCheckIn = async (e) => {
+                const button = e.target.closest('.undo-check-in-btn');
+                if (!button) return;
+
+                const registrationId = button.dataset.regid;
+
+                const password = prompt("To undo the check-in, please enter the admin password:");
+                if (password === null) return;
+
+                setButtonLoading(button, true);
+
+                try {
+                    const result = await makeApiCall('/.netlify/functions/unmark-checked-in', {
+                        method: 'POST',
+                        body: JSON.stringify({ registrationId, password })
+                    });
+
+                    currentUserData.checked_in_at = null;
+                    displayUsers(currentUserData);
+
+                } catch (err) {
+                    alert(`Failed to undo check-in: ${err.message}`);
                 } finally {
                     setButtonLoading(button, false);
                 }
@@ -483,12 +503,14 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
-                
+
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
                     } else if (e.target.closest('.check-in-btn')) {
                         handleCheckIn(e);
+                    } else if (e.target.closest('.undo-check-in-btn')) {
+                        handleUndoCheckIn(e);
                     }
                 });
 
@@ -564,7 +586,7 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-                
+
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
 

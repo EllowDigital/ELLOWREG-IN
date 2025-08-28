@@ -43,7 +43,7 @@ exports.handler = async (event) => {
                 checked_in_at = NULL,
                 needs_sync = true
             WHERE registration_id = $1
-            RETURNING registration_id, name, checked_in_at;
+            RETURNING *;
         `;
         const { rows } = await dbClient.query(updateQuery, [registrationId]);
 
