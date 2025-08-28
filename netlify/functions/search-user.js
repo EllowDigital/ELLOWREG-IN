@@ -13,40 +13,48 @@ exports.handler = async (event) => {
 
     if (!providedKey || providedKey !== secretKey) {
         return {
-            statusCode: 401, // Unauthorized
+            statusCode: 401,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Unauthorized: Missing or invalid secret key." }),
         };
     }
 
-    // 2. Method Check: This function should only respond to GET requests.
+    // 2. Method Check
     if (event.httpMethod !== "GET") {
         return {
-            statusCode: 405, // Method Not Allowed
+            statusCode: 405,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: "Method Not Allowed" })
         };
     }
 
-    // 3. Input Validation and Dynamic Query Building
+    // 3. Input Validation
     const { phone, registrationId } = event.queryStringParameters;
     const trimmedPhone = phone ? phone.trim() : null;
     const trimmedRegId = registrationId ? registrationId.trim().toUpperCase() : null;
 
     if (!trimmedPhone && !trimmedRegId) {
         return {
-            statusCode: 400, // Bad Request
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: "Please provide a phone number or a registration ID to search." }),
+            statusCode: 400,
+            body: JSON.stringify({ error: "Please provide a phone number or a registration ID." }),
         };
     }
 
-    let queryText = 'SELECT * FROM registrations WHERE';
+    // --- FINAL, CORRECTED QUERY ---
+    // Explicitly select all columns, including the new 'checked_in_at' field.
+    // This is more robust than SELECT * and ensures the frontend always gets the data it needs.
+    let queryText = `
+        SELECT 
+            id, timestamp, registration_id, name, company, phone, 
+            address, city, state, day, payment_id, image_url, 
+            needs_sync, checked_in_at 
+        FROM registrations 
+        WHERE
+    `;
     const queryParams = [];
     let conditions = [];
     let paramIndex = 1;
 
-    // Build query conditions based on provided parameters to prevent SQL injection
     if (trimmedPhone) {
         conditions.push(`phone = $${paramIndex++}`);
         queryParams.push(trimmedPhone);
@@ -57,41 +65,32 @@ exports.handler = async (event) => {
         queryParams.push(trimmedRegId);
     }
 
-    // Join conditions with OR for flexible searching
     queryText += ` ${conditions.join(' OR ')} ORDER BY timestamp DESC;`;
 
     let dbClient;
     try {
-        // 4. Database Query: Securely query the database.
         dbClient = await pool.connect();
         const { rows } = await dbClient.query(queryText, queryParams);
 
-        // 5. Handle Response: Check if any users were found.
         if (rows.length === 0) {
             return {
-                statusCode: 404, // Not Found
-                headers: { 'Content-Type': 'application/json' },
+                statusCode: 404,
                 body: JSON.stringify({ message: "No registration found for the provided details." }),
             };
         }
 
-        // Return all found registration data as a JSON array.
         return {
-            statusCode: 200, // OK
-            headers: { 'Content-Type': 'application/json' },
+            statusCode: 200,
             body: JSON.stringify(rows),
         };
 
     } catch (error) {
-        // 6. Generic Error Handling
         console.error("Error in search-user function:", error);
         return {
-            statusCode: 500, // Internal Server Error
-            headers: { 'Content-Type': 'application/json' },
+            statusCode: 500,
             body: JSON.stringify({ error: "An internal server error occurred." }),
         };
     } finally {
-        // 7. Cleanup: Always release the database client.
         if (dbClient) {
             dbClient.release();
         }
