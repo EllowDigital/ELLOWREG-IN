@@ -348,11 +348,11 @@
                 const userHTML = users.map(user => {
                     if (!user || !user.registration_id) {
                         console.error("Invalid user object found:", user);
-                        return '';
+                        return ''; 
                     }
 
                     const isCheckedIn = !!user.checked_in_at;
-
+                    
                     let checkInStatusHTML;
                     if (isCheckedIn) {
                         const checkInTime = new Date(user.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -385,11 +385,11 @@
                     </div>
                     `;
                 }).join('');
-
+                
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
-
+            
             // --- FINAL, CORRECTED makeApiCall function ---
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
@@ -402,7 +402,7 @@
                         // Throw an error using the message from the parsed JSON body
                         throw new Error(responseData.error || responseData.message || `Request failed: ${response.status}`);
                     }
-
+                    
                     // If successful, return the parsed JSON data
                     return responseData;
 
@@ -447,7 +447,7 @@
                         method: 'POST',
                         body: JSON.stringify({ registrationId })
                     });
-
+                    
                     button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-success', 'checked-in');
@@ -455,8 +455,8 @@
 
                     // Also update the status text in the list
                     const statusEl = document.querySelector(`li strong:contains('Status:')`).nextElementSibling;
-                    if (statusEl) {
-                        statusEl.innerHTML = `<span class="text-success fw-bold">Checked-In on ${new Date(result.data.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>`;
+                    if(statusEl){
+                         statusEl.innerHTML = `<span class="text-success fw-bold">Checked-In on ${new Date(result.data.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>`;
                     }
 
                 } catch (err) {
@@ -483,7 +483,7 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
-
+                
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
@@ -564,7 +564,7 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-
+                
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
 
