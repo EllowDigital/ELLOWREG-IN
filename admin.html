@@ -1,4 +1,4 @@
-<!-- VERSION: 3.0 - FINAL RE-ENGINEERED VERSION - 28 AUG 2025 -->
+<!-- VERSION: 4.0 - FINAL RE-ENGINEERED & CORRECTED - 29 AUG 2025 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -342,23 +342,17 @@
 
             // --- FINAL, RE-ENGINEERED displayUsers function ---
             const displayUsers = (data) => {
-                // This line makes the function robust. It ensures that 'users' is always an array,
-                // even if the backend accidentally sends a single object. This fixes the .map() error.
                 const users = Array.isArray(data) ? data : [data];
-
-                // Add a log to see what data is being processed.
                 console.log("Displaying data:", users);
 
                 const userHTML = users.map(user => {
-                    // Defensive check: if for some reason a user object is invalid, skip it.
                     if (!user || !user.registration_id) {
                         console.error("Invalid user object found:", user);
-                        return ''; // Return an empty string to avoid breaking the layout
+                        return '';
                     }
 
                     const isCheckedIn = !!user.checked_in_at;
 
-                    // --- NEW: Check-in status display logic ---
                     let checkInStatusHTML;
                     if (isCheckedIn) {
                         const checkInTime = new Date(user.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -396,21 +390,25 @@
                 showOutputView(resultsHTML);
             };
 
+            // --- FINAL, CORRECTED makeApiCall function ---
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
                 try {
                     const response = await fetch(endpoint, { ...options, headers });
+                    const responseData = await response.json(); // Always parse the JSON body
+
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ error: 'An API error occurred.' }));
-                        throw new Error(errorData.error || errorData.message || `Request failed: ${response.status}`);
+                        // Throw an error using the message from the parsed JSON body
+                        throw new Error(responseData.error || responseData.message || `Request failed: ${response.status}`);
                     }
-                    if (response.headers.get("content-type")?.includes("application/json")) {
-                        return response.json();
-                    }
-                    return response;
+
+                    // If successful, return the parsed JSON data
+                    return responseData;
+
                 } catch (error) {
-                    throw new Error(error.message || 'Network error.');
+                    // This will catch network errors and errors thrown from the block above
+                    throw new Error(error.message || 'A network error occurred.');
                 }
             };
 
@@ -460,7 +458,6 @@
                     if (statusEl) {
                         statusEl.innerHTML = `<span class="text-success fw-bold">Checked-In on ${new Date(result.data.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>`;
                     }
-
 
                 } catch (err) {
                     alert(`Check-in failed: ${err.message}`);
