@@ -30,12 +30,13 @@ exports.handler = async (event) => {
             dbClient = await pool.connect();
             console.log("Export started: Acquired database client.");
 
-            // --- THIS IS THE CORRECTED SQL QUERY ---
-            // Explicitly select only the columns needed for the export.
+            // --- FINAL, CORRECTED SQL QUERY ---
+            // Explicitly selects all columns, including the new 'checked_in_at' field.
             const sql = `
                 SELECT 
                     registration_id, name, company, phone, address, 
-                    city, state, day, payment_id, timestamp, image_url 
+                    city, state, day, payment_id, timestamp, image_url,
+                    checked_in_at
                 FROM registrations ORDER BY timestamp ASC
             `;
             const query = new QueryStream(sql);
@@ -63,7 +64,7 @@ exports.handler = async (event) => {
             });
             const worksheet = workbook.addWorksheet("Registrations");
 
-            // This column list now perfectly matches the explicit SELECT statement.
+            // This column list now includes the new 'checked_in_at' field.
             worksheet.columns = [
                 { header: "Registration ID", key: "registration_id", width: 22 },
                 { header: "Name", key: "name", width: 30 },
@@ -76,6 +77,7 @@ exports.handler = async (event) => {
                 { header: "Payment ID", key: "payment_id", width: 30 },
                 { header: "Registered On", key: "timestamp", width: 25, style: { numFmt: "dd-mmm-yyyy hh:mm:ss" } },
                 { header: "Profile Image URL", key: "image_url", width: 50 },
+                { header: "Checked-In At", key: "checked_in_at", width: 25, style: { numFmt: "dd-mmm-yyyy hh:mm:ss" } },
             ];
             worksheet.getRow(1).font = { bold: true, size: 12 };
 
