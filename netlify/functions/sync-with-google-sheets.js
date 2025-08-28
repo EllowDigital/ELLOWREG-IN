@@ -59,7 +59,6 @@ exports.handler = async () => {
         }
 
         // 4. If there are new records, append them to the sheet in managed batches.
-        // This is crucial for handling large volumes of data without overwhelming the Google Sheets API.
         if (recordsToAppend.length > 0) {
             console.log(`[Append] Preparing to append ${recordsToAppend.length} new records in batches of ${BATCH_SIZE}.`);
 
@@ -68,17 +67,20 @@ exports.handler = async () => {
                 const currentBatchNumber = Math.floor(i / BATCH_SIZE) + 1;
                 console.log(`[Append] Processing batch ${currentBatchNumber}...`);
 
+                // --- FINAL MODIFICATION: Added the 'checked_in_at' column ---
                 const rowsToAppend = batch.map(dbRecord => [
                     dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
                     dbRecord.address, dbRecord.city, dbRecord.state, dbRecord.day,
                     dbRecord.payment_id || 'N/A',
                     new Date(dbRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
                     dbRecord.image_url,
+                    // This new line adds the check-in time to the sheet, or 'N/A' if the user hasn't been checked in.
+                    dbRecord.checked_in_at ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : 'N/A'
                 ]);
 
                 await retryWithBackoff(() => sheets.spreadsheets.values.append({
                     spreadsheetId: SPREADSHEET_ID,
-                    range: SHEET_NAME, // Appending to the sheet automatically finds the next empty row.
+                    range: SHEET_NAME,
                     valueInputOption: "USER_ENTERED",
                     resource: { values: rowsToAppend },
                 }), `Google Sheets Append Batch ${currentBatchNumber}`);
@@ -89,8 +91,6 @@ exports.handler = async () => {
         }
 
         // 5. Mark ALL initially fetched records as synced in the database.
-        // This clears the entire sync queue, including any records that were skipped,
-        // ensuring they are not processed again in the next run. This is the safest approach.
         const allProcessedIds = dbRecordsToSync.map(record => record.registration_id);
         await dbClient.query(
             'UPDATE registrations SET needs_sync = false WHERE registration_id = ANY($1::text[])',
@@ -109,10 +109,9 @@ exports.handler = async () => {
         };
 
     } catch (error) {
-        // Enhanced error logging to provide more context on failure.
         console.error("[SYNC FAIL] The synchronization process failed critically.", {
             errorMessage: error.message,
-            googleApiError: error.response?.data?.error, // Catches specific errors from the Google API
+            googleApiError: error.response?.data?.error,
         });
         return {
             statusCode: 500,

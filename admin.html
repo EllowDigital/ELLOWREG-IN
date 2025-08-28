@@ -91,6 +91,21 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
+        /* --- NEW CSS FOR THE CHECK-IN BUTTON --- */
+        .check-in-btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .check-in-btn.checked-in {
+            background-color: #198754;
+            /* Success green */
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* --- END NEW CSS --- */
+
         .footer-credit {
             color: var(--text-muted);
             font-size: 0.9rem;
@@ -288,7 +303,6 @@
                 if (spinnerEl) spinnerEl.classList.toggle('d-none', !isLoading);
             };
 
-            // NEW: Function to display the last export time
             const displayLastExportTime = () => {
                 if (!lastExportTimeEl) lastExportTimeEl = document.getElementById('lastExportTime');
                 const lastExportTimestamp = localStorage.getItem('lastExportTimestamp');
@@ -329,26 +343,42 @@
             const displayErrorMessage = (message) => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`);
             const displayNoResults = () => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`);
 
+            // --- UPDATED displayUsers function to include the check-in button ---
             const displayUsers = (users) => {
-                const userHTML = users.map(user => `
-                <div class="text-center">
-                    <img src="${user.image_url || 'assets/favicon.ico'}" class="search-result-user-img mb-3" alt="Profile Photo">
-                    <h4 class="fw-bold text-primary mb-1">${user.name}</h4>
-                    <p class="text-muted fw-semibold mb-3">${user.company}</p>
-                </div>
-                <ul class="list-group list-group-flush small flex-grow-1">
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>ID:</strong> <span class="text-end">${user.registration_id}</span></li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Phone:</strong> <span class="text-end">${user.phone}</span></li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Address:</strong> <span class="text-end">${user.address}, ${user.city}</span></li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Attending:</strong> <span class="text-end">${user.day}</span></li>
-                </ul>`).join('');
+                const userHTML = users.map(user => {
+                    // Determine button state based on whether checked_in_at is null or has a date
+                    const isCheckedIn = user.checked_in_at !== null;
+                    const buttonText = isCheckedIn ? `Checked In @ ${new Date(user.checked_in_at).toLocaleTimeString('en-IN')}` : 'Mark as Checked-In';
+                    const buttonClass = isCheckedIn ? 'btn-success checked-in' : 'btn-primary';
+                    const buttonDisabled = isCheckedIn ? 'disabled' : '';
+
+                    return `
+                    <div class="text-center">
+                        <img src="${user.image_url || 'assets/favicon.ico'}" class="search-result-user-img mb-3" alt="Profile Photo">
+                        <h4 class="fw-bold text-primary mb-1">${user.name}</h4>
+                        <p class="text-muted fw-semibold mb-3">${user.company}</p>
+                    </div>
+                    <ul class="list-group list-group-flush small flex-grow-1">
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>ID:</strong> <span class="text-end">${user.registration_id}</span></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Phone:</strong> <span class="text-end">${user.phone}</span></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Address:</strong> <span class="text-end">${user.address}, ${user.city}</span></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Attending:</strong> <span class="text-end">${user.day}</span></li>
+                    </ul>
+                    <div class="d-grid mt-3">
+                        <button class="btn ${buttonClass} check-in-btn" data-regid="${user.registration_id}" ${buttonDisabled}>
+                            <i class="fas fa-check-circle me-2"></i> ${buttonText}
+                        </button>
+                    </div>
+                    `;
+                }).join('');
+
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
 
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
-                const headers = { 'x-admin-key': ADMIN_SECRET_KEY, ...options.headers };
+                const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
                 try {
                     const response = await fetch(endpoint, { ...options, headers });
                     if (!response.ok) {
@@ -387,6 +417,33 @@
                 }
             });
 
+            // --- NEW handleCheckIn function to call the new endpoint ---
+            const handleCheckIn = async (e) => {
+                const button = e.target.closest('.check-in-btn');
+                if (!button || button.disabled) return;
+
+                const registrationId = button.dataset.regid;
+                setButtonLoading(button, true);
+
+                try {
+                    const result = await makeApiCall('/.netlify/functions/mark-checked-in', {
+                        method: 'POST',
+                        body: JSON.stringify({ registrationId })
+                    });
+
+                    // Update the button's appearance and text to show the successful check-in
+                    button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-success', 'checked-in');
+                    button.disabled = true;
+
+                } catch (err) {
+                    alert(`Check-in failed: ${err.message}`);
+                } finally {
+                    setButtonLoading(button, false);
+                }
+            };
+
             function initializeDashboard() {
                 totalRegCountEl = document.getElementById('totalRegCount');
                 lastRegTimeEl = document.getElementById('lastRegTime');
@@ -404,15 +461,22 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
+
+                // --- UPDATED event listener to handle clicks on the new check-in button ---
                 searchOutputWrapper.addEventListener('click', (e) => {
-                    if (e.target && e.target.classList.contains('new-search-btn')) showSearchForm();
+                    if (e.target.closest('.new-search-btn')) {
+                        showSearchForm();
+                    } else if (e.target.closest('.check-in-btn')) {
+                        handleCheckIn(e);
+                    }
                 });
+
                 phoneInput.addEventListener('input', () => phoneInput.classList.remove('is-invalid'));
                 regIdInput.addEventListener('input', () => regIdInput.classList.remove('is-invalid'));
 
                 fetchDashboardStats();
                 checkSystemStatus();
-                displayLastExportTime(); // Call the new function on load
+                displayLastExportTime();
             }
 
             const fetchDashboardStats = async () => {
@@ -447,13 +511,9 @@
                     const result = await makeApiCall('/.netlify/functions/export-data');
                     window.open(result.downloadUrl, '_blank');
                     exportStatus.textContent = 'Download started!';
-
-                    // --- NEW CODE to save and display timestamp ---
                     const now = new Date();
                     localStorage.setItem('lastExportTimestamp', now.toISOString());
-                    displayLastExportTime(); // Update the display immediately
-                    // --- END NEW CODE ---
-
+                    displayLastExportTime();
                 } catch (err) {
                     exportStatus.textContent = `Failed: ${err.message}`;
                 } finally {
