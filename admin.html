@@ -357,7 +357,17 @@
                     }
 
                     const isCheckedIn = !!user.checked_in_at;
-                    const buttonText = isCheckedIn ? `Checked In @ ${new Date(user.checked_in_at).toLocaleTimeString('en-IN')}` : 'Mark as Checked-In';
+
+                    // --- NEW: Check-in status display logic ---
+                    let checkInStatusHTML;
+                    if (isCheckedIn) {
+                        const checkInTime = new Date(user.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+                        checkInStatusHTML = `<span class="text-success fw-bold">Checked-In on ${checkInTime}</span>`;
+                    } else {
+                        checkInStatusHTML = `<span class="text-muted">Not Checked-In Yet</span>`;
+                    }
+
+                    const buttonText = isCheckedIn ? `Already Checked In` : 'Mark as Checked-In';
                     const buttonClass = isCheckedIn ? 'btn-success checked-in' : 'btn-primary';
                     const buttonDisabled = isCheckedIn ? 'disabled' : '';
 
@@ -372,6 +382,7 @@
                         <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Phone:</strong> <span class="text-end">${user.phone}</span></li>
                         <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Address:</strong> <span class="text-end">${user.address}, ${user.city}</span></li>
                         <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Attending:</strong> <span class="text-end">${user.day}</span></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Status:</strong> ${checkInStatusHTML}</li>
                     </ul>
                     <div class="d-grid mt-3">
                         <button class="btn ${buttonClass} check-in-btn" data-regid="${user.registration_id}" ${buttonDisabled}>
@@ -380,11 +391,11 @@
                     </div>
                     `;
                 }).join('');
-                
+
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
-            
+
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
@@ -438,11 +449,18 @@
                         method: 'POST',
                         body: JSON.stringify({ registrationId })
                     });
-                    
+
                     button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-success', 'checked-in');
                     button.disabled = true;
+
+                    // Also update the status text in the list
+                    const statusEl = document.querySelector(`li strong:contains('Status:')`).nextElementSibling;
+                    if (statusEl) {
+                        statusEl.innerHTML = `<span class="text-success fw-bold">Checked-In on ${new Date(result.data.checked_in_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>`;
+                    }
+
 
                 } catch (err) {
                     alert(`Check-in failed: ${err.message}`);
@@ -468,7 +486,7 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
-                
+
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
@@ -549,7 +567,7 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-                
+
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
 
