@@ -1,4 +1,4 @@
-<!-- VERSION: 2.5 - FINAL CORRECTED VERSION - 28 AUG 2025 -->
+<!-- VERSION: 3.0 - FINAL RE-ENGINEERED VERSION - 28 AUG 2025 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -340,13 +340,22 @@
             const displayErrorMessage = (message) => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`);
             const displayNoResults = () => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`);
 
-            // --- FINAL, CORRECTED displayUsers function ---
+            // --- FINAL, RE-ENGINEERED displayUsers function ---
             const displayUsers = (data) => {
                 // This line makes the function robust. It ensures that 'users' is always an array,
                 // even if the backend accidentally sends a single object. This fixes the .map() error.
                 const users = Array.isArray(data) ? data : [data];
 
+                // Add a log to see what data is being processed.
+                console.log("Displaying data:", users);
+
                 const userHTML = users.map(user => {
+                    // Defensive check: if for some reason a user object is invalid, skip it.
+                    if (!user || !user.registration_id) {
+                        console.error("Invalid user object found:", user);
+                        return ''; // Return an empty string to avoid breaking the layout
+                    }
+
                     const isCheckedIn = !!user.checked_in_at;
                     const buttonText = isCheckedIn ? `Checked In @ ${new Date(user.checked_in_at).toLocaleTimeString('en-IN')}` : 'Mark as Checked-In';
                     const buttonClass = isCheckedIn ? 'btn-success checked-in' : 'btn-primary';
@@ -355,8 +364,8 @@
                     return `
                     <div class="text-center">
                         <img src="${user.image_url || 'assets/favicon.ico'}" class="search-result-user-img mb-3" alt="Profile Photo">
-                        <h4 class="fw-bold text-primary mb-1">${user.name}</h4>
-                        <p class="text-muted fw-semibold mb-3">${user.company}</p>
+                        <h4 class="fw-bold text-primary mb-1">${user.name || 'N/A'}</h4>
+                        <p class="text-muted fw-semibold mb-3">${user.company || 'N/A'}</p>
                     </div>
                     <ul class="list-group list-group-flush small flex-grow-1">
                         <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>ID:</strong> <span class="text-end">${user.registration_id}</span></li>
@@ -371,11 +380,11 @@
                     </div>
                     `;
                 }).join('');
-
+                
                 const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
                 showOutputView(resultsHTML);
             };
-
+            
             const makeApiCall = async (endpoint, options = {}) => {
                 if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
                 const headers = { 'x-admin-key': ADMIN_SECRET_KEY, 'Content-Type': 'application/json', ...options.headers };
@@ -429,7 +438,7 @@
                         method: 'POST',
                         body: JSON.stringify({ registrationId })
                     });
-
+                    
                     button.innerHTML = `<i class="fas fa-check-circle me-2"></i> Checked In @ ${new Date(result.data.checked_in_at).toLocaleTimeString('en-IN')}`;
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-success', 'checked-in');
@@ -459,7 +468,7 @@
                 checkStatusBtn.addEventListener('click', checkSystemStatus);
                 exportBtn.addEventListener('click', handleExport);
                 searchForm.addEventListener('submit', handleSearch);
-
+                
                 searchOutputWrapper.addEventListener('click', (e) => {
                     if (e.target.closest('.new-search-btn')) {
                         showSearchForm();
@@ -540,7 +549,7 @@
                     if (!regId) { regIdInput.classList.add('is-invalid'); return; }
                     query = `registrationId=${encodeURIComponent(regId)}`;
                 }
-
+                
                 setButtonLoading(searchBtn, true);
                 displayLoadingState();
 
