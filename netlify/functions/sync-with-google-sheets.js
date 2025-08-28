@@ -4,20 +4,16 @@ const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
 
 // --- Configuration ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations"; // The name of the sheet tab where data will be synced
-const BATCH_SIZE = 500; // The number of records to process in each batch to avoid Google API limits
+const SHEET_NAME = "Registrations";
 
 /**
- * A professional, idempotent, and robust serverless function to synchronize data
- * from a Postgres database to a Google Sheet. It is designed to handle large
- * datasets by processing records in batches and ensuring no duplicates are created.
+ * A professional, robust serverless function to synchronize data from a Postgres
+ * database to a Google Sheet using an "Update or Append" (Upsert) strategy.
  */
 exports.handler = async () => {
-    console.log(`[SYNC START] Starting robust sync process @ ${new Date().toISOString()}`);
-
-    // Safeguard: Ensure the required environment variable is set.
+    console.log(`[SYNC START] Starting Upsert Sync Process @ ${new Date().toISOString()}`);
     if (!SPREADSHEET_ID) {
-        console.error("[SYNC FAIL] Missing required environment variable: GOOGLE_SHEET_ID.");
+        console.error("[SYNC FAIL] Missing GOOGLE_SHEET_ID environment variable.");
         return { statusCode: 500, body: JSON.stringify({ error: "Server configuration error." }) };
     }
 
@@ -31,66 +27,82 @@ exports.handler = async () => {
         );
 
         if (dbRecordsToSync.length === 0) {
-            console.log("[SYNC INFO] No new records to sync. Job finished.");
-            return { statusCode: 200, body: JSON.stringify({ message: "No new records to sync." }) };
+            console.log("[SYNC INFO] No records to sync. Job finished.");
+            return { statusCode: 200, body: JSON.stringify({ message: "No records to sync." }) };
         }
-
         console.log(`[DB] Found ${dbRecordsToSync.length} records marked for sync.`);
 
-        // 2. Fetch all existing registration IDs from the Google Sheet.
-        // This is the key step to make the function idempotent and prevent duplicate entries.
+        // 2. Fetch all existing data from the Google Sheet to build a map.
         const sheets = await getGoogleSheetsClient();
-        const getSheetValues = await retryWithBackoff(() => sheets.spreadsheets.values.get({
+        const sheetResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${SHEET_NAME}!A2:A`, // Assumes IDs are in column A, starting from row 2.
-        }), 'Google Sheets Get IDs');
+            range: `${SHEET_NAME}!A:L`, // Fetch all columns to get row data
+        }), 'Google Sheets Get All Data');
 
-        const existingIdsInSheet = new Set(getSheetValues.data.values ? getSheetValues.data.values.flat() : []);
-        console.log(`[GSheet] Found ${existingIdsInSheet.size} existing IDs in the sheet.`);
-
-        // 3. Filter out records from the database that are already present in the sheet.
-        const recordsToAppend = dbRecordsToSync.filter(
-            record => !existingIdsInSheet.has(record.registration_id)
-        );
-
-        const skippedCount = dbRecordsToSync.length - recordsToAppend.length;
-        if (skippedCount > 0) {
-            console.log(`[Filter] Skipping ${skippedCount} records that are already present in the sheet to avoid duplication.`);
-        }
-
-        // 4. If there are new records, append them to the sheet in managed batches.
-        if (recordsToAppend.length > 0) {
-            console.log(`[Append] Preparing to append ${recordsToAppend.length} new records in batches of ${BATCH_SIZE}.`);
-
-            for (let i = 0; i < recordsToAppend.length; i += BATCH_SIZE) {
-                const batch = recordsToAppend.slice(i, i + BATCH_SIZE);
-                const currentBatchNumber = Math.floor(i / BATCH_SIZE) + 1;
-                console.log(`[Append] Processing batch ${currentBatchNumber}...`);
-
-                // --- FINAL MODIFICATION: Added the 'checked_in_at' column ---
-                const rowsToAppend = batch.map(dbRecord => [
-                    dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
-                    dbRecord.address, dbRecord.city, dbRecord.state, dbRecord.day,
-                    dbRecord.payment_id || 'N/A',
-                    new Date(dbRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-                    dbRecord.image_url,
-                    // This new line adds the check-in time to the sheet, or 'N/A' if the user hasn't been checked in.
-                    dbRecord.checked_in_at ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : 'N/A'
-                ]);
-
-                await retryWithBackoff(() => sheets.spreadsheets.values.append({
-                    spreadsheetId: SPREADSHEET_ID,
-                    range: SHEET_NAME,
-                    valueInputOption: "USER_ENTERED",
-                    resource: { values: rowsToAppend },
-                }), `Google Sheets Append Batch ${currentBatchNumber}`);
+        const sheetValues = sheetResponse.data.values || [];
+        // Create a map of registration_id -> { rowNumber, data }
+        const sheetMap = new Map();
+        sheetValues.forEach((row, index) => {
+            const regId = row[0]; // Assuming registration_id is in the first column (A)
+            if (regId) {
+                // Sheet rows are 1-based, array index is 0-based.
+                sheetMap.set(regId, { rowNumber: index + 1, data: row });
             }
-            console.log("[Append] All batches successfully appended to the Google Sheet.");
-        } else {
-            console.log("[Append] No new records to append.");
+        });
+        console.log(`[GSheet] Mapped ${sheetMap.size} existing rows from the sheet.`);
+
+        const recordsToAppend = [];
+        const updateRequests = [];
+
+        // 3. Determine which records to update and which to append.
+        for (const dbRecord of dbRecordsToSync) {
+            const newRowData = [
+                dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
+                dbRecord.address, dbRecord.city, dbRecord.state, dbRecord.day,
+                dbRecord.payment_id || 'N/A',
+                new Date(dbRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+                dbRecord.image_url,
+                dbRecord.checked_in_at ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : 'N/A'
+            ];
+
+            if (sheetMap.has(dbRecord.registration_id)) {
+                // User exists in the sheet, prepare an UPDATE request.
+                const existingRow = sheetMap.get(dbRecord.registration_id);
+                updateRequests.push({
+                    range: `${SHEET_NAME}!A${existingRow.rowNumber}`,
+                    values: [newRowData],
+                });
+            } else {
+                // User is new, add to the APPEND list.
+                recordsToAppend.push(newRowData);
+            }
         }
 
-        // 5. Mark ALL initially fetched records as synced in the database.
+        console.log(`[SYNC PLAN] Records to update: ${updateRequests.length}. Records to append: ${recordsToAppend.length}.`);
+
+        // 4. Execute all update and append operations.
+        if (updateRequests.length > 0) {
+            await retryWithBackoff(() => sheets.spreadsheets.values.batchUpdate({
+                spreadsheetId: SPREADSHEET_ID,
+                resource: {
+                    valueInputOption: 'USER_ENTERED',
+                    data: updateRequests,
+                },
+            }), 'Google Sheets Batch Update');
+            console.log(`[GSheet] Successfully updated ${updateRequests.length} rows.`);
+        }
+
+        if (recordsToAppend.length > 0) {
+            await retryWithBackoff(() => sheets.spreadsheets.values.append({
+                spreadsheetId: SPREADSHEET_ID,
+                range: SHEET_NAME,
+                valueInputOption: "USER_ENTERED",
+                resource: { values: recordsToAppend },
+            }), 'Google Sheets Append');
+            console.log(`[GSheet] Successfully appended ${recordsToAppend.length} new rows.`);
+        }
+
+        // 5. Mark all processed records as synced in the database.
         const allProcessedIds = dbRecordsToSync.map(record => record.registration_id);
         await dbClient.query(
             'UPDATE registrations SET needs_sync = false WHERE registration_id = ANY($1::text[])',
@@ -102,9 +114,8 @@ exports.handler = async () => {
             statusCode: 200,
             body: JSON.stringify({
                 message: "Sync successful.",
-                processedFromDB: dbRecordsToSync.length,
-                appendedToSheet: recordsToAppend.length,
-                skippedAsDuplicates: skippedCount
+                updated: updateRequests.length,
+                appended: recordsToAppend.length
             }),
         };
 
