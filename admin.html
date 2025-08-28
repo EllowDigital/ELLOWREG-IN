@@ -339,7 +339,12 @@
             const displayErrorMessage = (message) => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`);
             const displayNoResults = () => showOutputView(`<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`);
 
-            const displayUsers = (users) => {
+            // --- FINAL, CORRECTED displayUsers function ---
+            const displayUsers = (data) => {
+                // This line makes the function robust. It ensures that 'users' is always an array,
+                // even if the backend accidentally sends a single object. This fixes the .map() error.
+                const users = Array.isArray(data) ? data : [data];
+
                 const userHTML = users.map(user => {
                     const isCheckedIn = !!user.checked_in_at;
                     const buttonText = isCheckedIn ? `Checked In @ ${new Date(user.checked_in_at).toLocaleTimeString('en-IN')}` : 'Mark as Checked-In';
@@ -512,7 +517,6 @@
                 }
             };
 
-            // --- FINAL, CORRECTED handleSearch function ---
             const handleSearch = async (e) => {
                 e.preventDefault();
                 const activeTab = document.querySelector('#search-tab-content .tab-pane.active');
