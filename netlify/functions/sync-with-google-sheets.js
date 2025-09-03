@@ -5,10 +5,16 @@ const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
 // --- Configuration ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
+const API_CHUNK_SIZE = 500; // Process 500 records per API call to stay within limits.
 
 /**
- * A professional, robust serverless function to synchronize data from a Postgres
- * database to a Google Sheet using an "Update or Append" (Upsert) strategy.
+ * A highly scalable serverless function to synchronize up to 10,000+ records
+ * from a Postgres database to a Google Sheet using an "Upsert" strategy.
+ *
+ * Key features for scalability:
+ * - Efficiently fetches only registration IDs from the sheet to build a lookup map.
+ * - Chunks API requests (updates and appends) to avoid hitting Google's payload size limits.
+ * - Uses a reliable, serverless-friendly database connection pool.
  */
 exports.handler = async () => {
     console.log(`[SYNC START] Starting Upsert Sync Process @ ${new Date().toISOString()}`);
@@ -21,7 +27,7 @@ exports.handler = async () => {
     try {
         dbClient = await pool.connect();
 
-        // 1. Fetch all records from the database that are flagged for syncing.
+        // 1. Fetch records from the database that need syncing.
         const { rows: dbRecordsToSync } = await dbClient.query(
             "SELECT * FROM registrations WHERE needs_sync = true ORDER BY timestamp ASC"
         );
@@ -32,29 +38,26 @@ exports.handler = async () => {
         }
         console.log(`[DB] Found ${dbRecordsToSync.length} records marked for sync.`);
 
-        // 2. Fetch all existing data from the Google Sheet to build a map.
+        // 2. Efficiently fetch ONLY the ID column from the Google Sheet to build a lookup map.
         const sheets = await getGoogleSheetsClient();
         const sheetResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${SHEET_NAME}!A:L`, // Fetch all columns to get row data
-        }), 'Google Sheets Get All Data');
+            range: `${SHEET_NAME}!A:A`, // OPTIMIZED: Fetch only column A
+        }), 'Google Sheets Get IDs');
 
         const sheetValues = sheetResponse.data.values || [];
-        // Create a map of registration_id -> { rowNumber, data }
-        const sheetMap = new Map();
+        const sheetMap = new Map(); // Map of registration_id -> { rowNumber }
         sheetValues.forEach((row, index) => {
-            const regId = row[0]; // Assuming registration_id is in the first column (A)
+            const regId = row[0];
             if (regId) {
-                // Sheet rows are 1-based, array index is 0-based.
-                sheetMap.set(regId, { rowNumber: index + 1, data: row });
+                sheetMap.set(regId, { rowNumber: index + 1 });
             }
         });
         console.log(`[GSheet] Mapped ${sheetMap.size} existing rows from the sheet.`);
 
+        // 3. Categorize records for append or update operations.
         const recordsToAppend = [];
         const updateRequests = [];
-
-        // 3. Determine which records to update and which to append.
         for (const dbRecord of dbRecordsToSync) {
             const newRowData = [
                 dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
@@ -64,45 +67,43 @@ exports.handler = async () => {
                 dbRecord.image_url,
                 dbRecord.checked_in_at ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : 'N/A'
             ];
-
             if (sheetMap.has(dbRecord.registration_id)) {
-                // User exists in the sheet, prepare an UPDATE request.
-                const existingRow = sheetMap.get(dbRecord.registration_id);
-                updateRequests.push({
-                    range: `${SHEET_NAME}!A${existingRow.rowNumber}`,
-                    values: [newRowData],
-                });
+                const { rowNumber } = sheetMap.get(dbRecord.registration_id);
+                updateRequests.push({ range: `${SHEET_NAME}!A${rowNumber}`, values: [newRowData] });
             } else {
-                // User is new, add to the APPEND list.
                 recordsToAppend.push(newRowData);
             }
         }
-
         console.log(`[SYNC PLAN] Records to update: ${updateRequests.length}. Records to append: ${recordsToAppend.length}.`);
 
-        // 4. Execute all update and append operations.
+        // 4. Execute API calls in safe, manageable chunks.
         if (updateRequests.length > 0) {
-            await retryWithBackoff(() => sheets.spreadsheets.values.batchUpdate({
-                spreadsheetId: SPREADSHEET_ID,
-                resource: {
-                    valueInputOption: 'USER_ENTERED',
-                    data: updateRequests,
-                },
-            }), 'Google Sheets Batch Update');
-            console.log(`[GSheet] Successfully updated ${updateRequests.length} rows.`);
+            console.log(`[GSheet] Processing ${updateRequests.length} updates in chunks of ${API_CHUNK_SIZE}...`);
+            for (let i = 0; i < updateRequests.length; i += API_CHUNK_SIZE) {
+                const chunk = updateRequests.slice(i, i + API_CHUNK_SIZE);
+                await retryWithBackoff(() => sheets.spreadsheets.values.batchUpdate({
+                    spreadsheetId: SPREADSHEET_ID,
+                    resource: { valueInputOption: 'USER_ENTERED', data: chunk },
+                }), `Google Sheets Batch Update Chunk ${i / API_CHUNK_SIZE + 1}`);
+                console.log(` -> Updated chunk starting at index ${i}.`);
+            }
+            console.log("[GSheet] All update chunks processed successfully.");
         }
 
         if (recordsToAppend.length > 0) {
-            await retryWithBackoff(() => sheets.spreadsheets.values.append({
-                spreadsheetId: SPREADSHEET_ID,
-                range: SHEET_NAME,
-                valueInputOption: "USER_ENTERED",
-                resource: { values: recordsToAppend },
-            }), 'Google Sheets Append');
-            console.log(`[GSheet] Successfully appended ${recordsToAppend.length} new rows.`);
+            console.log(`[GSheet] Processing ${recordsToAppend.length} appends in chunks of ${API_CHUNK_SIZE}...`);
+            for (let i = 0; i < recordsToAppend.length; i += API_CHUNK_SIZE) {
+                const chunk = recordsToAppend.slice(i, i + API_CHUNK_SIZE);
+                await retryWithBackoff(() => sheets.spreadsheets.values.append({
+                    spreadsheetId: SPREADSHEET_ID, range: SHEET_NAME, valueInputOption: "USER_ENTERED",
+                    resource: { values: chunk },
+                }), `Google Sheets Append Chunk ${i / API_CHUNK_SIZE + 1}`);
+                console.log(` -> Appended chunk starting at index ${i}.`);
+            }
+            console.log("[GSheet] All append chunks processed successfully.");
         }
 
-        // 5. Mark all processed records as synced in the database.
+        // 5. Mark all processed records as synced in a single, efficient database transaction.
         const allProcessedIds = dbRecordsToSync.map(record => record.registration_id);
         await dbClient.query(
             'UPDATE registrations SET needs_sync = false WHERE registration_id = ANY($1::text[])',
@@ -112,13 +113,8 @@ exports.handler = async () => {
 
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                message: "Sync successful.",
-                updated: updateRequests.length,
-                appended: recordsToAppend.length
-            }),
+            body: JSON.stringify({ message: "Sync successful.", updated: updateRequests.length, appended: recordsToAppend.length }),
         };
-
     } catch (error) {
         console.error("[SYNC FAIL] The synchronization process failed critically.", {
             errorMessage: error.message,
