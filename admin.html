@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Next Steps</title>
+    <title>Admin Panel | 2025 Expo Summary</title>
+
+    <meta http-equiv="refresh" content="10; url=https://ellowdigital.netlify.app/">
+
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
         :root {
-            --primary-dark: #0a192f;
-            --primary-light: #172a45;
-            --accent-color: #ffd700; /* Gold */
-            --text-primary: #e6f1ff;
-            --text-secondary: #a8b2d1;
-            --card-bg: rgba(23, 42, 69, 0.5);
-            --border-color: rgba(255, 215, 0, 0.2);
+            --bg-dark: #0A192F;
+            --bg-light: #172A45;
+            --accent: #FFD700;
+            --text-primary: #CCD6F6;
+            --text-secondary: #8892B0;
+            --card-bg: rgba(23, 42, 69, 0.6);
+            --border-color: rgba(255, 215, 0, 0.15);
             --shadow-color: rgba(2, 12, 27, 0.7);
         }
 
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
         body {
-            background-color: var(--primary-dark);
-            background: linear-gradient(315deg, #0a192f, #172a45, #0a192f);
-            background-attachment: fixed;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: clamp(1rem, 5vw, 2rem);
-            overflow-y: auto; /* Ensures scrolling on smaller/full screens */
+            padding: clamp(1.5rem, 5vw, 3rem);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light), var(--bg-dark));
+            background-size: 200% 200%;
+            animation: gradient-flow 20s ease infinite;
         }
 
-        .main-container {
+        .main-grid {
             width: 100%;
             max-width: 1200px;
             margin: auto;
             display: grid;
-            grid-template-columns: 1fr; /* Default to 1 column for mobile */
+            grid-template-columns: 1fr;
             gap: 2rem;
-            animation: fadeIn 0.8s ease-out forwards;
         }
 
-        /* Switch to 2 columns on larger screens */
         @media (min-width: 992px) {
-            .main-container {
+            .main-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -57,161 +67,289 @@
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: clamp(1.5rem, 5vw, 2.5rem);
-            box-shadow: 0 15px 35px var(--shadow-color);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            box-shadow: 0 10px 30px -15px var(--shadow-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .card.celebration {
-            animation: slideUp 0.6s ease-out 0.2s backwards;
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 20px 30px -15px var(--shadow-color);
         }
-        .card.next-mission {
-            animation: slideUp 0.6s ease-out 0.4s backwards;
+
+        .card.summary {
+            animation: popIn 0.6s ease-out 0.2s forwards;
+        }
+
+        .card.next-steps {
+            animation: popIn 0.6s ease-out 0.4s forwards;
+        }
+
+        .card>* {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .summary .card-header {
+            animation-delay: 0.4s;
+        }
+
+        .summary .card-content {
+            animation-delay: 0.5s;
+        }
+
+        .next-steps .card-header {
+            animation-delay: 0.6s;
+        }
+
+        .next-steps .card-content {
+            animation-delay: 0.7s;
+        }
+
+        .next-steps .image-container {
+            animation-delay: 0.8s;
         }
 
         .card-header {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
         }
 
         .card-header .subtitle {
-            color: var(--accent-color);
+            color: var(--accent);
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
+            font-size: 0.8rem;
         }
 
         .card-header .title {
-            font-size: clamp(2rem, 5vw, 2.75rem);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             font-weight: 700;
             line-height: 1.2;
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
         }
 
         .card-content p {
             color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.7;
+            font-size: 1rem;
+            line-height: 1.6;
             margin-bottom: 2rem;
         }
 
         .stats-list {
             list-style: none;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         .stats-list li {
             font-size: 1.1rem;
             font-weight: 600;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .stats-list li:first-child {
-            padding-top: 0;
-        }
-        .stats-list li:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        .stats-list .stat-value {
-            font-weight: 300;
-            font-size: 1.2rem;
-            color: var(--accent-color);
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
         }
 
-        .meme-image-container {
-            flex-grow: 1; /* Allows container to fill space */
+        .summary li:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .summary li:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        .summary li:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+
+        .stats-list .stat-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .stats-list .stat-label i {
+            color: var(--accent);
+            width: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-list li:hover .stat-label i {
+            transform: scale(1.2);
+        }
+
+        .stats-list .stat-value {
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .image-container {
+            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background: rgba(0,0,0,0.2);
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            min-height: 250px;
         }
 
-        .meme-img {
+        .next-event-img {
             max-width: 100%;
-            max-height: 400px;
             height: auto;
-            border-radius: 10px;
-            object-fit: contain;
+            max-height: 350px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
-        footer {
+        .page-footer {
+            width: 100%;
             text-align: center;
             margin-top: 3rem;
             color: var(--text-secondary);
-            animation: fadeIn 1s 1s ease-out backwards;
+            opacity: 0;
+            animation: popIn 1s 1s ease-out forwards;
         }
 
-        footer a {
-            color: var(--accent-color);
+        .page-footer a {
+            color: var(--accent);
             text-decoration: none;
             font-weight: 600;
         }
-        
-        .heart-blink {
+
+        .page-footer .heart {
             color: #ff4757;
+            animation: pulse 1.5s infinite;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        /* --- NEW: Style for the redirect notice --- */
+        .redirect-notice {
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
         }
-        
-        @keyframes slideUp {
+
+        @keyframes popIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px) scale(0.95);
             }
+
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes gradient-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
             }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="main-container">
-        <section class="card celebration">
-            <div class="card-header">
+    <div class="main-grid">
+        <section class="card summary">
+            <header class="card-header">
                 <p class="subtitle">Mission Accomplished</p>
                 <h1 class="title">That's a Wrap on 2025!</h1>
-            </div>
+            </header>
             <div class="card-content">
-                <p>The numbers are in, and the 2025 expo was a phenomenal success. A huge round of applause to the entire admin team for making it happen.</p>
+                <p>The numbers are in, and the 2025 expo was a phenomenal success. A huge round of applause to the
+                    entire admin team for making it happen.</p>
                 <ul class="stats-list">
-                    <li><span>✅ Total Registrations</span> <span class="stat-value">2,500+</span></li>
-                    <li><span>🤝 Exhibitors Onboarded</span> <span class="stat-value">50+</span></li>
-                    <li><span>💧 Cups of Water Consumed</span> <span class="stat-value">Countless</span></li>
+                    <li>
+                        <span class="stat-label"><i class="fas fa-users"></i> Total Registrations</span>
+                        <span class="stat-value">2,500+</span>
+                    </li>
+                    <li>
+                        <span class="stat-label"><i class="fas fa-handshake"></i> Exhibitors Onboarded</span>
+                        <span class="stat-value">50+</span>
+                    </li>
+                    <li>
+                        <span class="stat-label"><i class="fas fa-tint"></i> Cups of Water Consumed</span>
+                        <span class="stat-value">Countless</span>
+                    </li>
                 </ul>
             </div>
         </section>
 
-        <section class="card next-mission">
-            <div class="card-header">
+        <section class="card next-steps">
+            <header class="card-header">
                 <p class="subtitle">What's Next?</p>
                 <h2 class="title">Brace Yourselves... 🚀</h2>
-            </div>
+            </header>
             <div class="card-content">
-                <p>Take a moment to relax, because the planning for the next event is already on the horizon. Let's make it even bigger!</p>
+                <p>Take a moment to relax, because the planning for the next event is already on the horizon. Let's make
+                    it even bigger!</p>
             </div>
-            <div class="meme-image-container">
-                <img src="assets/meme.png" alt="Meme about the success of the 2025 Expo and the admin team preparing for the next one." class="meme-img">
+            <div class="image-container">
+                <img src="assets/meme.png" alt="Admin team celebrating the success of the 2025 Expo."
+                    class="next-event-img">
             </div>
         </section>
     </div>
 
-    <footer>
-        <p>Made with <span class="heart-blink">❤️</span> by <a href="https://ellowdigital.netlify.app/" target="_blank">EllowDigital</a></p>
+    <footer class="page-footer">
+        <p class="redirect-notice">You will be redirected in 10 seconds...</p>
+        <p>Made with <span class="heart">❤️</span> by <a href="https://ellowdigital.netlify.app/"
+                target="_blank">EllowDigital</a></p>
     </footer>
 
 </body>
+
 </html>
