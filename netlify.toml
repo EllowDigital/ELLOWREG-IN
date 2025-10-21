@@ -1,4 +1,4 @@
 # netlify.toml
 # Runs "sync-with-google-sheets" daily at 08:00 PM IST (14:30 UTC). Netlify cron is evaluated in UTC.
-# [functions."sync-with-google-sheets"]
-# schedule = "30 14 * * *"
+[functions."sync-with-google-sheets"]
+  schedule = "30 14 * * *"

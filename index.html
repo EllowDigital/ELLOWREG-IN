@@ -4,46 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Grand Success! | TENT DECOR EXPO UP 2025</title>
+    <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
     <meta name="description"
-        content="TENT DECOR EXPO UP 2025 has successfully concluded. Thank you to all participants, exhibitors, and visitors for making it a grand success. Stay tuned for future events!">
+        content="Register now for TENT DECOR EXPO UP 2025, India's premier B2B trade show for the tent, decor, and event industry. Secure your free visitor pass today.">
     <meta name="keywords"
-        content="Tent Expo, Decor Expo, Lucknow Event, B2B Trade Show, Event Concluded, 2025 Expo, Tent Decor Expo UP, Tent Caterers and Decorators Welfare Association">
-    <meta property="og:title" content="A Grand Success! | TENT DECOR EXPO UP 2025">
+        content="Tent Expo, Decor Expo, Lucknow Event, B2B Trade Show, Event Registration, 2025 Expo, Visitor Pass, Tent Decor Expo UP">
+    <meta name="author" content="TENT DECOR EXPO Team">
+
+    <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
     <meta property="og:description"
-        content="Thank you for being part of India's leading tent and decor expo. The curtains have closed on a monumental event!">
+        content="Join thousands of industry professionals in Lucknow. Register now to get your official visitor pass for India's leading tent and decor expo.">
     <meta property="og:image" content="https://td-expoup25.netlify.app/assets/og-image.jpg">
     <meta property="og:url" content="https://td-expoup25.netlify.app/">
     <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
+        onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Inter:wght@300;400;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
+        defer></script>
 
     <style>
         :root {
-            --bg-dark: #0A192F;
-            --bg-light: #172A45;
-            --accent: #FFD700;
-            --text-primary: #CCD6F6;
-            --text-secondary: #8892B0;
-            --card-bg: rgba(23, 42, 69, 0.6);
-            --border-color: rgba(255, 215, 0, 0.15);
-            --shadow-color: rgba(2, 12, 27, 0.7);
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --primary-color: #0d2c4f;
+            --primary-dark: #0A2540;
+            --accent-color: #FDB813;
+            --accent-hover: #e4a60b;
+            --text-color: #333;
+            --text-light: #6c757d;
+            --card-bg: #ffffff;
+            --body-bg: #f4f7fa;
+            --border-color: #dee2e6;
+            --success-color: #198754;
+            --danger-color: #dc3545;
         }
 
         html {
@@ -52,242 +60,927 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
+            color: var(--text-color);
+            background-color: var(--body-bg);
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .registration-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .info-panel {
+            background-color: var(--primary-dark);
+            color: #fff;
+            padding: 3rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1.5rem;
-            overflow: hidden;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
         }
 
-        .container {
-            width: 100%;
-            max-width: 680px;
+        .info-panel .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .info-panel .lead {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .event-detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .event-detail-item .icon {
+            font-size: 1.5rem;
+            width: 40px;
+            color: var(--accent-color);
+        }
+
+        .form-panel {
+            padding: 3rem 4rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .form-panel {
+                padding: 2rem;
+            }
+        }
+
+        .form-panel .form-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-dark);
+            font-size: clamp(2rem, 5vw, 2.5rem);
+        }
+
+        .form-control,
+        .form-check-input {
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus,
+        .form-check-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
+            transform: scale(1.02);
+        }
+
+        .form-control:invalid {
+            border-color: var(--danger-color);
+        }
+
+        .image-upload-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        #imagePreview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--border-color);
+            background-color: #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        #profileImage {
+            display: none;
+        }
+
+        #uploadLabel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-dark);
+            color: white;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        #uploadLabel:hover {
+            transform: scale(1.1);
+        }
+
+        .day-selector .form-check {
+            padding-left: 0;
+        }
+
+        .day-selector .form-check-input {
+            display: none;
+        }
+
+        .day-selector .form-check-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .day-selector .form-check-input:checked+.form-check-label {
+            background-color: var(--primary-dark);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 5px 15px rgba(10, 37, 64, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: var(--accent-color);
+            border: none;
+            color: var(--primary-dark);
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            color: var(--primary-dark);
+            box-shadow: 0 7px 20px rgba(228, 166, 11, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .success-view {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        #download-id-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        #id-card-template {
+            display: none;
+        }
+
+        .id-card {
+            width: 380px;
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7FA;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid #E0E0E0;
+        }
+
+        .id-card-header {
+            background: var(--primary-dark);
+            padding: 1.5rem 1rem;
+            padding-bottom: 75px;
+        }
+
+        .id-card-header .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1.1;
+        }
+
+        .id-card-header .pass-subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .id-card-body {
+            position: relative;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            background-color: transparent;
+        }
+
+        .id-card-photo-wrapper {
+            margin-top: -65px;
             position: relative;
             z-index: 10;
         }
 
-        .finale-card {
+        .id-card-photo {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid #F4F7FA;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: clamp(2rem, 6vw, 3.5rem);
-            text-align: center;
-            box-shadow: 0 20px 40px var(--shadow-color);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transform: translateY(30px);
-            opacity: 0;
-            animation: slideUpFadeIn 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        /* Staggered Animations */
-        .animated {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUpFadeIn 0.7s ease-out forwards;
+        .id-card-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
         }
 
-        .delay-1 {
-            animation-delay: 0.2s;
-        }
-
-        .delay-2 {
-            animation-delay: 0.3s;
-        }
-
-        .delay-3 {
-            animation-delay: 0.4s;
-        }
-
-        .delay-4 {
-            animation-delay: 0.5s;
-        }
-
-        .delay-5 {
-            animation-delay: 0.7s;
-        }
-
-        .event-logo {
-            width: 100px;
-            height: auto;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .finale-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.8rem, 7vw, 4.5rem);
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .subtitle {
+        .id-card-firm {
             font-size: 1.1rem;
-            font-weight: 300;
-            color: var(--text-secondary);
-            max-width: 500px;
-            margin: 0 auto 1.5rem auto;
-            line-height: 1.7;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
         }
 
-        .association-thanks {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin: 1.5rem auto 2.5rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-left: 3px solid var(--accent);
-            border-radius: 0 8px 8px 0;
-            max-width: 90%;
-        }
-
-        .association-thanks strong {
-            font-weight: 600;
-            color: var(--text-primary);
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .social-links h3 {
-            font-weight: 400;
-            color: var(--text-secondary);
+        .id-card-attendance-date {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--primary-dark);
+            background-color: var(--accent-color);
+            padding: 0.6rem 1.75rem;
+            border-radius: 50px;
             margin-bottom: 1.5rem;
             font-size: 1rem;
+            text-transform: capitalize;
+        }
+
+        .id-card-reg-wrapper {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed #CDD3D9;
+        }
+
+        .id-card-footer-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
             text-transform: uppercase;
+        }
+
+        .id-card-reg-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
             letter-spacing: 1px;
         }
 
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-        }
-
-        .social-icons a {
-            color: var(--text-secondary);
-            font-size: 1.6rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            color: var(--accent);
-            transform: scale(1.2) translateY(-3px);
-        }
-
-        .page-footer {
-            margin-top: 3rem;
-            color: var(--text-secondary);
+        .id-card-footer {
+            background-color: transparent;
+            padding: 1rem;
+            padding-top: 0;
+            color: var(--text-light);
             font-size: 0.9rem;
-            text-align: center;
         }
 
-        .page-footer .heart {
-            color: #ff4757;
+        .lost-pass-link {
+            transition: color 0.3s ease, transform 0.2s ease;
         }
 
-        .page-footer a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .page-footer a:hover {
+        .lost-pass-link:hover {
+            color: #0d6efd;
+            transform: scale(1.05);
             text-decoration: underline;
         }
 
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+        .footer-custom {
+            background-color: var(--primary-dark);
+            /* #000000 background */
+            color: white;
         }
 
-        @keyframes slideUpFadeIn {
-            to {
-                transform: translateY(0);
+        .blinking-heart {
+            color: red;
+            animation: blink 1s infinite;
+            font-size: 1.2em;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
                 opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="main-container">
+        <div class="registration-wrapper">
+            <div class="row g-0">
+                <div class="col-lg-5 info-panel">
+                    <div>
+                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner"
+                            class="img-fluid rounded-3 mb-4" loading="lazy" decoding="async">
+                        <h1 class="expo-title">TENT DECOR EXPO UP 2025</h1>
+                        <p class="lead">
+                            Join industry leaders and innovators at the premier expo for tents, decorators, caterers,
+                            and event management
+                        </p>
 
-    <canvas id="confetti-canvas"></canvas>
+                        <hr class="my-4" style="opacity: 0.3;">
+                        <div class="event-details-list">
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-calendar-days icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Dates</h5>
+                                    <p class="mb-0">September 12, 13 & 14, 2025</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-location-dot icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Venue</h5>
+                                    <p class="mb-0">Indira Gandhi Pratishthan, Gomti Nagar, Lucknow</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-phone-volume icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Enquiries</h5>
+                                    <a href="tel:+917905881922"
+                                        class="text-white text-decoration-none d-block">7905881922</a>
+                                    <a href="tel:+919953903330"
+                                        class="text-white text-decoration-none d-block">9953903330</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="container">
-        <main class="finale-card">
-            <img src="https://td-expoup25.netlify.app/assets/unnamed.jpg" alt="Tent Decor Expo Logo"
-                class="event-logo animated delay-1">
+                <div class="col-lg-7 form-panel">
+                    <div id="success-view" class="d-none success-view" aria-live="polite">
+                        <h2 class="form-heading mb-3">Registration Confirmed!</h2>
+                        <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it for
+                            entry.</p>
+                        <div id="id-card-wrapper" class="d-flex justify-content-center mb-4"></div>
+                        <div class="d-grid">
+                            <button id="download-id-btn" class="btn btn-submit">
+                                <i class="fas fa-download me-2"></i>Download Visitor Pass
+                            </button>
+                        </div>
+                    </div>
 
-            <h1 class="finale-title animated delay-2">That's a Wrap!</h1>
+                    <div id="form-container">
+                        <!-- Lost Pass Notice -->
+                        <div class="alert alert-info rounded-3 text-start mb-4" role="alert">
+                            <strong>नोट:</strong> अगर आपका विज़िटर पास खो गया है, तो <strong>उसी मोबाइल नंबर</strong> और
+                            जानकारी के साथ यह फॉर्म फिर से भरें या नीचे दिए गए लिंक पर क्लिक करें। आपका पुराना पास स्वतः
+                            मिल जाएगा।
+                            <br>
+                            <strong>Note:</strong> If you’ve lost your visitor pass, simply fill out this form again
+                            using the <strong>same mobile number</strong> and details, or click the link below. Your
+                            original pass will be retrieved automatically.
+                        </div>
 
-            <p class="subtitle animated delay-3">
-                The TENT DECOR EXPO UP 2025 has successfully concluded. A heartfelt thank you to our exhibitors,
-                visitors, and partners for making it a monumental success!
-            </p>
+                        <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
+                        <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
+                        <form id="registrationForm" novalidate>
+                            <div class="image-upload-wrapper">
+                                <img id="imagePreview"
+                                    src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload+Photo"
+                                    alt="Profile image preview">
+                                <input type="file" id="profileImage" name="profileImage"
+                                    accept="image/png, image/jpeg, image/jpg" required>
+                                <label for="profileImage" id="uploadLabel" title="Upload Photo"><i
+                                        class="fa-solid fa-camera"></i></label>
+                            </div>
 
-            <div class="association-thanks animated delay-4">
-                Special thanks to our association:
-                <strong>Tent, Caterers, and Decorators Welfare Association of UP</strong>
-            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required
+                                        minlength="3">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label fw-semibold">10-Digit Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required
+                                        pattern="^[6-9]\d{9}$" placeholder="e.g., 9876543210">
+                                </div>
+                                <div class="col-12">
+                                    <label for="firmName" class="form-label fw-semibold">Firm Name</label>
+                                    <input type="text" class="form-control" id="firmName" name="firmName" required
+                                        minlength="3">
+                                </div>
+                                <div class="col-12">
+                                    <label for="address" class="form-label fw-semibold">Full Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="3" required
+                                        minlength="10"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="district" class="form-label fw-semibold">District</label>
+                                    <input type="text" class="form-control" id="district" name="district" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="state" class="form-label fw-semibold">State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Select Attending Days</label>
+                                    <div class="row g-2 day-selector">
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 1" id="day1">
+                                                <label class="form-check-label" for="day1">Day 1<br><small>Sep
+                                                        12</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 2" id="day2">
+                                                <label class="form-check-label" for="day2">Day 2<br><small>Sep
+                                                        13</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 3" id="day3">
+                                                <label class="form-check-label" for="day3">Day 3<br><small>Sep
+                                                        14</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-4 d-grid">
+                                    <button class="btn btn-submit" type="submit" id="submitBtn">
+                                        <span class="button-text">Register & Get Pass</span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- NEW: Lost Pass Link -->
+                        <div class="text-center mt-3">
+                            <small class="text-muted d-block mb-1">Already registered but lost your pass?</small>
+                            <a href="#" id="lostPassLink" role="button" aria-label="Find lost visitor pass"
+                                class="btn btn-outline-primary mt-2">
+                                <i class="bi bi-search me-1"></i>Find your lost visitor pass
+                            </a>
 
-            <div class="social-links animated delay-5">
-                <h3>Stay Connected</h3>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/tentdecorexpoup/reels/" target="_blank" aria-label="Facebook"><i
-                            class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/tentdecorexpoup/" target="_blank" aria-label="Instagram"><i
-                            class="fab fa-instagram"></i></a>
-                    <a href="https://x.com/tentdecorexpoup" target="_blank" aria-label="Twitter"><i
-                            class="fab fa-twitter"></i></a>
+                        </div>
+
+
+                    </div>
                 </div>
             </div>
-        </main>
-
-        <footer class="page-footer animated delay-5">
-            <p>© 2025 TENT DECOR EXPO UP. All Rights Reserved.</p>
-            <p>
-                Crafted with <span class="heart">❤️</span> by
-                <a href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer">EllowDigital</a>
-            </p>
-        </footer>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const confettiCanvas = document.getElementById('confetti-canvas');
-            const confettiInstance = confetti.create(confettiCanvas, {
-                resize: true,
-                useWorker: true
-            });
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header text-white" id="infoModalHeader">
+                    <h5 class="modal-title fw-bold" id="infoModalTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" id="infoModalBody" aria-live="polite">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            function launchConfetti() {
-                confettiInstance({
-                    particleCount: 120,
-                    spread: 160,
-                    origin: { y: 0.6 },
-                    colors: ['#FFD700', '#FFFFFF', '#8892B0']
-                });
+    <div class="modal fade" id="alreadyRegisteredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-body text-center p-4">
+                    <i class="fa-solid fa-user-check fa-4x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="modal-title mb-2 fw-bold" id="modalLabel">You're Already Registered!</h5>
+                    <p class="text-muted">Welcome back, <strong id="registeredUserName"></strong>! We found a visitor
+                        pass linked to this phone number.</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="button" class="btn btn-submit" id="modalDownloadBtn">
+                            <i class="fas fa-download me-2"></i>Download Your Visitor Pass
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Lost Pass Modal -->
+    <div class="modal fade" id="lostPassModal" tabindex="-1" aria-labelledby="lostPassModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="lostPassModalLabel">Find Your Visitor Pass</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted">Enter the 10-digit phone number you used to register.</p>
+                    <form id="lostPassForm">
+                        <div class="mb-3">
+                            <label for="lostPhoneInput" class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel" class="form-control" id="lostPhoneInput" required pattern="^[6-9]\d{9}$">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="findPassBtn">
+                                <span class="button-text">Find My Pass</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="lostPassError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="id-card-template">
+        <div class="id-card">
+            <div class="id-card-header">
+                <div class="expo-title">TENT DECOR EXPO UP 2025</div>
+                <div class="pass-subtitle">VISITOR PASS</div>
+            </div>
+            <div class="id-card-body">
+                <div class="id-card-photo-wrapper">
+                    <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
+                </div>
+                <h3 class="id-card-name"></h3>
+                <p class="id-card-firm"></p>
+                <div class="id-card-attendance-date"></div>
+                <div class="id-card-reg-wrapper">
+                    <div class="id-card-footer-label">REGISTRATION NO.</div>
+                    <div class="id-card-reg-number"></div>
+                </div>
+            </div>
+            <div class="id-card-footer">
+                <i class="fa-solid fa-location-dot me-1"></i> Indira Gandhi Pratishthan, Lucknow
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-custom text-center py-4">
+        <div class="container">
+            <p class="mb-0">© 2025 TENT DECOR EXPO UP. All rights reserved.</p>
+            <p class="mb-0">
+                Made with
+                <span class="blinking-heart" role="img" aria-label="love">❤️</span> by
+                <a href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer"
+                    class="text-white text-decoration-underline">
+                    EllowDigital
+                </a>
+            </p>
+        </div>
+    </footer>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Configuration & Constants ---
+            const API_ENDPOINT = '/.netlify/functions/submit-registration';
+            const FIND_PASS_ENDPOINT = '/.netlify/functions/find-pass'; // New endpoint
+
+            // --- DOM Elements ---
+            const form = document.getElementById('registrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const formContainer = document.getElementById('form-container');
+            const successView = document.getElementById('success-view');
+            const idCardWrapper = document.getElementById('id-card-wrapper');
+            const downloadBtn = document.getElementById('download-id-btn');
+            const profileImageInput = document.getElementById('profileImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const lostPassLink = document.getElementById('lostPassLink');
+            const lostPassModalEl = document.getElementById('lostPassModal');
+            const lostPassModal = new bootstrap.Modal(lostPassModalEl);
+            const lostPassForm = document.getElementById('lostPassForm');
+            const findPassBtn = document.getElementById('findPassBtn');
+            const lostPhoneInput = document.getElementById('lostPhoneInput');
+            const lostPassError = document.getElementById('lostPassError');
+
+            // Modal elements
+            const infoModalEl = document.getElementById('infoModal');
+            const infoModal = new bootstrap.Modal(infoModalEl);
+            const registeredModalEl = document.getElementById('alreadyRegisteredModal');
+            const registeredModal = new bootstrap.Modal(registeredModalEl);
+            const modalUserName = document.getElementById('registeredUserName');
+            const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+
+            // --- State ---
+            let compressedImageFile = null;
+            let existingUserData = null;
+
+            // --- UI & UX Functions ---
+            function setButtonLoading(button, isLoading) {
+                const buttonText = button.querySelector('.button-text');
+                const spinner = button.querySelector('.spinner-border');
+                if (!buttonText || !spinner) return;
+
+                button.disabled = isLoading;
+                buttonText.classList.toggle('d-none', isLoading);
+                spinner.classList.toggle('d-none', !isLoading);
             }
 
-            setTimeout(launchConfetti, 600);
+            function showInfoModal(title, content, type = 'error') {
+                const modalHeader = infoModalEl.querySelector('#infoModalHeader');
+                const modalTitle = infoModalEl.querySelector('#infoModalTitle');
+                const modalBody = infoModalEl.querySelector('#infoModalBody');
+
+                const typeConfig = {
+                    error: { bg: 'bg-danger', icon: 'fa-solid fa-circle-xmark' },
+                    success: { bg: 'bg-success', icon: 'fa-solid fa-circle-check' },
+                    info: { bg: 'bg-primary', icon: 'fa-solid fa-circle-info' }
+                };
+                const config = typeConfig[type] || typeConfig.error;
+
+                modalHeader.className = `modal-header text-white ${config.bg}`;
+                modalTitle.innerHTML = `<i class="${config.icon} me-2"></i> ${title}`;
+
+                modalBody.innerHTML = '';
+                if (typeof content === 'string') {
+                    modalBody.innerHTML = content;
+                } else {
+                    modalBody.appendChild(content);
+                }
+                infoModal.show();
+            }
+
+            async function generateAndDownloadPass(userData) {
+                const passElement = createPassElement(userData);
+                document.body.appendChild(passElement);
+
+                try {
+                    const canvas = await html2canvas(passElement, { scale: 3, useCORS: true, backgroundColor: null });
+                    const link = document.createElement('a');
+                    const name = userData.name.trim().replace(/\s+/g, '_');
+                    link.download = `Visitor-Pass_${name}_${userData.registrationId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    console.error('Download Error:', err);
+                    showInfoModal('Download Failed', 'Could not generate the pass image. Please try taking a screenshot instead.', 'error');
+                } finally {
+                    document.body.removeChild(passElement);
+                }
+            }
+
+            // --- Visitor Pass Generation ---
+            function createPassElement(data) {
+                const template = document.getElementById('id-card-template').cloneNode(true);
+                const card = template.firstElementChild;
+                card.style.display = 'block';
+
+                const dateMap = { 'Day 1': 'Sep 12', 'Day 2': 'Sep 13', 'Day 3': 'Sep 14' };
+                const attendingDays = (data.attendance || '').split(',').map(d => d.trim()).filter(Boolean);
+                let attendanceText;
+
+                if (attendingDays.length === 0 || attendingDays.length >= 3) {
+                    attendanceText = 'Attending: All Days';
+                } else if (attendingDays.length === 1) {
+                    attendanceText = `Attending: ${dateMap[attendingDays[0]]}, 2025`;
+                } else {
+                    attendanceText = `Attending: ${attendingDays.map(d => dateMap[d] || d).join(' & ')}`;
+                }
+
+                card.querySelector('.id-card-photo').src = data.profileImageUrl;
+                card.querySelector('.id-card-name').textContent = data.name;
+                card.querySelector('.id-card-firm').textContent = data.firmName;
+                card.querySelector('.id-card-reg-number').textContent = data.registrationId;
+                card.querySelector('.id-card-attendance-date').textContent = attendanceText;
+
+                return card;
+            }
+
+            // --- Form & Input Handling ---
+            profileImageInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const originalSizeMB = file.size / 1024 / 1024;
+                if (originalSizeMB > 15) {
+                    showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
+                    profileImageInput.value = '';
+                    return;
+                }
+
+                imagePreview.src = URL.createObjectURL(file);
+
+                const options = {
+                    maxWidthOrHeight: 800,
+                    useWebWorker: true,
+                    initialQuality: 0.8,
+                    maxSizeMB: 0.3
+                };
+
+                try {
+                    compressedImageFile = await imageCompression(file, options);
+                } catch (error) {
+                    console.error('Image compression error:', error);
+                    compressedImageFile = file;
+                    showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'info');
+                }
+            });
+
+            function validateForm() {
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                const errors = [];
+                const addError = (field, message) => {
+                    errors.push({ field, message });
+                    field.classList.add('is-invalid');
+                };
+
+                if (profileImageInput.files.length === 0) errors.push({ field: null, message: 'A profile photo is required.' });
+                if (!form.elements.name.checkValidity()) addError(form.elements.name, 'Please enter a valid full name (min. 3 characters).');
+                if (!form.elements.phone.checkValidity()) addError(form.elements.phone, 'Please enter a valid 10-digit Indian phone number.');
+                if (!form.elements.firmName.checkValidity()) addError(form.elements.firmName, 'Please enter your firm name (min. 3 characters).');
+                if (!form.elements.address.checkValidity()) addError(form.elements.address, 'Please enter your full address (min. 10 characters).');
+                if (!form.elements.district.checkValidity()) addError(form.elements.district, 'Please enter your district.');
+                if (!form.elements.state.checkValidity()) addError(form.elements.state, 'Please enter your state.');
+                if (document.querySelectorAll('input[name="attendance"]:checked').length === 0) errors.push({ field: null, message: 'Please select at least one attending day.' });
+
+                if (errors.length > 0) {
+                    const errorList = document.createElement('ul');
+                    errorList.className = 'list-unstyled text-start mb-0 ps-2';
+                    errors.forEach(err => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fa-solid fa-times-circle text-danger me-2"></i>${err.message}`;
+                        errorList.appendChild(li);
+                    });
+                    showInfoModal('Please Complete the Form', errorList, 'error');
+                    infoModalEl.addEventListener('hidden.bs.modal', () => {
+                        const firstInvalidField = errors.find(e => e.field);
+                        if (firstInvalidField) firstInvalidField.field.focus();
+                    }, { once: true });
+                    return false;
+                }
+                return true;
+            }
+
+            // --- Main Form Submission Logic with Improved Error Handling ---
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!validateForm()) return;
+
+                setButtonLoading(submitBtn, true);
+                const formData = new FormData(form);
+                if (compressedImageFile) {
+                    formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
+                }
+
+                try {
+                    // Check for network connection first
+                    if (!navigator.onLine) {
+                        throw new Error("You appear to be offline. Please check your internet connection.");
+                    }
+                    const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
+
+                    // Always try to parse JSON, as even errors should have a JSON body
+                    const result = await response.json();
+
+                    if (response.status === 409 && result.status === 'exists') {
+                        existingUserData = result.registrationData;
+                        modalUserName.textContent = result.registrationData.name;
+                        registeredModal.show();
+                    } else if (response.ok && result.status === 'success') {
+                        const newPassElement = createPassElement(result.registrationData);
+                        idCardWrapper.innerHTML = '';
+                        idCardWrapper.appendChild(newPassElement);
+                        formContainer.classList.add('d-none');
+                        successView.classList.remove('d-none');
+                        document.querySelector('.registration-wrapper').scrollIntoView();
+                        downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
+                    } else {
+                        // Throw an error with the server-provided message, or a generic one
+                        const error = new Error(result.error || `A server error occurred (Status: ${response.status}).`);
+                        error.response = response; // Attach response for more context
+                        throw error;
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+
+                    let title = 'Registration Failed';
+                    let message = '';
+
+                    if (error.message.includes("offline")) {
+                        title = 'Connection Error';
+                        message = '<p>You seem to be offline. Please check your internet connection and try again.</p>';
+                    } else if (error.response?.status >= 500) {
+                        title = 'Server Error';
+                        message = '<p>We are currently experiencing issues on our end. Our team has been notified.</p><p>Please try again in a few minutes.</p>';
+                    } else {
+                        // Default message using the specific error from the server or catch block
+                        message = `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please review the form or contact support if the problem persists.</p>`;
+                    }
+
+                    showInfoModal(title, message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            modalDownloadBtn.addEventListener('click', () => {
+                if (existingUserData) {
+                    generateAndDownloadPass(existingUserData);
+                }
+            });
+
+            // --- NEW: Lost Pass Logic ---
+            lostPassLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                lostPassModal.show();
+            });
+
+            lostPassForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setButtonLoading(findPassBtn, true);
+                lostPassError.classList.add('d-none');
+
+                const phone = lostPhoneInput.value.trim();
+                if (!/^[6-9]\d{9}$/.test(phone)) {
+                    lostPassError.textContent = 'Please enter a valid 10-digit phone number.';
+                    lostPassError.classList.remove('d-none');
+                    setButtonLoading(findPassBtn, false);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${FIND_PASS_ENDPOINT}?phone=${phone}`);
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Could not find registration.');
+                    }
+
+                    // Success! Show the 'already registered' modal with the found data
+                    existingUserData = result;
+                    modalUserName.textContent = result.name;
+                    lostPassModal.hide();
+                    registeredModal.show();
+
+                } catch (err) {
+                    lostPassError.textContent = err.message;
+                    lostPassError.classList.remove('d-none');
+                } finally {
+                    setButtonLoading(findPassBtn, false);
+                }
+            });
+            // Hide the info alert after a few seconds
+            setTimeout(() => {
+                const alertEl = document.querySelector('.alert.alert-info');
+                if (alertEl) alertEl.style.display = 'none';
+            }, 8000);
         });
     </script>
+
 </body>
 
 </html>
