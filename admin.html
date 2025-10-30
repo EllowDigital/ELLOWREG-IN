@@ -161,26 +161,13 @@
     .registrations-toolbar {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .registrations-toolbar .toolbar-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
     .registrations-toolbar .toolbar-controls {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-    }
-
-    .registrations-toolbar .toolbar-controls .search-form {
-      width: 100%;
-      max-width: 420px;
     }
 
     .registrations-toolbar .toolbar-controls .form-select {
@@ -193,27 +180,6 @@
       gap: 0.75rem;
       align-items: stretch;
       justify-content: flex-start;
-    }
-
-    .btn-pill {
-      border-radius: 999px;
-      font-weight: 600;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-    }
-
-    .toolbar-actions .btn {
-      min-width: 140px;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      box-shadow: 0 8px 20px rgba(10, 37, 64, 0.08);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .toolbar-actions .btn:hover,
-    .toolbar-actions .btn:focus {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 26px rgba(10, 37, 64, 0.15);
     }
 
     .download-hint {
@@ -255,22 +221,24 @@
     }
 
     @media (min-width: 992px) {
+      .registrations-toolbar {
+        flex-direction: column;
+      }
+
       .registrations-toolbar .toolbar-controls {
         flex-direction: row;
         align-items: center;
-        justify-content: space-between;
-        gap: 1.5rem;
+        justify-content: flex-end;
+        gap: 1rem;
       }
 
-      .registrations-toolbar .toolbar-controls .search-form {
-        flex: 1 1 420px;
-        max-width: 520px;
+      .registrations-toolbar .toolbar-controls form {
+        flex: 1 1 360px;
+        max-width: 480px;
       }
 
       .registrations-toolbar .toolbar-actions {
         justify-content: flex-end;
-        align-items: center;
-        gap: 1rem;
       }
     }
 
@@ -289,11 +257,6 @@
     @media (max-width: 991.98px) {
       .search-input-group {
         width: 100%;
-      }
-
-      .registrations-toolbar .toolbar-controls {
-        flex-direction: column;
-        align-items: stretch;
       }
     }
 
@@ -331,15 +294,6 @@
       }
 
       .actions-group {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .registrations-toolbar {
-        gap: 1.25rem;
-      }
-
-      .registrations-toolbar .toolbar-actions {
         flex-direction: column;
         align-items: stretch;
       }
@@ -514,108 +468,108 @@
       </section>
 
       <section id="system" class="mb-5">
-        <div class="system-status-wrapper">
-          <div class="glass-card p-4 h-100">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <h2 class="section-heading mb-0">System Status</h2>
-              <button id="checkStatusBtn" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-sync-alt me-1"></i>Refresh
-              </button>
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="glass-card p-4 h-100">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="section-heading mb-0">System Status</h2>
+                <button id="checkStatusBtn" class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+              </div>
+              <p class="text-muted small">
+                Live health indicators across core services powering the EMRS stack.
+              </p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                  <span>
+                    <i class="fas fa-database fa-fw me-2 text-primary"></i>
+                    Database
+                  </span>
+                  <span id="status-database" class="badge bg-light text-dark">
+                    <div class="spinner-border spinner-border-sm"></div>
+                  </span>
+                </li>
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                  <span>
+                    <i class="fas fa-cloud fa-fw me-2 text-info"></i>
+                    Cloudinary
+                  </span>
+                  <span id="status-cloudinary" class="badge bg-light text-dark">
+                    <div class="spinner-border spinner-border-sm"></div>
+                  </span>
+                </li>
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                  <span>
+                    <i class="fas fa-file-excel fa-fw me-2 text-success"></i>
+                    Google Sheets
+                  </span>
+                  <span id="status-googleSheets" class="badge bg-light text-dark">
+                    <div class="spinner-border spinner-border-sm"></div>
+                  </span>
+                </li>
+              </ul>
             </div>
-            <p class="text-muted small">
-              Live health indicators across core services powering the EMRS stack.
-            </p>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
-                <span>
-                  <i class="fas fa-database fa-fw me-2 text-primary"></i>
-                  Database
-                </span>
-                <span id="status-database" class="badge bg-light text-dark">
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
-              </li>
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
-                <span>
-                  <i class="fas fa-cloud fa-fw me-2 text-info"></i>
-                  Cloudinary
-                </span>
-                <span id="status-cloudinary" class="badge bg-light text-dark">
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
-              </li>
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
-                <span>
-                  <i class="fas fa-file-excel fa-fw me-2 text-success"></i>
-                  Google Sheets
-                </span>
-                <span id="status-googleSheets" class="badge bg-light text-dark">
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
-              </li>
-            </ul>
+          </div>
+          <div class="col-lg-8">
+            <div class="glass-card p-4 h-100">
+              <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                  <h2 class="section-heading mb-1">Export Data</h2>
+                  <p class="text-muted small mb-0">
+                    Download the complete attendee dataset as an Excel workbook.
+                  </p>
+                </div>
+                <div class="text-end">
+                  <div class="subtle-text">Last downloaded</div>
+                  <div class="fw-semibold" id="lastExportTime">Never</div>
+                </div>
+              </div>
+              <div class="alert alert-warning py-2 px-3 small" role="alert">
+                <strong>Heads up:</strong> Allow pop-ups so the Excel download can start automatically.
+              </div>
+              <div class="d-flex flex-wrap gap-3 align-items-center">
+                <button id="exportBtn" class="btn btn-success btn-lg">
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                  <span class="button-text"><i class="fas fa-download me-2"></i>Download Excel</span>
+                </button>
+                <div id="exportStatus" class="text-muted small"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="registrations" class="mb-5">
         <div class="glass-card p-4">
-          <div class="registrations-toolbar mb-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-              <div>
-                <h2 class="section-heading mb-1">Recent Registrations</h2>
-                <p class="text-muted small mb-0">
-                  Paginated roster of confirmed attendees in reverse chronological order.
-                </p>
-              </div>
-              <div class="toolbar-controls ms-xl-auto">
-                <form id="registrationsSearchForm" class="w-100">
-                  <div class="input-group input-group-sm search-input-group">
-                    <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                    <input type="search" class="form-control" id="registrationsSearchInput"
-                      placeholder="Search name, email, phone, or Reg ID" aria-label="Search registrations" />
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
-                    <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">Clear</button>
-                  </div>
-                </form>
-                <div class="toolbar-actions">
-                  <div class="d-flex align-items-center gap-2">
-                    <label for="pageSizeSelect" class="small text-muted mb-0">Rows</label>
-                    <select id="pageSizeSelect" class="form-select form-select-sm">
-                      <option value="10" selected>10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                    </select>
-                  </div>
-                  <button id="refreshTableBtn" class="btn btn-outline-primary btn-sm">
-                    <span class="button-text"><i class="fas fa-sync-alt me-1"></i>Reload</span>
-                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                  </button>
-                  <div class="d-flex flex-column gap-1 align-items-stretch">
-                    <button id="syncSheetsBtn" class="btn btn-outline-success">
-                      <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                      <span class="button-text"><i class="fas fa-sync me-2"></i>Sync Sheets</span>
-                    </button>
-                    <div id="syncStatus" class="small text-muted"></div>
-                  </div>
-                  <div class="d-flex flex-column gap-1 align-items-stretch">
-                    <button id="exportBtn" class="btn btn-success">
-                      <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                      <span class="button-text"><i class="fas fa-file-excel me-2"></i>Download Excel</span>
-                    </button>
-                    <div id="exportStatus" class="small text-muted"></div>
-                  </div>
-                </div>
-              </div>
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+            <div>
+              <h2 class="section-heading mb-1">Recent Registrations</h2>
+              <p class="text-muted small mb-0">
+                Paginated roster of confirmed attendees in reverse chronological order.
+              </p>
             </div>
-            <div class="download-meta small mt-2">
-              <div class="download-hint">
-                <i class="fas fa-lightbulb"></i>
-                <span><strong>Heads up:</strong> Allow pop-ups so the Excel download can start automatically.</span>
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                <span class="chip"><i class="fas fa-clock"></i> Export</span>
-                <span>Last download <span class="fw-semibold" id="lastExportTime">Never</span></span>
+            <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 ms-lg-auto">
+              <form id="registrationsSearchForm" class="w-100">
+                <div class="input-group input-group-sm search-input-group ms-lg-auto">
+                  <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                  <input type="search" class="form-control" id="registrationsSearchInput"
+                    placeholder="Search name, email, phone, or Reg ID" aria-label="Search registrations" />
+                  <button class="btn btn-outline-primary" type="submit">Search</button>
+                  <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">Clear</button>
+                </div>
+              </form>
+              <div class="d-flex flex-wrap align-items-center gap-2 ms-lg-auto">
+                <label for="pageSizeSelect" class="small text-muted mb-0">Rows</label>
+                <select id="pageSizeSelect" class="form-select form-select-sm">
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+                <button id="refreshTableBtn" class="btn btn-outline-primary btn-sm">
+                  <span class="button-text"><i class="fas fa-sync-alt me-1"></i>Reload</span>
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
               </div>
             </div>
           </div>
@@ -775,8 +729,6 @@
         checkedInCountEl,
         exportBtn,
         exportStatus,
-        syncSheetsBtn,
-        syncStatus,
         checkStatusBtn,
         lastExportTimeEl,
         pageSizeSelect,
@@ -1128,36 +1080,6 @@
         }
       };
 
-      const handleSyncSheets = async () => {
-        setButtonLoading(syncSheetsBtn, true);
-        if (syncStatus) {
-          syncStatus.classList.remove("text-success", "text-danger");
-          syncStatus.classList.add("text-muted");
-          syncStatus.textContent = "Syncing with Google Sheets...";
-        }
-        try {
-          const result = await makeApiCall(
-            "/.netlify/functions/sync-with-google-sheets",
-            { method: "POST" },
-          );
-          if (syncStatus) {
-            const updatedCount = Number(result?.updated || 0);
-            const appendedCount = Number(result?.appended || 0);
-            syncStatus.classList.remove("text-muted", "text-danger");
-            syncStatus.classList.add("text-success");
-            syncStatus.textContent = `Sync complete: ${updatedCount} updated, ${appendedCount} added.`;
-          }
-        } catch (err) {
-          if (syncStatus) {
-            syncStatus.classList.remove("text-muted", "text-success");
-            syncStatus.classList.add("text-danger");
-            syncStatus.textContent = `Sync failed: ${err.message}`;
-          }
-        } finally {
-          setButtonLoading(syncSheetsBtn, false);
-        }
-      };
-
       const handleLogout = () => {
         ADMIN_SECRET_KEY = null;
         state.currentPage = 1;
@@ -1170,12 +1092,6 @@
         loginContainer.classList.remove("d-none");
         loginForm.reset();
         clearFeedbackMessage();
-        if (exportStatus) exportStatus.textContent = "";
-        if (syncStatus) {
-          syncStatus.textContent = "";
-          syncStatus.classList.remove("text-success", "text-danger");
-          syncStatus.classList.add("text-muted");
-        }
         passwordInput.focus();
         setButtonLoading(loginBtn, false);
       };
@@ -1335,8 +1251,6 @@
         checkedInCountEl = document.getElementById("checkedInCount");
         exportBtn = document.getElementById("exportBtn");
         exportStatus = document.getElementById("exportStatus");
-        syncSheetsBtn = document.getElementById("syncSheetsBtn");
-        syncStatus = document.getElementById("syncStatus");
         checkStatusBtn = document.getElementById("checkStatusBtn");
         lastExportTimeEl = document.getElementById("lastExportTime");
         pageSizeSelect = document.getElementById("pageSizeSelect");
@@ -1410,9 +1324,6 @@
         }
         if (exportBtn) {
           exportBtn.addEventListener("click", handleExport);
-        }
-        if (syncSheetsBtn) {
-          syncSheetsBtn.addEventListener("click", handleSyncSheets);
         }
         if (logoutBtn) {
           logoutBtn.addEventListener("click", handleLogout);
