@@ -1,4 +1,4 @@
-<!-- VERSION: 5.1 - EMRS MULTI-EVENT RELEASE - 30 OCT 2025 -->
+<!-- VERSION: 5.2 - EMRS ADMIN OVERHAUL - 15 NOV 2025 -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -17,18 +17,40 @@
     <style>
       :root {
         --primary-color: #0a2540;
-        --danger: #dc3545;
+        --secondary-color: #1b3a73;
+        --surface: rgba(255, 255, 255, 0.85);
         --text-muted: #6c757d;
+        --danger: #dc3545;
       }
 
       body {
-        background-color: #f4f7fa;
+        background: radial-gradient(circle at top, #edf2f9 0%, #e0e7f1 45%, #d6deeb 100%);
         font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial;
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        color: #1d2d50;
+      }
+
+      .navbar {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      }
+
+      .navbar .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+      }
+
+      .navbar .nav-link:hover,
+      .navbar .nav-link:focus,
+      .navbar .nav-link.active {
+        color: #ffffff;
       }
 
       .center-container {
@@ -36,77 +58,80 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 2rem 1rem;
       }
 
-      .main-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        flex-grow: 1;
+      .page-title {
+        font-size: 2.25rem;
+        font-weight: 700;
       }
 
       .glass-card {
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: var(--surface);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 1rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        box-shadow: 0 12px 50px rgba(31, 38, 135, 0.12);
+      }
+
+      .stats-card {
+        padding: 1.5rem;
       }
 
       .widget-icon {
         font-size: 1.5rem;
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background-color: rgba(10, 37, 64, 0.1);
+        background: rgba(10, 37, 64, 0.12);
         color: var(--primary-color);
         flex-shrink: 0;
       }
 
-      #search-container {
-        min-height: 420px;
+      .stat-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.08rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .stat-value {
+        font-size: 1.9rem;
+        font-weight: 700;
+      }
+
+      .table thead {
+        font-size: 0.78rem;
+        letter-spacing: 0.04rem;
+        text-transform: uppercase;
+      }
+
+      .table td {
+        vertical-align: middle;
+        font-size: 0.95rem;
+      }
+
+      .table-responsive {
+        position: relative;
+      }
+
+      .table-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
         display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+        border-radius: 0.75rem;
       }
 
-      #search-container.results-active #search-form-wrapper {
-        display: none;
-      }
-
-      #search-container:not(.results-active) #search-output-wrapper {
-        display: none;
-      }
-
-      .nav-pills .nav-link {
-        color: var(--primary-color);
-      }
-
-      .nav-pills .nav-link.active {
-        background-color: var(--primary-color);
-        color: white;
-        box-shadow: 0 4px 15px rgba(10, 37, 64, 0.3);
-      }
-
-      .search-result-user-img {
-        width: 90px;
-        height: 90px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid var(--primary-color);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .check-in-btn {
-        transition: all 0.2s ease-in-out;
-      }
-
-      .check-in-btn.checked-in {
-        background-color: #198754;
-        color: white;
-        cursor: default;
+      .subtle-text {
+        font-size: 0.75rem;
+        color: var(--text-muted);
       }
 
       .footer-credit {
@@ -119,6 +144,11 @@
         animation: heartbeat 1.5s infinite;
       }
 
+      .section-heading {
+        font-size: 1.35rem;
+        font-weight: 700;
+      }
+
       @keyframes heartbeat {
         0%,
         100% {
@@ -129,19 +159,42 @@
           transform: scale(1.2);
         }
       }
+
+      @media (max-width: 767.98px) {
+        .stats-card {
+          text-align: center;
+        }
+
+        .stats-card .widget-icon {
+          margin: 0 auto 0.75rem;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .page-title {
+          font-size: 1.8rem;
+        }
+
+        .navbar .btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
-
   <body>
     <div id="login-container" class="center-container">
-      <div class="card shadow-sm" style="width: 24rem">
+      <div class="card shadow-sm border-0" style="max-width: 24rem">
         <div class="card-body p-4">
-          <h3 class="card-title text-center mb-4">Admin Panel Login</h3>
+          <div class="text-center mb-4">
+            <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+            <h3 class="card-title mb-1">Admin Access</h3>
+            <p class="text-muted small mb-0">
+              Secure gateway to the EMRS control center
+            </p>
+          </div>
           <form id="loginForm">
             <div class="mb-3">
-              <label for="passwordInput" class="form-label fw-semibold"
-                >Password</label
-              >
+              <label for="passwordInput" class="form-label fw-semibold">Master Password</label>
               <input
                 type="password"
                 class="form-control form-control-lg"
@@ -150,243 +203,277 @@
               />
             </div>
             <div class="d-grid">
-              <button
-                type="submit"
-                class="btn btn-primary btn-lg"
-                id="loginBtn"
-              >
-                <span class="button-text">Login</span>
-                <span
-                  class="spinner-border spinner-border-sm d-none"
-                  role="status"
-                ></span>
+              <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                <span class="button-text">Unlock Dashboard</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
               </button>
             </div>
           </form>
-          <div
-            id="loginError"
-            class="alert alert-danger mt-3 d-none"
-            role="alert"
-          ></div>
+          <div id="loginError" class="alert alert-danger mt-3 d-none" role="alert"></div>
         </div>
       </div>
     </div>
 
-    <div class="container main-container d-none" id="dashboard-container">
-      <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-dark">
-          <i class="fas fa-user-shield me-3"></i>EMRS Control Center
-        </h1>
-        <p class="lead text-muted">
-          Event Management & Registration System by EllowDigital
-        </p>
-      </div>
-      <div class="row g-4">
-        <div class="col-xl-3 col-lg-6">
-          <div class="glass-card h-100 d-flex flex-column">
-            <div class="p-3">
-              <div class="d-flex align-items-center">
-                <div class="widget-icon me-3"><i class="fas fa-users"></i></div>
-                <div>
-                  <div class="fs-4 fw-bold" id="totalRegCount">
-                    <div class="spinner-border spinner-border-sm"></div>
-                  </div>
-                  <div class="text-muted small fw-semibold">
-                    TOTAL REGISTRATIONS
-                  </div>
-                </div>
-              </div>
-            </div>
-            <hr class="my-0" />
-            <div class="p-3">
-              <div class="d-flex align-items-center">
-                <div class="widget-icon me-3"><i class="fas fa-clock"></i></div>
-                <div>
-                  <div class="fw-bold" id="lastRegTime">
-                    <div class="spinner-border spinner-border-sm"></div>
-                  </div>
-                  <div class="text-muted small fw-semibold">
-                    LAST REGISTRATION
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-6">
-          <div id="search-container" class="glass-card position-relative p-4">
-            <div id="search-form-wrapper" class="d-flex flex-column h-100">
-              <h4 class="fw-bold text-center mb-3">Find a Registration</h4>
-              <ul
-                class="nav nav-pills nav-fill mb-4"
-                id="search-tab"
-                role="tablist"
-              >
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link active"
-                    id="phone-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#phone-pane"
-                    type="button"
-                    role="tab"
-                  >
-                    By Phone
-                  </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link"
-                    id="regid-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#regid-pane"
-                    type="button"
-                    role="tab"
-                  >
-                    By Registration ID
-                  </button>
-                </li>
-              </ul>
-              <form id="searchForm" class="flex-grow-1 d-flex flex-column">
-                <div class="tab-content flex-grow-1" id="search-tab-content">
-                  <div
-                    class="tab-pane fade show active"
-                    id="phone-pane"
-                    role="tabpanel"
-                  >
-                    <label for="phoneInput" class="form-label fw-semibold"
-                      >Phone Number</label
-                    >
-                    <input
-                      type="tel"
-                      class="form-control form-control-lg"
-                      id="phoneInput"
-                      placeholder="Enter 10-digit number"
-                      maxlength="10"
-                    />
-                  </div>
-                  <div class="tab-pane fade" id="regid-pane" role="tabpanel">
-                    <label for="regIdInput" class="form-label fw-semibold"
-                      >Registration ID</label
-                    >
-                    <div class="input-group">
-                      <span class="input-group-text">EMRS-</span>
-                      <input
-                        type="text"
-                        class="form-control form-control-lg"
-                        id="regIdInput"
-                        placeholder="A1B2C3D4"
-                        style="text-transform: uppercase"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="d-grid mt-4">
-                  <button
-                    id="searchBtn"
-                    type="submit"
-                    class="btn btn-primary btn-lg"
-                  >
-                    <span
-                      class="spinner-border spinner-border-sm d-none"
-                      role="status"
-                    ></span>
-                    <span class="button-text"
-                      ><i class="fas fa-search me-2"></i>Search</span
-                    >
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div
-              id="search-output-wrapper"
-              class="p-3 d-flex flex-column h-100"
-            ></div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-6">
-          <div class="glass-card p-3 mb-4">
-            <h5 class="card-header-custom p-2 mb-2 rounded text-center">
-              System Status
-            </h5>
-            <ul class="list-group list-group-flush">
-              <li
-                class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2"
-              >
-                <span
-                  ><i class="fas fa-database fa-fw me-2 text-primary"></i
-                  >Database</span
-                ><span id="status-database" class="badge bg-light text-dark">
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
+    <div id="dashboard-container" class="d-none">
+      <nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top">
+        <div class="container-fluid">
+          <a class="navbar-brand fw-bold" href="#overview">
+            <i class="fas fa-user-shield me-2"></i>EMRS Admin
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#adminNavbar"
+            aria-controls="adminNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="adminNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" href="#overview">Overview</a>
               </li>
-              <li
-                class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2"
-              >
-                <span
-                  ><i class="fas fa-cloud fa-fw me-2 text-info"></i
-                  >Cloudinary</span
-                ><span id="status-cloudinary" class="badge bg-light text-dark">
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
+              <li class="nav-item">
+                <a class="nav-link" href="#system">System</a>
               </li>
-              <li
-                class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-1 py-2"
-              >
-                <span
-                  ><i class="fas fa-file-alt fa-fw me-2 text-success"></i>Google
-                  Sheets</span
-                ><span
-                  id="status-googleSheets"
-                  class="badge bg-light text-dark"
-                >
-                  <div class="spinner-border spinner-border-sm"></div>
-                </span>
+              <li class="nav-item">
+                <a class="nav-link" href="#registrations">Registrations</a>
               </li>
             </ul>
-            <div class="d-grid mt-2">
-              <button
-                id="checkStatusBtn"
-                class="btn btn-sm btn-outline-secondary bg-white"
-              >
-                <i class="fas fa-sync-alt me-1"></i> Refresh Status
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <span class="text-light small" id="lastRefreshLabel">Awaiting data...</span>
+              <button id="refreshDashboardBtn" class="btn btn-outline-light btn-sm">
+                <span class="button-text"><i class="fas fa-rotate me-1"></i>Refresh</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+              </button>
+              <button id="logoutBtn" class="btn btn-danger btn-sm">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
               </button>
             </div>
           </div>
-          <div class="glass-card p-3 text-center">
-            <h5 class="card-header-custom p-2 mb-3 rounded">Export Data</h5>
-            <p class="small mb-2">
-              Download all registrations as an Excel file.
-            </p>
-            <p class="text-warning small mb-3">
-              <strong>Note:</strong> Please allow pop-ups in your browser to
-              enable Excel file download.
-            </p>
-            <button id="exportBtn" class="btn btn-success w-100">
-              <span
-                class="spinner-border spinner-border-sm d-none"
-                role="status"
-              ></span>
-              <span class="button-text"
-                ><i class="fas fa-download me-2"></i>Download</span
-              >
-            </button>
-            <div id="exportStatus" class="mt-2 small"></div>
-
-            <div id="lastExportTime" class="mt-1 small text-muted"></div>
-          </div>
         </div>
-      </div>
+      </nav>
+
+      <main class="container-xxl py-4">
+        <section id="overview" class="mb-5">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+            <div>
+              <h1 class="page-title mb-1">Control Center</h1>
+              <p class="text-muted mb-0">
+                Monitor registrations, runtime health, and exports in real time.
+              </p>
+            </div>
+          </div>
+          <div class="row g-4">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="glass-card stats-card h-100">
+                <div class="d-flex align-items-center">
+                  <div class="widget-icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <div class="ms-3 text-start">
+                    <div class="stat-label">Total Registrations</div>
+                    <div class="stat-value" id="totalRegCount">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="glass-card stats-card h-100">
+                <div class="d-flex align-items-center">
+                  <div class="widget-icon">
+                    <i class="fas fa-bolt"></i>
+                  </div>
+                  <div class="ms-3 text-start">
+                    <div class="stat-label">Last 24 Hours</div>
+                    <div class="stat-value" id="registrationsLast24Hours">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="glass-card stats-card h-100">
+                <div class="d-flex align-items-center">
+                  <div class="widget-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div class="ms-3 text-start">
+                    <div class="stat-label">Last Registration</div>
+                    <div class="stat-value fs-5" id="lastRegTime">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="glass-card stats-card h-100">
+                <div class="d-flex align-items-center">
+                  <div class="widget-icon">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                  <div class="ms-3 text-start">
+                    <div class="stat-label">Checked In</div>
+                    <div class="stat-value" id="checkedInCount">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="system" class="mb-5">
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="glass-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <h2 class="section-heading mb-0">System Status</h2>
+                  <button id="checkStatusBtn" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                  </button>
+                </div>
+                <p class="text-muted small">
+                  Live health indicators across core services powering the EMRS stack.
+                </p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span>
+                      <i class="fas fa-database fa-fw me-2 text-primary"></i>
+                      Database
+                    </span>
+                    <span id="status-database" class="badge bg-light text-dark">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </span>
+                  </li>
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span>
+                      <i class="fas fa-cloud fa-fw me-2 text-info"></i>
+                      Cloudinary
+                    </span>
+                    <span id="status-cloudinary" class="badge bg-light text-dark">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </span>
+                  </li>
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span>
+                      <i class="fas fa-file-excel fa-fw me-2 text-success"></i>
+                      Google Sheets
+                    </span>
+                    <span id="status-googleSheets" class="badge bg-light text-dark">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-lg-8">
+              <div class="glass-card p-4 h-100">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                  <div>
+                    <h2 class="section-heading mb-1">Export Data</h2>
+                    <p class="text-muted small mb-0">
+                      Download the complete attendee dataset as an Excel workbook.
+                    </p>
+                  </div>
+                  <div class="text-end">
+                    <div class="subtle-text">Last downloaded</div>
+                    <div class="fw-semibold" id="lastExportTime">Never</div>
+                  </div>
+                </div>
+                <div class="alert alert-warning py-2 px-3 small" role="alert">
+                  <strong>Heads up:</strong> Allow pop-ups so the Excel download can start automatically.
+                </div>
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                  <button id="exportBtn" class="btn btn-success btn-lg">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <span class="button-text"><i class="fas fa-download me-2"></i>Download Excel</span>
+                  </button>
+                  <div id="exportStatus" class="text-muted small"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="registrations" class="mb-5">
+          <div class="glass-card p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+              <div>
+                <h2 class="section-heading mb-1">Recent Registrations</h2>
+                <p class="text-muted small mb-0">
+                  Paginated roster of confirmed attendees in reverse chronological order.
+                </p>
+              </div>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <label for="pageSizeSelect" class="small text-muted mb-0">Rows</label>
+                <select id="pageSizeSelect" class="form-select form-select-sm">
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+                <button id="refreshTableBtn" class="btn btn-outline-primary btn-sm">
+                  <span class="button-text"><i class="fas fa-sync-alt me-1"></i>Reload</span>
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <div id="registrationsLoading" class="table-overlay d-none">
+                <div class="spinner-border text-primary" role="status"></div>
+              </div>
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Reg ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Email</th>
+                    <th scope="col" class="d-none d-md-table-cell">City</th>
+                    <th scope="col" class="d-none d-lg-table-cell">State</th>
+                    <th scope="col">Registered</th>
+                    <th scope="col">Check-In</th>
+                  </tr>
+                </thead>
+                <tbody id="registrationsTableBody">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                      Loading registrations...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="registrationsError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3">
+              <div class="text-muted small" id="paginationStatus">Showing 0 of 0</div>
+              <div class="d-flex align-items-center gap-2">
+                <button id="paginationPrev" class="btn btn-outline-secondary btn-sm" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="small fw-semibold" id="paginationIndicator">1 / 1</span>
+                <button id="paginationNext" class="btn btn-outline-secondary btn-sm" disabled>
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
-    <footer class="text-center py-4">
+
+    <footer class="text-center py-4 mt-auto">
       <p class="footer-credit mb-0">
-        Made with <span class="heart-blink">❤️</span> by
-        <a
-          href="https://ellow.in/"
-          target="_blank"
-          class="fw-bold text-decoration-none text-muted"
-          >EllowDigital</a
-        >
+        Made with <span class="heart-blink">&#10084;</span> by
+        <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
       </p>
     </footer>
 
@@ -395,32 +482,42 @@
       document.addEventListener("DOMContentLoaded", () => {
         let ADMIN_SECRET_KEY = null;
 
-        // --- Element Selectors ---
+        const DEFAULT_PAGE_SIZE = 10;
+        const state = {
+          currentPage: 1,
+          totalPages: 1,
+          totalRecords: 0,
+          pageSize: DEFAULT_PAGE_SIZE,
+        };
+
         const loginContainer = document.getElementById("login-container");
-        const dashboardContainer = document.getElementById(
-          "dashboard-container",
-        );
+        const dashboardContainer = document.getElementById("dashboard-container");
         const loginForm = document.getElementById("loginForm");
         const loginBtn = document.getElementById("loginBtn");
         const passwordInput = document.getElementById("passwordInput");
         const loginError = document.getElementById("loginError");
+        const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const lastRefreshLabel = document.getElementById("lastRefreshLabel");
 
         let totalRegCountEl,
+          registrationsLast24HoursEl,
           lastRegTimeEl,
-          searchForm,
-          searchBtn,
-          phoneInput,
-          regIdInput,
+          checkedInCountEl,
           exportBtn,
           exportStatus,
           checkStatusBtn,
-          searchContainer,
-          searchOutputWrapper,
-          phoneTab,
-          lastExportTimeEl;
-        let currentUserData = null; // Store the current user's data
+          lastExportTimeEl,
+          pageSizeSelect,
+          registrationsLoadingOverlay,
+          registrationsTableBody,
+          registrationsErrorEl,
+          paginationStatusEl,
+          paginationIndicatorEl,
+          paginationPrevBtn,
+          paginationNextBtn,
+          refreshTableBtn;
 
-        // --- Helper Functions ---
         const setButtonLoading = (btn, isLoading) => {
           if (!btn) return;
           const textEl = btn.querySelector(".button-text");
@@ -430,17 +527,25 @@
           if (spinnerEl) spinnerEl.classList.toggle("d-none", !isLoading);
         };
 
+        const updateLastRefreshLabel = () => {
+          if (!lastRefreshLabel) return;
+          lastRefreshLabel.textContent = `Updated ${new Date().toLocaleString("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}`;
+        };
+
         const displayLastExportTime = () => {
-          if (!lastExportTimeEl)
-            lastExportTimeEl = document.getElementById("lastExportTime");
-          const lastExportTimestamp = localStorage.getItem(
-            "lastExportTimestamp",
-          );
+          if (!lastExportTimeEl) lastExportTimeEl = document.getElementById("lastExportTime");
+          const lastExportTimestamp = localStorage.getItem("lastExportTimestamp");
           if (lastExportTimestamp) {
             const date = new Date(lastExportTimestamp);
-            lastExportTimeEl.textContent = `Last downloaded: ${date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}`;
+            lastExportTimeEl.textContent = date.toLocaleString("en-IN", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            });
           } else {
-            lastExportTimeEl.textContent = "Last downloaded: Never";
+            lastExportTimeEl.textContent = "Never";
           }
         };
 
@@ -459,102 +564,89 @@
           el.textContent = current.text;
         };
 
-        const showSearchForm = () => {
-          searchContainer.classList.remove("results-active");
-          searchOutputWrapper.innerHTML = "";
-          currentUserData = null;
-          if (phoneInput) phoneInput.value = "";
-          if (regIdInput) regIdInput.value = "";
-          if (phoneInput) phoneInput.classList.remove("is-invalid");
-          if (regIdInput) regIdInput.classList.remove("is-invalid");
-          if (phoneTab) phoneTab.show();
-          if (phoneInput) phoneInput.focus();
+        const escapeHtml = (unsafe) => {
+          if (unsafe === undefined || unsafe === null) return "";
+          return unsafe
+            .toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
         };
 
-        const showOutputView = (htmlContent) => {
-          searchOutputWrapper.innerHTML = htmlContent;
-          searchContainer.classList.add("results-active");
+        const formatDateTime = (value) => {
+          if (!value) return "--";
+          return new Date(value).toLocaleString("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          });
         };
 
-        const displayLoadingState = () =>
-          showOutputView(
-            `<div class="text-center m-auto"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div><p class="mt-3 fw-bold">Searching...</p></div>`,
-          );
-        const displayErrorMessage = (message) =>
-          showOutputView(
-            `<div class="text-center m-auto"><div class="fs-1 text-danger mb-3"><i class="fas fa-exclamation-circle"></i></div><h5 class="fw-bold">Search Error</h5><p class="text-muted">${message}</p><button class="btn btn-outline-secondary mt-3 new-search-btn">New Search</button></div>`,
-          );
-        const displayNoResults = () =>
-          showOutputView(
-            `<div class="text-center m-auto"><div class="fs-1 text-info mb-3"><i class="fas fa-search"></i></div><h5 class="fw-bold">No Registrations Found</h5><p class="text-muted">No records match your criteria.</p><button class="btn btn-primary mt-3 new-search-btn">Start a New Search</button></div>`,
-          );
+        const setTableLoading = (isLoading) => {
+          if (registrationsLoadingOverlay) {
+            registrationsLoadingOverlay.classList.toggle("d-none", !isLoading);
+          }
+          if (paginationPrevBtn) paginationPrevBtn.disabled = isLoading;
+          if (paginationNextBtn) paginationNextBtn.disabled = isLoading;
+        };
 
-        // --- FINAL, RE-ENGINEERED displayUsers function ---
-        const displayUsers = (data) => {
-          const users = Array.isArray(data) ? data : [data];
-          currentUserData = users[0];
+        const updatePaginationUI = () => {
+          if (!paginationStatusEl || !paginationIndicatorEl) return;
+          if (state.totalRecords === 0) {
+            paginationStatusEl.textContent = "No registrations on record.";
+          } else {
+            const start = (state.currentPage - 1) * state.pageSize + 1;
+            const end = Math.min(state.totalRecords, state.currentPage * state.pageSize);
+            paginationStatusEl.textContent = `Showing ${start} - ${end} of ${state.totalRecords}`;
+          }
+          paginationIndicatorEl.textContent = `${state.currentPage} / ${state.totalPages}`;
+          if (paginationPrevBtn) paginationPrevBtn.disabled = state.currentPage <= 1;
+          if (paginationNextBtn) paginationNextBtn.disabled = state.currentPage >= state.totalPages;
+        };
 
-          const userHTML = users
-            .map((user) => {
-              if (!user || !user.registration_id) return "";
+        const renderRegistrations = (records = []) => {
+          if (!registrationsTableBody) return;
+          if (!Array.isArray(records) || records.length === 0) {
+            registrationsTableBody.innerHTML = `
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  No registrations found.
+                </td>
+              </tr>
+            `;
+            return;
+          }
 
-              const isCheckedIn = !!user.checked_in_at;
-
-              let checkInStatusHTML;
-              if (isCheckedIn) {
-                const checkInTime = new Date(user.checked_in_at).toLocaleString(
-                  "en-IN",
-                  { dateStyle: "medium", timeStyle: "short" },
-                );
-                checkInStatusHTML = `<span class="text-success fw-bold">Checked-In on ${checkInTime}</span>`;
-              } else {
-                checkInStatusHTML = `<span class="text-muted">Not Checked-In Yet</span>`;
-              }
-
-              const buttonText = isCheckedIn
-                ? `Already Checked In`
-                : "Mark as Checked-In";
-              const buttonClass = isCheckedIn
-                ? "btn-success checked-in"
-                : "btn-primary";
-              const buttonDisabled = isCheckedIn ? "disabled" : "";
-
-              const undoButtonHTML = isCheckedIn
-                ? `
-                        <button class="btn btn-sm btn-outline-danger mt-2 undo-check-in-btn" data-regid="${user.registration_id}">
-                            <i class="fas fa-undo me-2"></i> Mark as Not Attended
-                        </button>
-                    `
-                : "";
-
+          const rowsHtml = records
+            .map((entry) => {
+              const registeredAt = formatDateTime(entry.timestamp);
+              const checkInBadge = entry.checked_in_at
+                ? `<span class="badge bg-success">Checked in</span><div class="subtle-text mt-1">${formatDateTime(entry.checked_in_at)}</div>`
+                : '<span class="badge bg-warning text-dark">Pending</span>';
+              const phoneCell = entry.phone
+                ? `<a href="tel:${escapeHtml(entry.phone)}" class="text-decoration-none">${escapeHtml(entry.phone)}</a>`
+                : "--";
+              const emailCell = entry.email
+                ? `<a href="mailto:${escapeHtml(entry.email)}" class="text-decoration-none">${escapeHtml(entry.email)}</a>`
+                : "--";
               return `
-                    <div class="text-center">
-                        <img src="${user.image_url || "assets/favicon.ico"}" class="search-result-user-img mb-3" alt="Profile Photo">
-                        <h4 class="fw-bold text-primary mb-1">${user.name || "N/A"}</h4>
-                        <p class="text-muted fw-semibold mb-3">${user.company || "N/A"}</p>
-                    </div>
-                    <ul class="list-group list-group-flush small flex-grow-1">
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>ID:</strong> <span class="text-end">${user.registration_id}</span></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Phone:</strong> <span class="text-end">${user.phone}</span></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Address:</strong> <span class="text-end">${user.address}, ${user.city}</span></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Access:</strong> <span class="text-end">${user.day}</span></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0"><strong>Status:</strong> ${checkInStatusHTML}</li>
-                    </ul>
-                    <div class="d-grid mt-3">
-                        <button class="btn ${buttonClass} check-in-btn" data-regid="${user.registration_id}" ${buttonDisabled}>
-                            <i class="fas fa-check-circle me-2"></i> ${buttonText}
-                        </button>
-                        ${undoButtonHTML}
-                    </div>
-                    `;
+                <tr>
+                  <td class="fw-semibold">${escapeHtml(entry.registration_id) || "--"}</td>
+                  <td>${escapeHtml(entry.name) || "--"}</td>
+                  <td>${phoneCell}</td>
+                  <td class="d-none d-lg-table-cell">${emailCell}</td>
+                  <td class="d-none d-md-table-cell">${escapeHtml(entry.city) || "--"}</td>
+                  <td class="d-none d-lg-table-cell">${escapeHtml(entry.state) || "--"}</td>
+                  <td>${registeredAt}</td>
+                  <td>${checkInBadge}</td>
+                </tr>
+              `;
             })
             .join("");
-
-          const resultsHTML = `<div class="w-100 h-100 d-flex flex-column">${userHTML}<div class="d-grid mt-auto pt-3"><button class="btn btn-outline-secondary new-search-btn"><i class="fas fa-arrow-left me-2"></i>New Search</button></div></div>`;
-          showOutputView(resultsHTML);
+          registrationsTableBody.innerHTML = rowsHtml;
         };
 
-        // --- FINAL, CORRECTED makeApiCall function ---
         const makeApiCall = async (endpoint, options = {}) => {
           if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
           const headers = {
@@ -580,6 +672,148 @@
           }
         };
 
+        const loadRegistrations = async (page = 1, options = {}) => {
+          const { showButtonLoading = false } = options;
+          if (showButtonLoading && refreshTableBtn) {
+            setButtonLoading(refreshTableBtn, true);
+          }
+          setTableLoading(true);
+          if (registrationsErrorEl) {
+            registrationsErrorEl.classList.add("d-none");
+          }
+          try {
+            const params = new URLSearchParams({
+              page: String(page),
+              limit: String(state.pageSize),
+            });
+            const data = await makeApiCall(
+              `/.netlify/functions/list-registrations?${params.toString()}`,
+            );
+            const {
+              results = [],
+              total = 0,
+              page: resolvedPage = 1,
+              pageSize: resolvedPageSize = state.pageSize,
+              totalPages: resolvedTotalPages = 1,
+            } = data;
+
+            state.totalRecords = total;
+            state.pageSize = resolvedPageSize;
+            state.currentPage = resolvedPage;
+            state.totalPages = Math.max(1, resolvedTotalPages);
+
+            if (
+              pageSizeSelect &&
+              Number(pageSizeSelect.value) !== Number(state.pageSize)
+            ) {
+              pageSizeSelect.value = String(state.pageSize);
+            }
+
+            renderRegistrations(results);
+            updatePaginationUI();
+            updateLastRefreshLabel();
+          } catch (error) {
+            console.error("Registrations fetch error:", error);
+            if (registrationsErrorEl) {
+              registrationsErrorEl.textContent = `Unable to load registrations: ${error.message}`;
+              registrationsErrorEl.classList.remove("d-none");
+            }
+          } finally {
+            setTableLoading(false);
+            if (showButtonLoading && refreshTableBtn) {
+              setButtonLoading(refreshTableBtn, false);
+            }
+          }
+        };
+
+        const fetchDashboardStats = async () => {
+          try {
+            const data = await makeApiCall("/.netlify/functions/get-stats");
+            if (totalRegCountEl)
+              totalRegCountEl.textContent = Number(
+                data.totalRegistrations || 0,
+              ).toLocaleString("en-IN");
+            if (registrationsLast24HoursEl)
+              registrationsLast24HoursEl.textContent = Number(
+                data.registrationsLast24Hours || 0,
+              ).toLocaleString("en-IN");
+            if (lastRegTimeEl)
+              lastRegTimeEl.textContent = data.lastRegistrationTime
+                ? formatDateTime(data.lastRegistrationTime)
+                : "N/A";
+            if (checkedInCountEl)
+              checkedInCountEl.textContent = Number(
+                data.totalCheckedIn || 0,
+              ).toLocaleString("en-IN");
+          } catch (err) {
+            console.error("Stats fetch error:", err);
+            if (totalRegCountEl) totalRegCountEl.textContent = "Error";
+            if (registrationsLast24HoursEl)
+              registrationsLast24HoursEl.textContent = "Error";
+            if (lastRegTimeEl) lastRegTimeEl.textContent = "Error";
+            if (checkedInCountEl) checkedInCountEl.textContent = "Error";
+          }
+        };
+
+        const checkSystemStatus = async () => {
+          ["database", "cloudinary", "googleSheets"].forEach((id) => {
+            const el = document.getElementById(`status-${id}`);
+            if (el) {
+              el.innerHTML =
+                '<div class="spinner-border spinner-border-sm"></div>';
+            }
+          });
+          try {
+            const statuses = await makeApiCall(
+              "/.netlify/functions/check-status",
+            );
+            setStatusIndicator("status-database", statuses.database.status);
+            setStatusIndicator("status-cloudinary", statuses.cloudinary.status);
+            setStatusIndicator(
+              "status-googleSheets",
+              statuses.googleSheets.status,
+            );
+          } catch (err) {
+            ["database", "cloudinary", "googleSheets"].forEach((id) =>
+              setStatusIndicator(`status-${id}`, "error"),
+            );
+            console.error("Status check error:", err);
+          }
+        };
+
+        const handleExport = async () => {
+          setButtonLoading(exportBtn, true);
+          if (exportStatus) {
+            exportStatus.textContent = "Preparing download...";
+          }
+          try {
+            const result = await makeApiCall("/.netlify/functions/export-data");
+            window.open(result.downloadUrl, "_blank");
+            if (exportStatus) exportStatus.textContent = "Download started!";
+            const now = new Date();
+            localStorage.setItem("lastExportTimestamp", now.toISOString());
+            displayLastExportTime();
+          } catch (err) {
+            if (exportStatus)
+              exportStatus.textContent = `Failed: ${err.message}`;
+          } finally {
+            setButtonLoading(exportBtn, false);
+          }
+        };
+
+        const handleLogout = () => {
+          ADMIN_SECRET_KEY = null;
+          state.currentPage = 1;
+          state.totalPages = 1;
+          state.totalRecords = 0;
+          state.pageSize = DEFAULT_PAGE_SIZE;
+          dashboardContainer.classList.add("d-none");
+          loginContainer.classList.remove("d-none");
+          loginForm.reset();
+          passwordInput.focus();
+          setButtonLoading(loginBtn, false);
+        };
+
         loginForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           setButtonLoading(loginBtn, true);
@@ -603,215 +837,96 @@
           }
         });
 
-        const handleCheckIn = async (e) => {
-          const button = e.target.closest(".check-in-btn");
-          if (!button || button.disabled) return;
-
-          const registrationId = button.dataset.regid;
-          setButtonLoading(button, true);
-
-          try {
-            const result = await makeApiCall(
-              "/.netlify/functions/mark-checked-in",
-              {
-                method: "POST",
-                body: JSON.stringify({ registrationId }),
-              },
-            );
-
-            currentUserData.checked_in_at = result.data.checked_in_at;
-            displayUsers(currentUserData);
-          } catch (err) {
-            alert(`Check-in failed: ${err.message}`);
-          } finally {
-            setButtonLoading(button, false);
-          }
-        };
-
-        // --- NEW handleUndoCheckIn function ---
-        const handleUndoCheckIn = async (e) => {
-          const button = e.target.closest(".undo-check-in-btn");
-          if (!button) return;
-
-          const registrationId = button.dataset.regid;
-
-          const password = prompt(
-            "To undo the check-in, please enter the admin password:",
-          );
-          if (password === null) return;
-
-          setButtonLoading(button, true);
-
-          try {
-            const result = await makeApiCall(
-              "/.netlify/functions/unmark-checked-in",
-              {
-                method: "POST",
-                body: JSON.stringify({ registrationId, password }),
-              },
-            );
-
-            currentUserData.checked_in_at = null;
-            displayUsers(currentUserData);
-          } catch (err) {
-            alert(`Failed to undo check-in: ${err.message}`);
-          } finally {
-            setButtonLoading(button, false);
-          }
-        };
-
         function initializeDashboard() {
           totalRegCountEl = document.getElementById("totalRegCount");
+          registrationsLast24HoursEl = document.getElementById(
+            "registrationsLast24Hours",
+          );
           lastRegTimeEl = document.getElementById("lastRegTime");
-          searchForm = document.getElementById("searchForm");
-          searchBtn = document.getElementById("searchBtn");
-          phoneInput = document.getElementById("phoneInput");
-          regIdInput = document.getElementById("regIdInput");
+          checkedInCountEl = document.getElementById("checkedInCount");
           exportBtn = document.getElementById("exportBtn");
           exportStatus = document.getElementById("exportStatus");
           checkStatusBtn = document.getElementById("checkStatusBtn");
-          searchContainer = document.getElementById("search-container");
-          searchOutputWrapper = document.getElementById(
-            "search-output-wrapper",
+          lastExportTimeEl = document.getElementById("lastExportTime");
+          pageSizeSelect = document.getElementById("pageSizeSelect");
+          registrationsLoadingOverlay = document.getElementById(
+            "registrationsLoading",
           );
-          phoneTab = new bootstrap.Tab(document.getElementById("phone-tab"));
-
-          checkStatusBtn.addEventListener("click", checkSystemStatus);
-          exportBtn.addEventListener("click", handleExport);
-          searchForm.addEventListener("submit", handleSearch);
-
-          searchOutputWrapper.addEventListener("click", (e) => {
-            if (e.target.closest(".new-search-btn")) {
-              showSearchForm();
-            } else if (e.target.closest(".check-in-btn")) {
-              handleCheckIn(e);
-            } else if (e.target.closest(".undo-check-in-btn")) {
-              handleUndoCheckIn(e);
-            }
-          });
-
-          phoneInput.addEventListener("input", () =>
-            phoneInput.classList.remove("is-invalid"),
+          registrationsTableBody = document.getElementById(
+            "registrationsTableBody",
           );
-          regIdInput.addEventListener("input", () =>
-            regIdInput.classList.remove("is-invalid"),
+          registrationsErrorEl = document.getElementById("registrationsError");
+          paginationStatusEl = document.getElementById("paginationStatus");
+          paginationIndicatorEl = document.getElementById(
+            "paginationIndicator",
           );
+          paginationPrevBtn = document.getElementById("paginationPrev");
+          paginationNextBtn = document.getElementById("paginationNext");
+          refreshTableBtn = document.getElementById("refreshTableBtn");
+
+          state.pageSize = Number(pageSizeSelect?.value) || DEFAULT_PAGE_SIZE;
+
+          if (checkStatusBtn) {
+            checkStatusBtn.addEventListener("click", checkSystemStatus);
+          }
+          if (exportBtn) {
+            exportBtn.addEventListener("click", handleExport);
+          }
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", handleLogout);
+          }
+
+          if (pageSizeSelect) {
+            pageSizeSelect.addEventListener("change", () => {
+              state.pageSize = Number(pageSizeSelect.value) || DEFAULT_PAGE_SIZE;
+              state.currentPage = 1;
+              loadRegistrations(1);
+            });
+          }
+
+          if (paginationPrevBtn) {
+            paginationPrevBtn.addEventListener("click", () => {
+              if (state.currentPage > 1) {
+                loadRegistrations(state.currentPage - 1);
+              }
+            });
+          }
+
+          if (paginationNextBtn) {
+            paginationNextBtn.addEventListener("click", () => {
+              if (state.currentPage < state.totalPages) {
+                loadRegistrations(state.currentPage + 1);
+              }
+            });
+          }
+
+          if (refreshTableBtn) {
+            refreshTableBtn.addEventListener("click", () => {
+              loadRegistrations(state.currentPage, { showButtonLoading: true });
+            });
+          }
+
+          if (refreshDashboardBtn) {
+            refreshDashboardBtn.addEventListener("click", async () => {
+              setButtonLoading(refreshDashboardBtn, true);
+              try {
+                await Promise.all([
+                  fetchDashboardStats(),
+                  loadRegistrations(state.currentPage),
+                  checkSystemStatus(),
+                ]);
+              } finally {
+                setButtonLoading(refreshDashboardBtn, false);
+              }
+            });
+          }
 
           fetchDashboardStats();
           checkSystemStatus();
           displayLastExportTime();
+          loadRegistrations(state.currentPage);
+          setButtonLoading(loginBtn, false);
         }
-
-        const fetchDashboardStats = async () => {
-          try {
-            const data = await makeApiCall("/.netlify/functions/get-stats");
-            totalRegCountEl.textContent = data.totalRegistrations;
-            lastRegTimeEl.textContent = data.lastRegistrationTime
-              ? new Date(data.lastRegistrationTime).toLocaleString("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })
-              : "N/A";
-          } catch (err) {
-            totalRegCountEl.textContent = "Error";
-            lastRegTimeEl.textContent = "Error";
-            console.error("Stats Fetch Error:", err);
-          }
-        };
-
-        const checkSystemStatus = async () => {
-          ["database", "cloudinary", "googleSheets"].forEach(
-            (id) =>
-              (document.getElementById(`status-${id}`).innerHTML =
-                '<div class="spinner-border spinner-border-sm"></div>'),
-          );
-          try {
-            const statuses = await makeApiCall(
-              "/.netlify/functions/check-status",
-            );
-            setStatusIndicator("status-database", statuses.database.status);
-            setStatusIndicator("status-cloudinary", statuses.cloudinary.status);
-            setStatusIndicator(
-              "status-googleSheets",
-              statuses.googleSheets.status,
-            );
-          } catch (err) {
-            ["database", "cloudinary", "googleSheets"].forEach((id) =>
-              setStatusIndicator(`status-${id}`, "error"),
-            );
-            console.error("Status check error:", err);
-          }
-        };
-
-        const handleExport = async () => {
-          setButtonLoading(exportBtn, true);
-          exportStatus.textContent = "Preparing download...";
-          try {
-            const result = await makeApiCall("/.netlify/functions/export-data");
-            window.open(result.downloadUrl, "_blank");
-            exportStatus.textContent = "Download started!";
-            const now = new Date();
-            localStorage.setItem("lastExportTimestamp", now.toISOString());
-            displayLastExportTime();
-          } catch (err) {
-            exportStatus.textContent = `Failed: ${err.message}`;
-          } finally {
-            setButtonLoading(exportBtn, false);
-          }
-        };
-
-        const handleSearch = async (e) => {
-          e.preventDefault();
-          const activeTab = document.querySelector(
-            "#search-tab-content .tab-pane.active",
-          );
-          if (!activeTab) {
-            displayErrorMessage("Could not determine search type.");
-            return;
-          }
-          const phone = phoneInput.value.trim();
-          let regId = regIdInput.value.trim().toUpperCase();
-          let query = "";
-
-          if (activeTab.id === "phone-pane") {
-            if (!phone) {
-              phoneInput.classList.add("is-invalid");
-              return;
-            }
-            query = `phone=${encodeURIComponent(phone)}`;
-          } else {
-            const prefix = "EMRS-";
-            if (regId && !regId.startsWith(prefix)) {
-              regId = prefix + regId;
-            }
-            if (!regId) {
-              regIdInput.classList.add("is-invalid");
-              return;
-            }
-            query = `registrationId=${encodeURIComponent(regId)}`;
-          }
-
-          setButtonLoading(searchBtn, true);
-          displayLoadingState();
-
-          try {
-            const users = await makeApiCall(
-              `/.netlify/functions/search-user?${query}`,
-            );
-            displayUsers(users);
-          } catch (err) {
-            if (
-              err.message &&
-              err.message.toLowerCase().includes("no registration found")
-            ) {
-              displayNoResults();
-            } else {
-              displayErrorMessage(err.message);
-            }
-          } finally {
-            setButtonLoading(searchBtn, false);
-          }
-        };
       });
     </script>
   </body>

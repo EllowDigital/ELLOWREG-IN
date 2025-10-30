@@ -1,6 +1,6 @@
 {
   "name": "ellowreg-in",
-  "version": "1.0.0",
+  "version": "3.0.2",
   "description": "Event Management & Registration System (EMRS) by EllowDigital for handling multi-event registrations, media uploads, analytics, and Google Sheets sync.",
   "private": true,
   "author": "EllowDigital",

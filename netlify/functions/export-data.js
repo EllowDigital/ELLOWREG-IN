@@ -30,20 +30,21 @@ exports.handler = async (event) => {
       dbClient = await pool.connect();
       console.log("Export started: Acquired database client.");
 
-      // --- FINAL, CORRECTED SQL QUERY ---
-      // Explicitly selects all columns, including the new 'checked_in_at' field.
+      // --- CORRECTED SQL QUERY ---
+      // 'company' column removed to match new schema.
       const sql = `
-                SELECT 
-                    registration_id, name, company, phone, address, 
-                    city, state, day, payment_id, timestamp, image_url,
-                    checked_in_at
-                FROM registrations ORDER BY timestamp ASC
-            `;
+          SELECT 
+            registration_id, name, phone, email, 
+            city, state, payment_id, timestamp, image_url,
+            checked_in_at
+          FROM registrations ORDER BY timestamp ASC
+        `;
       const query = new QueryStream(sql);
       // -----------------------------------------
 
       const dbStream = dbClient.query(query);
-      const fileName = `emrs-registrations-${new Date().toISOString().split("T")[0]}.xlsx`;
+      const fileName = `emrs-registrations-${new Date().toISOString().split("T")[0]
+        }.xlsx`;
 
       const cloudinaryStream = cloudinary.uploader.upload_stream(
         {
@@ -70,16 +71,16 @@ exports.handler = async (event) => {
       });
       const worksheet = workbook.addWorksheet("Registrations");
 
-      // This column list now includes the new 'checked_in_at' field.
+      // --- CORRECTED EXCEL COLUMNS ---
+      // 1. Removed 'company' column.
+      // 2. Fixed 'Email' column key from 'address' to 'email'.
       worksheet.columns = [
         { header: "Registration ID", key: "registration_id", width: 22 },
         { header: "Name", key: "name", width: 30 },
-        { header: "Company Name", key: "company", width: 35 },
         { header: "Phone Number", key: "phone", width: 18 },
-        { header: "Full Address", key: "address", width: 45 },
+        { header: "Email", key: "email", width: 45 }, // KEY FIXED
         { header: "District / City", key: "city", width: 25 },
         { header: "State", key: "state", width: 25 },
-        { header: "Access Days", key: "day", width: 25 },
         { header: "Payment ID", key: "payment_id", width: 30 },
         {
           header: "Registered On",
@@ -95,6 +96,8 @@ exports.handler = async (event) => {
           style: { numFmt: "dd-mmm-yyyy hh:mm:ss" },
         },
       ];
+      // -----------------------------------------
+
       worksheet.getRow(1).font = { bold: true, size: 12 };
 
       dbStream.on("data", (row) => {
