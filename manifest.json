@@ -1,12 +1,13 @@
 {
-  "name": "E-Pass Check-In",
-  "short_name": "E-Pass",
-  "description": "Event E-Pass Verification and Check-In",
-  "start_url": "/verify.html",
+  "name": "EMRS Admin Console",
+  "short_name": "EMRS Admin",
+  "description": "Manage registrations, sync data, and export attendee insights with the EMRS Admin Console by EllowDigital.",
+  "start_url": "/admin.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0d6efd",
-  "orientation": "portrait-primary",
+  "background_color": "#0a2540",
+  "theme_color": "#0a2540",
+  "orientation": "any",
   "icons": [
     {
       "src": "assets/favicon/android-chrome-192x192.png",
@@ -18,5 +19,29 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Admin Dashboard",
+      "short_name": "Dashboard",
+      "url": "/admin.html",
+      "icons": [
+        {
+          "src": "assets/favicon/android-chrome-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Verify Registrations",
+      "short_name": "Verify",
+      "url": "/verify.html"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "business"
+  ],
+  "lang": "en-IN"
 }

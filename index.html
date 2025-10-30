@@ -2,478 +2,490 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMRS by EllowDigital – Get Your E-Pass</title>
+  <meta name="description"
+    content="Event Management & Registration System (EMRS) by EllowDigital. Collect registrations, capture photos, and issue e-passes for any event in minutes." />
+  <meta name="keywords"
+    content="EMRS, EllowDigital, event management, event registration system, e-pass generator, digital pass, attendee check-in" />
+  <meta name="author" content="EllowDigital" />
+  <link rel="canonical" href="https://your-epass-site.com/" />
 
-    <title>EMRS by EllowDigital – Get Your E-Pass</title>
-    <meta name="description"
-      content="Event Management & Registration System (EMRS) by EllowDigital. Collect registrations, capture photos, and issue e-passes for any event in minutes." />
-    <meta name="keywords"
-      content="EMRS, EllowDigital, event management, event registration system, e-pass generator, digital pass, attendee check-in" />
-    <meta name="author" content="EllowDigital" />
-    <link rel="canonical" href="https://your-epass-site.com/" />
-
-    <meta property="og:title" content="EMRS by EllowDigital – Get Your E-Pass" />
-    <meta property="og:description"
+  <meta property="og:title" content="EMRS by EllowDigital – Get Your E-Pass" />
+  <meta property="og:description"
+    content="Manage registrations and download personalized e-passes for any event using EMRS by EllowDigital." />
+  <meta property="og:image" content="https://your-epass-site.com/assets/unnamed.jpg" />
+  <meta property="og:url" content="https://your-epass-site.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EMRS by EllowDigital" />
+  <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EMRS by EllowDigital – Get Your E-Pass" />
+    <meta name="twitter:description"
       content="Manage registrations and download personalized e-passes for any event using EMRS by EllowDigital." />
-    <meta property="og:image" content="https://your-epass-site.com/assets/unnamed.jpg" />
-    <meta property="og:url" content="https://your-epass-site.com/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="EMRS by EllowDigital" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://your-epass-site.com/assets/unnamed.jpg" />
 
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#ffffff" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="E-Pass" />
-    <link rel="icon" href="assets/favicon/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
-    <link rel="icon" href="assets/favicon/favicon.ico" sizes="any" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
-    <link rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
-      as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript>
-      <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" />
-    </noscript>
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" />
+  </noscript>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
-      defer></script>
-
-    <style>
-      :root {
-        --primary-color: #0d2c4f;
-        --primary-dark: #0a2540;
-        --accent-color: #fdb813;
-        --accent-hover: #e4a60b;
-        --text-color: #333;
-        --text-light: #6c757d;
-        --card-bg: #ffffff;
-        --body-bg: #f4f7fa;
-        --border-color: #dee2e6;
-        --success-color: #198754;
-        --danger-color: #dc3545;
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
+    defer></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "EMRS by EllowDigital",
+        "url": "https://your-epass-site.com/",
+        "description": "Event Management & Registration System for collecting registrations, issuing digital passes, and managing attendee check-ins.",
+        "operatingSystem": "Web",
+        "applicationCategory": "BusinessApplication",
+        "publisher": {
+          "@type": "Organization",
+          "name": "EllowDigital",
+          "url": "https://ellow.in/"
+        }
       }
+    </script>
 
-      html {
-        scroll-behavior: smooth;
-      }
+  <style>
+    :root {
+      --primary-color: #0d2c4f;
+      --primary-dark: #0a2540;
+      --accent-color: #fdb813;
+      --accent-hover: #e4a60b;
+      --text-color: #333;
+      --text-light: #6c757d;
+      --card-bg: #ffffff;
+      --body-bg: #f4f7fa;
+      --border-color: #dee2e6;
+      --success-color: #198754;
+      --danger-color: #dc3545;
+    }
 
-      body {
-        font-family: "Inter", sans-serif;
-        color: var(--text-color);
-        background-color: var(--body-bg);
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      color: var(--text-color);
+      background-color: var(--body-bg);
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
         opacity: 0;
-        animation: fadeIn 0.6s ease-in-out forwards;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-
-        to {
-          opacity: 1;
-        }
+      to {
+        opacity: 1;
       }
+    }
 
-      .main-container {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1rem;
-      }
+    .main-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
 
-      .registration-wrapper {
-        max-width: 1200px;
-        width: 100%;
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
+    .registration-wrapper {
+      max-width: 1200px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
 
-      .info-panel {
-        background-color: var(--primary-dark);
-        color: #fff;
-        padding: 3rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
+    .info-panel {
+      background-color: var(--primary-dark);
+      color: #fff;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
-      .info-panel .expo-title {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(2rem, 5vw, 2.75rem);
-        line-height: 1.2;
-        margin-bottom: 1rem;
-      }
+    .info-panel .expo-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
 
-      .info-panel .lead {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        margin-bottom: 2rem;
-      }
+    .info-panel .lead {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
 
-      .event-detail-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 1.25rem;
-      }
+    .event-detail-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
 
-      .event-detail-item .icon {
-        font-size: 1.5rem;
-        width: 40px;
-        color: var(--accent-color);
-      }
+    .event-detail-item .icon {
+      font-size: 1.5rem;
+      width: 40px;
+      color: var(--accent-color);
+    }
 
+    .form-panel {
+      padding: 3rem 4rem;
+    }
+
+    @media (max-width: 991.98px) {
       .form-panel {
-        padding: 3rem 4rem;
+        padding: 2rem;
+      }
+    }
+
+    .form-panel .form-heading {
+      font-family: "Playfair Display", serif;
+      color: var(--primary-dark);
+      font-size: clamp(2rem, 5vw, 2.5rem);
+    }
+
+    .form-control,
+    .form-check-input {
+      border-radius: 8px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-check-input:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
+      transform: scale(1.02);
+    }
+
+    .form-control:invalid {
+      border-color: var(--danger-color);
+    }
+
+    .image-upload-wrapper {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    #imagePreview {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--border-color);
+      background-color: #e9ecef;
+      transition: all 0.3s ease;
+    }
+
+    #profileImage {
+      display: none;
+    }
+
+    #uploadLabel {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 40px;
+      height: 40px;
+      background: var(--primary-dark);
+      color: white;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    #uploadLabel:hover {
+      transform: scale(1.1);
+    }
+
+    .day-selector .form-check {
+      padding-left: 0;
+    }
+
+    .day-selector .form-check-input {
+      display: none;
+    }
+
+    .day-selector .form-check-label {
+      display: block;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .day-selector .form-check-input:checked+.form-check-label {
+      background-color: var(--primary-dark);
+      color: white;
+      border-color: var(--primary-dark);
+      box-shadow: 0 5px 15px rgba(10, 37, 64, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit {
+      background: var(--accent-color);
+      border: none;
+      color: var(--primary-dark);
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+      color: var(--primary-dark);
+      box-shadow: 0 7px 20px rgba(228, 166, 11, 0.3);
+      transform: translateY(-3px);
+    }
+
+    /* Upload progress */
+    .upload-progress {
+      height: 14px;
+      background: linear-gradient(90deg,
+          rgba(13, 44, 79, 0.08),
+          rgba(13, 44, 79, 0.06));
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    .upload-progress .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-color), #e8b53b);
+      transition: width 200ms linear;
+    }
+
+    .upload-progress .label {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      text-align: center;
+    }
+
+    .success-view {
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    #download-id-btn {
+      background: var(--success-color);
+      color: white;
+    }
+
+    #id-card-template {
+      display: none;
+    }
+
+    .id-card {
+      width: 380px;
+      font-family: "Inter", sans-serif;
+      background-color: #f4f7fa;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+    }
+
+    .id-card-header {
+      background: var(--primary-dark);
+      padding: 1.75rem 1.25rem 78px;
+      text-align: center;
+    }
+
+    .id-card-header .expo-title {
+      font-family: "Playfair Display", serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    .id-card-header .pass-subtitle {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 0.35rem;
+    }
+
+    .id-card-body {
+      position: relative;
+      padding: 1rem 1.5rem 1.5rem 1.5rem;
+      background-color: transparent;
+    }
+
+    .id-card-photo-wrapper {
+      margin-top: -65px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .id-card-photo {
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 6px solid #ffffff;
+      background: var(--card-bg);
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.15),
+        0 0 0 6px rgba(13, 44, 79, 0.12);
+    }
+
+    .id-card-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+    }
+
+    .id-card-qr-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(10, 37, 64, 0.04);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .id-card-qr {
+      width: 120px;
+      height: 120px;
+      display: grid;
+      place-items: center;
+      padding: 0.35rem;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 2px solid rgba(13, 44, 79, 0.18);
+      overflow: visible;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .id-card-qr canvas,
+    .id-card-qr img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .id-card-qr-details {
+      text-align: left;
+    }
+
+    .id-card-qr-details .label {
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .id-card-qr-details .value {
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 1rem;
+    }
+
+    .id-card-qr-details .secondary-label {
+      margin-top: 0.6rem;
+      font-size: 0.7rem;
+      opacity: 0.75;
+    }
+
+    .id-card-footer {
+      background-color: var(--primary-dark);
+      padding: 0.85rem 1.25rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.9rem;
+      letter-spacing: 0.4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .lost-pass-link {
+      transition:
+        color 0.3s ease,
+        transform 0.2s ease;
+    }
+
+    .lost-pass-link:hover {
+      color: #0d6efd;
+      transform: scale(1.05);
+      text-decoration: underline;
+    }
+
+    .footer-custom {
+      background-color: var(--primary-dark);
+      /* #000000 background */
+      color: white;
+    }
+
+    .blinking-heart {
+      color: red;
+      animation: blink 1s infinite;
+      font-size: 1.2em;
+      margin-left: 5px;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
       }
 
-      @media (max-width: 991.98px) {
-        .form-panel {
-          padding: 2rem;
-        }
+      50% {
+        opacity: 0;
       }
-
-      .form-panel .form-heading {
-        font-family: "Playfair Display", serif;
-        color: var(--primary-dark);
-        font-size: clamp(2rem, 5vw, 2.5rem);
-      }
-
-      .form-control,
-      .form-check-input {
-        border-radius: 8px;
-        transition: all 0.2s ease-in-out;
-      }
-
-      .form-control:focus,
-      .form-check-input:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
-        transform: scale(1.02);
-      }
-
-      .form-control:invalid {
-        border-color: var(--danger-color);
-      }
-
-      .image-upload-wrapper {
-        position: relative;
-        width: 150px;
-        height: 150px;
-        margin: 0 auto 1.5rem auto;
-      }
-
-      #imagePreview {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid var(--border-color);
-        background-color: #e9ecef;
-        transition: all 0.3s ease;
-      }
-
-      #profileImage {
-        display: none;
-      }
-
-      #uploadLabel {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 40px;
-        height: 40px;
-        background: var(--primary-dark);
-        color: white;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-      }
-
-      #uploadLabel:hover {
-        transform: scale(1.1);
-      }
-
-      .day-selector .form-check {
-        padding-left: 0;
-      }
-
-      .day-selector .form-check-input {
-        display: none;
-      }
-
-      .day-selector .form-check-label {
-        display: block;
-        padding: 0.75rem 1rem;
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        text-align: center;
-        font-weight: 500;
-      }
-
-      .day-selector .form-check-input:checked+.form-check-label {
-        background-color: var(--primary-dark);
-        color: white;
-        border-color: var(--primary-dark);
-        box-shadow: 0 5px 15px rgba(10, 37, 64, 0.2);
-        transform: translateY(-2px);
-      }
-
-      .btn-submit {
-        background: var(--accent-color);
-        border: none;
-        color: var(--primary-dark);
-        padding: 1rem;
-        font-size: 1.1rem;
-        font-weight: 700;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-
-      .btn-submit:hover {
-        background: var(--accent-hover);
-        color: var(--primary-dark);
-        box-shadow: 0 7px 20px rgba(228, 166, 11, 0.3);
-        transform: translateY(-3px);
-      }
-
-      /* Upload progress */
-      .upload-progress {
-        height: 14px;
-        background: linear-gradient(90deg,
-            rgba(13, 44, 79, 0.08),
-            rgba(13, 44, 79, 0.06));
-        border-radius: 10px;
-        overflow: hidden;
-        margin-top: 0.75rem;
-        display: none;
-      }
-
-      .upload-progress .bar {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, var(--accent-color), #e8b53b);
-        transition: width 200ms linear;
-      }
-
-      .upload-progress .label {
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: var(--text-light);
-        text-align: center;
-      }
-
-      .success-view {
-        text-align: center;
-        padding: 2rem 0;
-      }
-
-      #download-id-btn {
-        background: var(--success-color);
-        color: white;
-      }
-
-      #id-card-template {
-        display: none;
-      }
-
-      .id-card {
-        width: 380px;
-        font-family: "Inter", sans-serif;
-        background-color: #f4f7fa;
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        text-align: center;
-        border: 1px solid #e0e0e0;
-      }
-
-      .id-card-header {
-        background: var(--primary-dark);
-        padding: 1.75rem 1.25rem 78px;
-        text-align: center;
-      }
-
-      .id-card-header .expo-title {
-        font-family: "Playfair Display", serif;
-        font-size: 2.1rem;
-        font-weight: 700;
-        color: #ffffff;
-        letter-spacing: 0.5px;
-      }
-
-      .id-card-header .pass-subtitle {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.85);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-top: 0.35rem;
-      }
-
-      .id-card-body {
-        position: relative;
-        padding: 1rem 1.5rem 1.5rem 1.5rem;
-        background-color: transparent;
-      }
-
-      .id-card-photo-wrapper {
-        margin-top: -65px;
-        position: relative;
-        z-index: 10;
-      }
-
-      .id-card-photo {
-        width: 130px;
-        height: 130px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 6px solid #ffffff;
-        background: var(--card-bg);
-        box-shadow:
-          0 10px 25px rgba(0, 0, 0, 0.15),
-          0 0 0 6px rgba(13, 44, 79, 0.12);
-      }
-
-      .id-card-name {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-dark);
-        margin-top: 1rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.2;
-      }
-
-      .id-card-qr-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        background: rgba(10, 37, 64, 0.04);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-top: 1.5rem;
-      }
-
-      .id-card-qr {
-        width: 120px;
-        height: 120px;
-        display: grid;
-        place-items: center;
-        padding: 0.35rem;
-        background: #ffffff;
-        border-radius: 14px;
-        border: 2px solid rgba(13, 44, 79, 0.18);
-        overflow: visible;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-      }
-
-      .id-card-qr canvas,
-      .id-card-qr img {
-        width: 100% !important;
-        height: 100% !important;
-      }
-
-      .id-card-qr-details {
-        text-align: left;
-      }
-
-      .id-card-qr-details .label {
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: var(--text-light);
-        margin-bottom: 0.25rem;
-        display: block;
-      }
-
-      .id-card-qr-details .value {
-        font-weight: 700;
-        color: var(--primary-dark);
-        font-size: 1rem;
-      }
-
-      .id-card-qr-details .secondary-label {
-        margin-top: 0.6rem;
-        font-size: 0.7rem;
-        opacity: 0.75;
-      }
-
-      .id-card-footer {
-        background-color: var(--primary-dark);
-        padding: 0.85rem 1.25rem;
-        color: rgba(255, 255, 255, 0.85);
-        font-size: 0.9rem;
-        letter-spacing: 0.4px;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-      }
-
-      .lost-pass-link {
-        transition:
-          color 0.3s ease,
-          transform 0.2s ease;
-      }
-
-      .lost-pass-link:hover {
-        color: #0d6efd;
-        transform: scale(1.05);
-        text-decoration: underline;
-      }
-
-      .footer-custom {
-        background-color: var(--primary-dark);
-        /* #000000 background */
-        color: white;
-      }
-
-      .blinking-heart {
-        color: red;
-        animation: blink 1s infinite;
-        font-size: 1.2em;
-        margin-left: 5px;
-      }
-
-      @keyframes blink {
-
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0;
-        }
-      }
-    </style>
-  </head>
+    }
+  </style>
+</head>
 
 <body>
   <div class="main-container">

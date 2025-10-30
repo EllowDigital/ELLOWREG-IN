@@ -3,9 +3,33 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - EMRS by EllowDigital</title>
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <meta name="description"
+    content="EMRS Admin Console by EllowDigital. Manage registrations, sync Google Sheets, and export attendee insights from any device." />
+  <meta name="keywords"
+    content="EMRS admin, EllowDigital, event registration dashboard, attendee management, google sheets sync" />
+  <meta name="author" content="EllowDigital" />
+  <link rel="canonical" href="https://your-epass-site.com/admin.html" />
+  <title>EMRS Admin Console – EllowDigital</title>
+  <meta property="og:title" content="EMRS Admin Console – EllowDigital" />
+  <meta property="og:description" content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-epass-site.com/admin.html" />
+  <meta property="og:image" content="https://your-epass-site.com/assets/favicon/android-chrome-512x512.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EMRS Admin Console – EllowDigital" />
+  <meta name="twitter:description" content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console." />
+  <meta name="twitter:image" content="https://your-epass-site.com/assets/favicon/android-chrome-512x512.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0a2540" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="EMRS Admin" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
   <style>
@@ -736,6 +760,15 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/service-worker.js')
+          .catch((error) => console.error('Service worker registration failed:', error));
+      });
+    }
+  </script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       let ADMIN_SECRET_KEY = null;
