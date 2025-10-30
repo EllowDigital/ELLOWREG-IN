@@ -1,4 +1,3 @@
-<!-- VERSION: 6.0 - EMRS ADMIN REDESIGN - 30 OCT 2025 -->
 <!doctype html>
 <html lang="en">
 
@@ -65,7 +64,7 @@
 
     .navbar.glass-card {
       padding: 1rem 1.5rem;
-      margin: 0 auto 2rem;
+      margin: 2rem auto 2rem;
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
@@ -224,9 +223,17 @@
       box-shadow: 0 14px 26px rgba(10, 37, 64, 0.18);
     }
 
-    .search-input-group {
-      max-width: 460px;
+    /* --- CHANGED --- */
+    .search-form {
+      width: 100%;
     }
+
+    .search-input-group {
+      /* max-width: 460px; <-- REMOVED */
+      width: 100%;
+    }
+
+    /* --- END CHANGE --- */
 
     .download-hint {
       display: flex;
@@ -300,6 +307,7 @@
     }
 
     @keyframes heartbeat {
+
       0%,
       100% {
         transform: scale(1);
@@ -317,9 +325,21 @@
         justify-content: space-between;
       }
 
-      .search-input-group {
-        width: 100%;
+      /* --- CHANGED --- */
+      .search-form {
+        flex: 1 1 50%;
+        /* Let it grow */
+        margin-right: 1.5rem;
+        width: auto;
       }
+
+      .search-input-group {
+        /* width: 100%; <-- REMOVED, already set in base */
+        max-width: 550px;
+        /* Added a max-width */
+      }
+
+      /* --- END CHANGE --- */
 
       .toolbar-actions {
         justify-content: flex-end;
@@ -353,7 +373,7 @@
         justify-content: center;
       }
 
-      .overview-header > div {
+      .overview-header>div {
         width: 100%;
       }
     }
@@ -430,7 +450,8 @@
           <div class="overview-header d-flex flex-wrap align-items-start justify-content-between mb-4 gap-3">
             <div>
               <h2 class="page-title mb-2">Welcome back</h2>
-              <p class="mb-0">Track registration velocity, manage attendees, and keep exports in sync with Sheets in real time.</p>
+              <p class="mb-0">Track registration velocity, manage attendees, and keep exports in sync with Sheets in
+                real time.</p>
             </div>
           </div>
           <div class="row g-3">
@@ -440,7 +461,9 @@
                   <div class="widget-icon"><i class="fas fa-users"></i></div>
                   <div class="stats-card-info">
                     <div class="stat-label">Total Registrations</div>
-                    <div class="stat-value" id="totalRegCount"><div class="spinner-border spinner-border-sm"></div></div>
+                    <div class="stat-value" id="totalRegCount">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -451,7 +474,9 @@
                   <div class="widget-icon"><i class="fas fa-bolt"></i></div>
                   <div class="stats-card-info">
                     <div class="stat-label">Last 24 Hours</div>
-                    <div class="stat-value" id="registrationsLast24Hours"><div class="spinner-border spinner-border-sm"></div></div>
+                    <div class="stat-value" id="registrationsLast24Hours">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -462,7 +487,9 @@
                   <div class="widget-icon"><i class="fas fa-clock"></i></div>
                   <div class="stats-card-info">
                     <div class="stat-label">Last Registration</div>
-                    <div class="stat-value fs-5" id="lastRegTime"><div class="spinner-border spinner-border-sm"></div></div>
+                    <div class="stat-value fs-5" id="lastRegTime">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -473,7 +500,9 @@
                   <div class="widget-icon"><i class="fas fa-user-check"></i></div>
                   <div class="stats-card-info">
                     <div class="stat-label">Checked In</div>
-                    <div class="stat-value" id="checkedInCount"><div class="spinner-border spinner-border-sm"></div></div>
+                    <div class="stat-value" id="checkedInCount">
+                      <div class="spinner-border spinner-border-sm"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -486,7 +515,8 @@
             <div class="toolbar-header">
               <div>
                 <h2 class="section-heading mb-1">Recent Registrations</h2>
-                <p class="text-muted small mb-0">Paginated roster of confirmed attendees in reverse chronological order.</p>
+                <p class="text-muted small mb-0">Paginated roster of confirmed attendees in reverse chronological order.
+                </p>
               </div>
               <div class="toolbar-meta">
                 <span class="chip"><i class="fas fa-clock"></i> Export</span>
@@ -496,9 +526,10 @@
             <div class="toolbar-controls">
               <form id="registrationsSearchForm" class="search-form" novalidate>
                 <div class="input-group input-group-sm search-input-group">
-                  <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
-                  <input type="search" class="form-control" id="registrationsSearchInput" placeholder="Search name, email, phone, or Reg ID" aria-label="Search registrations" />
-                  <button class="btn btn-outline-primary" type="submit">Search</button>
+                  <input type="search" class="form-control" id="registrationsSearchInput"
+                    placeholder="Search name, email, phone, or Reg ID" aria-label="Search registrations" />
+                  <button class="btn btn-outline-primary" type="submit">
+                    <i class="fas fa-search me-1"></i>Search </button>
                   <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">Clear</button>
                 </div>
               </form>
@@ -511,12 +542,16 @@
                     <option value="50">50</option>
                   </select>
                 </div>
-                <button id="refreshTableBtn" class="btn btn-outline-primary btn-pill">
-                  <span class="button-text"><i class="fas fa-sync-alt me-2"></i>Reload</span>
-                  <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                </button>
                 <div class="action-block">
-                  <button id="syncSheetsBtn" class="btn btn-outline-success btn-pill" data-loading-label="Syncing&hellip;">
+                  <button id="refreshTableBtn" class="btn btn-outline-primary btn-pill">
+                    <span class="button-text"><i class="fas fa-sync-alt me-2"></i>Reload</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                  </button>
+                  <div class="small text-muted status-message"></div>
+                </div>
+                <div class="action-block">
+                  <button id="syncSheetsBtn" class="btn btn-outline-success btn-pill"
+                    data-loading-label="Syncing&hellip;">
                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                     <span class="button-text"><i class="fas fa-sync me-2"></i>Sync Sheets</span>
                   </button>
@@ -592,15 +627,21 @@
           <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
-              <span id="status-database" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+              <span id="status-database" class="badge bg-light text-dark">
+                <div class="spinner-border spinner-border-sm"></div>
+              </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
-              <span id="status-cloudinary" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+              <span id="status-cloudinary" class="badge bg-light text-dark">
+                <div class="spinner-border spinner-border-sm"></div>
+              </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-file-excel fa-fw me-2 text-success"></i>Google Sheets</span>
-              <span id="status-googleSheets" class="badge bg-light text-dark"><div class="spinner-border spinner-border-sm"></div></span>
+              <span id="status-googleSheets" class="badge bg-light text-dark">
+                <div class="spinner-border spinner-border-sm"></div>
+              </span>
             </li>
           </ul>
         </div>
@@ -848,8 +889,14 @@
         const el = document.getElementById(elementId);
         if (!el) return;
         const config = {
-          ok: { class: "bg-success text-white", text: "Operational" },
-          error: { class: "bg-danger text-white", text: "Down" },
+          ok: {
+            class: "bg-success text-white",
+            text: "Operational"
+          },
+          error: {
+            class: "bg-danger text-white",
+            text: "Down"
+          },
         };
         const current = config[status] || {
           class: "bg-warning text-dark",
@@ -934,15 +981,15 @@
         const rowsHtml = records
           .map((entry) => {
             const registeredAt = formatDateTime(entry.timestamp);
-            const checkInBadge = entry.checked_in_at
-              ? `<span class="badge bg-success">Checked in</span><div class="text-muted small mt-1">${formatDateTime(entry.checked_in_at)}</div>`
-              : '<span class="badge bg-warning text-dark">Pending</span>';
-            const phoneCell = entry.phone
-              ? `<a href="tel:${escapeHtml(entry.phone)}" class="text-decoration-none">${escapeHtml(entry.phone)}</a>`
-              : "--";
-            const emailCell = entry.email
-              ? `<a href="mailto:${escapeHtml(entry.email)}" class="text-decoration-none">${escapeHtml(entry.email)}</a>`
-              : "--";
+            const checkInBadge = entry.checked_in_at ?
+              `<span class="badge bg-success">Checked in</span><div class="text-muted small mt-1">${formatDateTime(entry.checked_in_at)}</div>` :
+              '<span class="badge bg-warning text-dark">Pending</span>';
+            const phoneCell = entry.phone ?
+              `<a href="tel:${escapeHtml(entry.phone)}" class="text-decoration-none">${escapeHtml(entry.phone)}</a>` :
+              "--";
+            const emailCell = entry.email ?
+              `<a href="mailto:${escapeHtml(entry.email)}" class="text-decoration-none">${escapeHtml(entry.email)}</a>` :
+              "--";
             return `
               <tr>
                 <td class="fw-semibold">${escapeHtml(entry.registration_id) || "--"}</td>
@@ -976,11 +1023,16 @@
         if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
         const headers = {
           "x-admin-key": ADMIN_SECRET_KEY,
-          ...(options.body ? { "Content-Type": "application/json" } : {}),
+          ...(options.body ? {
+            "Content-Type": "application/json"
+          } : {}),
           ...options.headers,
         };
         try {
-          const response = await fetch(endpoint, { ...options, headers });
+          const response = await fetch(endpoint, {
+            ...options,
+            headers
+          });
           const isJson = response.headers.get("content-type")?.includes("application/json");
           const responseData = isJson ? await response.json() : null;
 
@@ -997,7 +1049,9 @@
       };
 
       const loadRegistrations = async (page = 1, options = {}) => {
-        const { showButtonLoading = false } = options;
+        const {
+          showButtonLoading = false
+        } = options;
         if (showButtonLoading && refreshTableBtn) {
           setButtonLoading(refreshTableBtn, true);
         }
@@ -1072,7 +1126,9 @@
       };
 
       const checkSystemStatus = async (options = {}) => {
-        const { showButtonLoading = false } = options;
+        const {
+          showButtonLoading = false
+        } = options;
         if (showButtonLoading && refreshSystemStatusBtn) {
           setButtonLoading(refreshSystemStatusBtn, true);
         }
@@ -1117,7 +1173,9 @@
         setButtonLoading(syncSheetsBtn, true);
         setStatusMessage(syncStatus, "sync", "Syncing with Google Sheets...", "muted", false);
         try {
-          const result = await makeApiCall("/.netlify/functions/sync-with-google-sheets", { method: "POST" });
+          const result = await makeApiCall("/.netlify/functions/sync-with-google-sheets", {
+            method: "POST"
+          });
           const updatedCount = Number(result?.updated || 0);
           const appendedCount = Number(result?.appended || 0);
           setStatusMessage(
@@ -1253,7 +1311,9 @@
         try {
           await makeApiCall("/.netlify/functions/delete-registration", {
             method: "DELETE",
-            body: JSON.stringify({ registrationId: deleteRegistrationId.value }),
+            body: JSON.stringify({
+              registrationId: deleteRegistrationId.value
+            }),
           });
           deleteModalInstance.hide();
           setFeedbackMessage("success", "Registration deleted successfully.");
@@ -1271,7 +1331,10 @@
       const handleTableClick = (event) => {
         const actionBtn = event.target.closest("[data-action]");
         if (!actionBtn) return;
-        const { action, registration: registrationId } = actionBtn.dataset;
+        const {
+          action,
+          registration: registrationId
+        } = actionBtn.dataset;
         if (!registrationId) return;
         const record = getRecordByRegistrationId(registrationId);
         if (!record) return;
@@ -1289,7 +1352,9 @@
         try {
           const response = await fetch("/.netlify/functions/admin-login", {
             method: "POST",
-            body: JSON.stringify({ password: passwordInput.value }),
+            body: JSON.stringify({
+              password: passwordInput.value
+            }),
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error);
@@ -1372,12 +1437,16 @@
             if (systemStatusModalInstance) {
               systemStatusModalInstance.show();
             }
-            checkSystemStatus({ showButtonLoading: true });
+            checkSystemStatus({
+              showButtonLoading: true
+            });
           });
         }
         if (refreshSystemStatusBtn) {
           refreshSystemStatusBtn.addEventListener("click", () =>
-            checkSystemStatus({ showButtonLoading: true }),
+            checkSystemStatus({
+              showButtonLoading: true
+            }),
           );
         }
         if (exportBtn) {
@@ -1416,7 +1485,9 @@
 
         if (refreshTableBtn) {
           refreshTableBtn.addEventListener("click", () => {
-            loadRegistrations(state.currentPage, { showButtonLoading: true });
+            loadRegistrations(state.currentPage, {
+              showButtonLoading: true
+            });
           });
         }
 
@@ -1463,3 +1534,5 @@
     });
   </script>
 </body>
+
+</html>
