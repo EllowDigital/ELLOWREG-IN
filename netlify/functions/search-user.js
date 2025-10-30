@@ -46,13 +46,22 @@ exports.handler = async (event) => {
 
   // Explicitly select all columns to ensure consistent data structure.
   let queryText = `
-        SELECT 
-            id, timestamp, registration_id, name, company, phone, 
-            address, city, state, day, payment_id, image_url, 
-            needs_sync, checked_in_at 
-        FROM registrations 
-        WHERE
-    `;
+    SELECT 
+      id,
+      timestamp,
+      registration_id,
+      name,
+      phone,
+      email,
+      city,
+      state,
+      payment_id,
+      image_url,
+      needs_sync,
+      checked_in_at
+    FROM registrations 
+    WHERE
+  `;
   const queryParams = [];
   let conditions = [];
   let paramIndex = 1;

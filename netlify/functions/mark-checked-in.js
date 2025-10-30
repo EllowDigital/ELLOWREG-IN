@@ -27,27 +27,29 @@ exports.handler = async (event) => {
     const { registrationId } = JSON.parse(event.body);
 
     // 3. Validation: Ensure a registration ID was provided in the request body.
-    if (!registrationId) {
+    if (!registrationId || !registrationId.trim()) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Registration ID is required." }),
       };
     }
 
+    const normalizedRegistrationId = registrationId.trim().toUpperCase();
+
     dbClient = await pool.connect();
 
     // 4. Database Update: Set the check-in time and flag the record for sync.
     // We use COALESCE to prevent accidentally overwriting an existing check-in time.
     // This query updates the record and returns the new data in a single operation.
-    const updateQuery = `
-            UPDATE registrations
-            SET
-                checked_in_at = COALESCE(checked_in_at, NOW()),
-                needs_sync = true
-            WHERE registration_id = $1
-            RETURNING registration_id, name, checked_in_at;
-        `;
-    const { rows } = await dbClient.query(updateQuery, [registrationId]);
+  const updateQuery = `
+      UPDATE registrations
+      SET
+        checked_in_at = NOW(),
+        needs_sync = true
+      WHERE registration_id = $1
+      RETURNING registration_id, name, checked_in_at;
+    `;
+  const { rows } = await dbClient.query(updateQuery, [normalizedRegistrationId]);
 
     if (rows.length === 0) {
       return {

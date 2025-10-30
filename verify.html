@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Verify EMRS e-passes quickly via QR scan or manual lookup." />
+    <meta name="author" content="EllowDigital" />
+    <title>Verify E-Pass – EMRS</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/dist/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #edf2f9 0%, #e0e7f1 45%, #d6deeb 100%);
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-height: 100vh;
+        }
+
+        .card-surface {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 18px 40px rgba(10, 37, 64, 0.18);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(10, 37, 64, 0.08);
+        }
+
+        .scan-laser::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(10, 37, 64, 0.12);
+            border-radius: 1rem;
+        }
+
+        .scan-laser::after {
+            content: "";
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.85), transparent);
+            border-radius: 999px;
+            animation: sweep 2.2s ease-in-out infinite;
+        }
+
+        @keyframes sweep {
+            0% {
+                top: 12%;
+                opacity: 0.2;
+            }
+
+            50% {
+                top: 50%;
+                opacity: 1;
+            }
+
+            100% {
+                top: 86%;
+                opacity: 0.2;
+            }
+        }
+
+        .modal-backdrop {
+            background: rgba(10, 37, 64, 0.45);
+        }
+
+        .modal-card {
+            background: #fff;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 24rem;
+            width: 100%;
+            box-shadow: 0 18px 40px rgba(10, 37, 64, 0.25);
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out forwards;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col">
+    <nav class="bg-white/80 backdrop-blur border-b border-slate-200/50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-2 text-slate-900">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-white"><i
+                        class="fas fa-qrcode"></i></span>
+                <div>
+                    <p class="text-lg font-semibold">Verify E-Pass</p>
+                    <p class="text-xs text-slate-500">EMRS Admin Authentication Portal</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="admin.html"
+                    class="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900">
+                    <i class="fas fa-solar-panel text-slate-500"></i> Admin Page
+                </a>
+                <a href="index.html"
+                    class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+                    <i class="fas fa-home"></i> Main Page
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-10">
+        <div class="w-full max-w-5xl">
+            <div class="grid gap-6">
+                <!-- Scanner Block -->
+                <section id="scannerBlock" class="card-surface p-8 transition" data-block="scanner">
+                    <div class="flex flex-col gap-6 md:flex-row">
+                        <div class="md:w-1/2">
+                            <h2 class="text-2xl font-semibold text-slate-900">QR Scanner</h2>
+                            <p class="mt-2 text-sm leading-6 text-slate-500">Point the camera at the visitor's QR code
+                                to validate
+                                their pass instantly. Keep the code inside the boundary for best results.</p>
+                            <div class="relative mt-6 rounded-2xl bg-slate-100 p-4">
+                                <div class="scan-laser relative overflow-hidden rounded-2xl" style="min-height: 280px;">
+                                    <div id="qr-reader" class="h-[280px] w-full"></div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                <button id="toggleCameraBtn"
+                                    class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+                                    <i class="fas fa-video"></i> <span>Turn Camera Off</span>
+                                </button>
+                                <button id="manualTriggerBtn"
+                                    class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700">
+                                    <i class="fas fa-keyboard"></i> Verify Manually
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 flex flex-col justify-center">
+                            <div
+                                class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-6 text-indigo-900 shadow-inner">
+                                <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">How it works
+                                </p>
+                                <ul class="mt-3 space-y-3 text-sm leading-6">
+                                    <li class="flex gap-3"><span
+                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">1</span>
+                                        Allow camera access; the scanner activates automatically.</li>
+                                    <li class="flex gap-3"><span
+                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">2</span>
+                                        Hold the QR code 15-20 cm from the camera until it's detected.</li>
+                                    <li class="flex gap-3"><span
+                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">3</span>
+                                        If scanning fails, switch to manual entry or keep scanning.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Manual Block -->
+                <section id="manualBlock" class="card-surface hidden p-8 transition" data-block="manual">
+                    <div class="max-w-xl">
+                        <h2 class="text-2xl font-semibold text-slate-900">Manual Verification</h2>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">Enter the registration ID exactly as shown on
+                            the e-pass.</p>
+                        <div class="mt-6 space-y-4">
+                            <label class="block text-sm font-semibold text-slate-700" for="manualInput">Registration
+                                ID</label>
+                            <input id="manualInput" type="text" placeholder="EMRS-2025-0001"
+                                class="w-full rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                            <div class="flex flex-wrap gap-3 pt-2">
+                                <button id="manualSearchBtn"
+                                    class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-700">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                                <button id="backToScannerBtn"
+                                    class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800">
+                                    <i class="fas fa-arrow-left"></i> Back to Scanner
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Result Block -->
+                <section id="resultBlock" class="card-surface hidden p-8 transition" data-block="result">
+                    <div class="flex flex-col gap-6 md:flex-row">
+                        <div class="md:w-1/3 flex justify-center">
+                            <div class="relative">
+                                <img id="resultPhoto" src="" alt="Profile"
+                                    class="h-48 w-48 rounded-full border-4 border-white shadow-xl object-cover" />
+                                <span
+                                    class="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-green-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">Verified</span>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">Attendee Details
+                            </p>
+                            <h2 id="resultName" class="mt-2 text-3xl font-semibold text-slate-900"></h2>
+                            <div class="mt-4 grid gap-3">
+                                <div class="rounded-xl border border-slate-200/80 bg-white/70 px-4 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Registration
+                                        ID</p>
+                                    <p id="resultRegId" class="mt-1 text-lg font-semibold text-slate-900"></p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200/80 bg-white/70 px-4 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Pass Type
+                                    </p>
+                                    <p id="resultPassType" class="mt-1 text-lg text-slate-800"></p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200/80 bg-white/70 px-4 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</p>
+                                    <p id="resultStatus" class="mt-1 text-lg font-semibold text-green-600"></p>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex flex-wrap gap-3">
+                                <button id="checkedInBtn"
+                                    class="inline-flex items-center gap-2 rounded-full bg-green-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-green-700">
+                                    <i class="fas fa-check"></i> Mark as Checked-In
+                                </button>
+                                <button id="newScanBtn"
+                                    class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800">
+                                    <i class="fas fa-redo"></i> New Scan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scan Failure Modal -->
+    <div id="scanFailureModal" class="fixed inset-0 z-40 hidden items-center justify-center">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative modal-card text-center">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-orange-100 text-orange-500">
+                <i class="fas fa-exclamation-triangle text-2xl"></i>
+            </div>
+            <h3 class="mt-4 text-xl font-semibold text-slate-900">No QR detected yet</h3>
+            <p class="mt-2 text-sm text-slate-500">Would you like to keep scanning or switch to manual verification?</p>
+            <div class="mt-5 flex flex-col gap-2">
+                <button id="keepScanningBtn"
+                    class="w-full rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Keep
+                    Scanning</button>
+                <button id="switchManualBtn"
+                    class="w-full rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900">Type
+                    Manually</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Not Found Modal -->
+    <div id="notFoundModal" class="fixed inset-0 z-40 hidden items-center justify-center">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative modal-card text-center">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-500">
+                <svg id="notFoundIcon" class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                </svg>
+            </div>
+            <h3 class="mt-4 text-xl font-semibold text-slate-900">Oops! Not Found</h3>
+            <p class="mt-2 text-sm text-slate-500">We couldn't match that registration ID. Please check and try again.
+            </p>
+            <div class="mt-5 flex flex-col gap-2">
+                <button id="notFoundCloseBtn"
+                    class="w-full rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Try
+                    Another</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-6 text-center text-xs text-slate-500">
+        <p>EMRS Verification Portal · Crafted by EllowDigital</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" defer></script>
+    <script>
+        const blocks = {
+            scanner: document.getElementById('scannerBlock'),
+            manual: document.getElementById('manualBlock'),
+            result: document.getElementById('resultBlock')
+        };
+
+        const modals = {
+            scanFailure: document.getElementById('scanFailureModal'),
+            notFound: document.getElementById('notFoundModal')
+        };
+
+        const elements = {
+            toggleCameraBtn: document.getElementById('toggleCameraBtn'),
+            manualTriggerBtn: document.getElementById('manualTriggerBtn'),
+            manualInput: document.getElementById('manualInput'),
+            manualSearchBtn: document.getElementById('manualSearchBtn'),
+            backToScannerBtn: document.getElementById('backToScannerBtn'),
+            keepScanningBtn: document.getElementById('keepScanningBtn'),
+            switchManualBtn: document.getElementById('switchManualBtn'),
+            notFoundCloseBtn: document.getElementById('notFoundCloseBtn'),
+            resultPhoto: document.getElementById('resultPhoto'),
+            resultName: document.getElementById('resultName'),
+            resultRegId: document.getElementById('resultRegId'),
+            resultPassType: document.getElementById('resultPassType'),
+            resultStatus: document.getElementById('resultStatus'),
+            checkedInBtn: document.getElementById('checkedInBtn'),
+            newScanBtn: document.getElementById('newScanBtn'),
+            notFoundIcon: document.getElementById('notFoundIcon')
+        };
+
+        const ADMIN_KEY_STORAGE_KEY = 'EMRS_ADMIN_SESSION_KEY';
+
+        let html5QrCode;
+        let isCameraActive = false;
+        let scanFailureTimer = null;
+
+        const state = {
+            adminKey: sessionStorage.getItem(ADMIN_KEY_STORAGE_KEY) || null,
+            currentRegistrationId: null,
+            currentRecord: null
+        };
+
+        const SCAN_TIMEOUT_MS = 6500;
+
+        const showBlock = (target) => {
+            Object.entries(blocks).forEach(([key, section]) => {
+                if (key === target) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        };
+
+        const showModal = (modal) => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        const hideModal = (modal) => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        const resetScanTimer = () => {
+            if (scanFailureTimer) {
+                clearTimeout(scanFailureTimer);
+            }
+            scanFailureTimer = setTimeout(() => {
+                if (isCameraActive && blocks.scanner && !blocks.scanner.classList.contains('hidden')) {
+                    showModal(modals.scanFailure);
+                }
+            }, SCAN_TIMEOUT_MS);
+        };
+
+        const ensureAdminKey = async () => {
+            if (state.adminKey) {
+                return state.adminKey;
+            }
+            const password = prompt('Admin authentication required. Enter admin password to continue.');
+            if (!password) {
+                throw new Error('Admin password is required to verify passes.');
+            }
+            const response = await fetch('/.netlify/functions/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (!response.ok) {
+                throw new Error('Authentication failed. Please check the password and try again.');
+            }
+            const data = await response.json();
+            state.adminKey = data.secretKey;
+            sessionStorage.setItem(ADMIN_KEY_STORAGE_KEY, state.adminKey);
+            return state.adminKey;
+        };
+
+        const clearAdminKey = () => {
+            state.adminKey = null;
+            sessionStorage.removeItem(ADMIN_KEY_STORAGE_KEY);
+        };
+
+        const authorizedFetch = async (url, options = {}, retry = true) => {
+            const adminKey = await ensureAdminKey();
+            const mergedHeaders = {
+                ...(options.headers || {}),
+                'x-admin-key': adminKey
+            };
+            const response = await fetch(url, { ...options, headers: mergedHeaders });
+            if (response.status === 401 && retry) {
+                clearAdminKey();
+                return authorizedFetch(url, options, false);
+            }
+            return response;
+        };
+
+        const formatDateTime = (value) => {
+            if (!value) {
+                return '';
+            }
+            const date = new Date(value);
+            return new Intl.DateTimeFormat('en-IN', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            }).format(date);
+        };
+
+        const startCamera = async () => {
+            if (isCameraActive) return;
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode('qr-reader');
+            }
+            try {
+                await html5QrCode.start(
+                    { facingMode: 'environment' },
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 },
+                        aspectRatio: 1
+                    },
+                    onScanSuccess,
+                    onScanFailure
+                );
+                isCameraActive = true;
+                elements.toggleCameraBtn.querySelector('span').textContent = 'Turn Camera Off';
+                elements.toggleCameraBtn.querySelector('i').className = 'fas fa-video-slash';
+                resetScanTimer();
+            } catch (error) {
+                console.error('Camera start failed:', error);
+                alert('Unable to start camera. Please allow camera permissions or try another device.');
+            }
+        };
+
+        const stopCamera = async () => {
+            if (!isCameraActive || !html5QrCode) return;
+            await html5QrCode.stop().catch(() => null);
+            await html5QrCode.clear().catch(() => null);
+            isCameraActive = false;
+            if (scanFailureTimer) {
+                clearTimeout(scanFailureTimer);
+            }
+            elements.toggleCameraBtn.querySelector('span').textContent = 'Turn Camera On';
+            elements.toggleCameraBtn.querySelector('i').className = 'fas fa-video';
+        };
+
+        const fetchRegistration = async (registrationId) => {
+            const trimmedId = registrationId.trim().toUpperCase();
+            if (!trimmedId) {
+                return null;
+            }
+            const response = await authorizedFetch(
+                `/.netlify/functions/search-user?registrationId=${encodeURIComponent(trimmedId)}`,
+                { method: 'GET' }
+            );
+            if (response.status === 404) {
+                return null;
+            }
+            if (!response.ok) {
+                const { error } = await response.json().catch(() => ({ error: 'Unexpected error occurred.' }));
+                throw new Error(error || 'Unable to look up registration.');
+            }
+            const data = await response.json();
+            return Array.isArray(data) ? data[0] : data;
+        };
+
+        const populateResult = (record) => {
+            const placeholder = 'https://cdn.jsdelivr.net/gh/ellowdigital/assets@main/images/avatar-placeholder.png';
+            elements.resultPhoto.src = record.image_url || placeholder;
+            elements.resultName.textContent = record.name || 'Unnamed Attendee';
+            elements.resultRegId.textContent = record.registration_id;
+            elements.resultPassType.textContent = record.payment_id ? 'Paid Registration' : 'Standard Pass';
+            elements.resultStatus.textContent = record.checked_in_at
+                ? `Checked In • ${formatDateTime(record.checked_in_at)}`
+                : 'Not Checked In';
+            state.currentRegistrationId = record.registration_id;
+            state.currentRecord = record;
+        };
+
+        const onScanSuccess = async (decodedText) => {
+            if (!decodedText) {
+                return;
+            }
+            if (scanFailureTimer) {
+                clearTimeout(scanFailureTimer);
+            }
+            await stopCamera();
+            try {
+                const record = await fetchRegistration(decodedText.trim());
+                if (!record) {
+                    showNotFound();
+                    await startCamera();
+                    return;
+                }
+                populateResult(record);
+                showBlock('result');
+            } catch (error) {
+                console.error('Lookup failed:', error);
+                alert(error.message || 'Unable to verify the pass.');
+                await startCamera();
+            }
+        };
+
+        const onScanFailure = () => {
+            // Intentionally silent but keep timer running
+        };
+
+        const showNotFound = () => {
+            elements.notFoundIcon.classList.remove('shake');
+            void elements.notFoundIcon.offsetWidth;
+            elements.notFoundIcon.classList.add('shake');
+            showModal(modals.notFound);
+        };
+
+        const performManualSearch = async () => {
+            const inputValue = elements.manualInput.value.trim();
+            if (!inputValue) {
+                elements.manualInput.focus();
+                return;
+            }
+            try {
+                const record = await fetchRegistration(inputValue);
+                if (!record) {
+                    showNotFound();
+                    return;
+                }
+                populateResult(record);
+                showBlock('result');
+            } catch (error) {
+                alert(error.message || 'Unable to verify the pass.');
+            }
+        };
+
+        const markRegistrationCheckedIn = async () => {
+            if (!state.currentRegistrationId) {
+                return;
+            }
+            const response = await authorizedFetch('/.netlify/functions/mark-checked-in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ registrationId: state.currentRegistrationId })
+            });
+            if (!response.ok) {
+                const { error } = await response.json().catch(() => ({ error: 'Unable to mark check-in.' }));
+                throw new Error(error || 'Unable to mark check-in.');
+            }
+            const result = await response.json();
+            if (result?.data?.checked_in_at) {
+                state.currentRecord.checked_in_at = result.data.checked_in_at;
+                elements.resultStatus.textContent = `Checked In • ${formatDateTime(result.data.checked_in_at)}`;
+            }
+            return result;
+        };
+
+        const resetToScanner = async () => {
+            showBlock('scanner');
+            elements.manualInput.value = '';
+            state.currentRegistrationId = null;
+            state.currentRecord = null;
+            await startCamera();
+        };
+
+        elements.toggleCameraBtn.addEventListener('click', async () => {
+            if (isCameraActive) {
+                await stopCamera();
+            } else {
+                await startCamera();
+            }
+        });
+
+        elements.manualTriggerBtn.addEventListener('click', async () => {
+            await stopCamera();
+            showBlock('manual');
+            elements.manualInput.focus();
+        });
+
+        elements.manualSearchBtn.addEventListener('click', performManualSearch);
+        elements.manualInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                performManualSearch();
+            }
+        });
+
+        elements.backToScannerBtn.addEventListener('click', resetToScanner);
+
+        elements.keepScanningBtn.addEventListener('click', () => {
+            hideModal(modals.scanFailure);
+            resetScanTimer();
+        });
+
+        elements.switchManualBtn.addEventListener('click', async () => {
+            hideModal(modals.scanFailure);
+            await stopCamera();
+            showBlock('manual');
+            elements.manualInput.focus();
+        });
+
+        elements.notFoundCloseBtn.addEventListener('click', () => {
+            hideModal(modals.notFound);
+            if (blocks.manual.classList.contains('hidden')) {
+                resetScanTimer();
+            }
+        });
+
+        elements.newScanBtn.addEventListener('click', resetToScanner);
+
+        elements.checkedInBtn.addEventListener('click', async () => {
+            if (!state.currentRegistrationId) {
+                return;
+            }
+            elements.checkedInBtn.disabled = true;
+            try {
+                await markRegistrationCheckedIn();
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                await new Promise((resolve) => setTimeout(resolve, 1200));
+                await resetToScanner();
+            } catch (error) {
+                alert(error.message || 'Could not mark check-in.');
+            } finally {
+                elements.checkedInBtn.disabled = false;
+            }
+        });
+
+        window.addEventListener('load', async () => {
+            showBlock('scanner');
+            await startCamera();
+        });
+    </script>
+</body>
+
+</html>
