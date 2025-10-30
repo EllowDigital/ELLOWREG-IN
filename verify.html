@@ -692,13 +692,46 @@
                 }).format(date);
             }
 
-            async function fetchRegistration(registrationId) {
-                const trimmedId = registrationId.trim().toUpperCase();
-                if (!trimmedId) {
+            async function fetchRegistration(identifier) {
+                let registrationId = null;
+                let phone = null;
+
+                if (typeof identifier === 'string') {
+                    const trimmed = identifier.trim();
+                    if (trimmed) {
+                        registrationId = trimmed.toUpperCase();
+                    }
+                } else if (identifier && typeof identifier === 'object') {
+                    const regValue = identifier.registrationId || identifier.registration_id || identifier.id;
+                    const phoneValue = identifier.phone || identifier.mobile || identifier.contact;
+                    if (typeof regValue === 'string') {
+                        const trimmedReg = regValue.trim();
+                        if (trimmedReg) {
+                            registrationId = trimmedReg.toUpperCase();
+                        }
+                    }
+                    if (typeof phoneValue === 'string' || typeof phoneValue === 'number') {
+                        const phoneStr = String(phoneValue).trim();
+                        if (phoneStr) {
+                            phone = phoneStr;
+                        }
+                    }
+                }
+
+                if (!registrationId && !phone) {
                     return null;
                 }
+
+                const searchParams = new URLSearchParams();
+                if (registrationId) {
+                    searchParams.set('registrationId', registrationId);
+                }
+                if (phone) {
+                    searchParams.set('phone', phone);
+                }
+
                 const response = await authorizedFetch(
-                    `/.netlify/functions/search-user?registrationId=${encodeURIComponent(trimmedId)}`,
+                    `/.netlify/functions/search-user?${searchParams.toString()}`,
                     { method: 'GET' }
                 );
                 if (response.status === 404) {
@@ -710,6 +743,29 @@
                 }
                 const data = await response.json();
                 return Array.isArray(data) ? data[0] : data;
+            }
+
+            function deriveLookupParams(decodedText) {
+                if (!decodedText) {
+                    return null;
+                }
+                const trimmed = decodedText.trim();
+                if (!trimmed) {
+                    return null;
+                }
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    if (parsed && typeof parsed === 'object') {
+                        const registrationId = parsed.registrationId || parsed.registration_id || parsed.id;
+                        const phone = parsed.phone || parsed.mobile || parsed.contact;
+                        if (registrationId || phone) {
+                            return { registrationId, phone };
+                        }
+                    }
+                } catch (parseError) {
+                    // Not JSON; fall back to treating the entire string as a registration ID
+                }
+                return { registrationId: trimmed };
             }
 
             function populateResult(record) {
@@ -734,7 +790,13 @@
                 }
                 await stopCamera();
                 try {
-                    const record = await fetchRegistration(decodedText.trim());
+                    const lookupParams = deriveLookupParams(decodedText);
+                    if (!lookupParams) {
+                        alert('Scanned code did not contain recognizable information.');
+                        await resetToScanner();
+                        return;
+                    }
+                    const record = await fetchRegistration(lookupParams);
                     if (!record) {
                         showNotFound();
                         await resetToScanner();
