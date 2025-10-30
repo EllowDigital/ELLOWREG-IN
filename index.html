@@ -303,26 +303,25 @@
 
       .id-card-header {
         background: var(--primary-dark);
-        padding: 1.5rem 1rem;
-        padding-bottom: 75px;
+        padding: 1.75rem 1.25rem 78px;
+        text-align: center;
       }
 
       .id-card-header .expo-title {
         font-family: "Playfair Display", serif;
-        font-size: 2rem;
+        font-size: 2.1rem;
         font-weight: 700;
-        color: var(--accent-color);
-        line-height: 1.1;
+        color: #ffffff;
+        letter-spacing: 0.5px;
       }
 
       .id-card-header .pass-subtitle {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
-        color: #fff;
-        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: 1.5px;
         text-transform: uppercase;
-        opacity: 0.8;
-        margin-top: 0.5rem;
+        margin-top: 0.35rem;
       }
 
       .id-card-body {
@@ -342,9 +341,11 @@
         height: 130px;
         object-fit: cover;
         border-radius: 50%;
-        border: 6px solid #f4f7fa;
+        border: 6px solid #ffffff;
         background: var(--card-bg);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        box-shadow:
+          0 10px 25px rgba(0, 0, 0, 0.15),
+          0 0 0 6px rgba(13, 44, 79, 0.12);
       }
 
       .id-card-name {
@@ -368,14 +369,16 @@
       }
 
       .id-card-qr {
-        width: 112px;
-        height: 112px;
+        width: 120px;
+        height: 120px;
         display: grid;
         place-items: center;
-        background: #fff;
-        border-radius: 12px;
-        border: 1px solid #dee2e6;
-        overflow: hidden;
+        padding: 0.35rem;
+        background: #ffffff;
+        border-radius: 14px;
+        border: 2px solid rgba(13, 44, 79, 0.18);
+        overflow: visible;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
       }
 
       .id-card-qr canvas,
@@ -400,43 +403,22 @@
       .id-card-qr-details .value {
         font-weight: 700;
         color: var(--primary-dark);
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
 
       .id-card-qr-details .secondary-label {
-        margin-top: 0.75rem;
+        margin-top: 0.6rem;
         font-size: 0.7rem;
-        opacity: 0.8;
-      }
-
-      .id-card-reg-wrapper {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 2px dashed #cdd3d9;
-      }
-
-      .id-card-footer-label {
-        font-weight: 600;
-        color: var(--text-light);
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
-
-      .id-card-reg-number {
-        font-family: "Courier New", Courier, monospace;
-        font-weight: bold;
-        font-size: 1.8rem;
-        color: var(--primary-dark);
-        letter-spacing: 1px;
+        opacity: 0.75;
       }
 
       .id-card-footer {
-        background-color: transparent;
-        padding: 1rem;
-        padding-top: 0;
-        color: var(--text-light);
+        background-color: var(--primary-dark);
+        padding: 0.85rem 1.25rem;
+        color: rgba(255, 255, 255, 0.85);
         font-size: 0.9rem;
+        letter-spacing: 0.4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
       }
 
       .lost-pass-link {
@@ -824,8 +806,8 @@
     <div id="id-card-template">
       <div class="id-card">
         <div class="id-card-header">
-          <div class="expo-title">EMRS Digital Pass</div>
-          <div class="pass-subtitle">E-PASS</div>
+          <div class="expo-title">EMRS E-Pass</div>
+          <div class="pass-subtitle">Official Entry Credential</div>
         </div>
         <div class="id-card-body">
           <div class="id-card-photo-wrapper">
@@ -844,10 +826,6 @@
               <span class="value id-card-reg-number-short"></span>
               <span class="label secondary-label">Scan for verification</span>
             </div>
-          </div>
-          <div class="id-card-reg-wrapper">
-            <div class="id-card-footer-label">REGISTRATION NO.</div>
-            <div class="id-card-reg-number"></div>
           </div>
         </div>
         <div class="id-card-footer">
@@ -1021,12 +999,20 @@
             photoEl.src = data.profileImageUrl || defaultPhotoUrl;
             photoEl.alt = `${data.name || "Guest"} profile photo`;
           }
-          card.querySelector(".id-card-name").textContent = data.name;
-          card.querySelector(".id-card-reg-number").textContent =
-            data.registrationId;
+
+          const nameEl = card.querySelector(".id-card-name");
+          if (nameEl) {
+            nameEl.textContent = data.name || "Guest";
+          }
+
           const regShortEl = card.querySelector(".id-card-reg-number-short");
           if (regShortEl) {
             regShortEl.textContent = data.registrationId;
+          }
+
+          const fullRegEl = card.querySelector(".id-card-reg-number");
+          if (fullRegEl) {
+            fullRegEl.textContent = data.registrationId;
           }
 
           const qrContainer = card.querySelector(".id-card-qr");
@@ -1040,8 +1026,8 @@
               if (typeof QRCode !== "undefined") {
                 new QRCode(qrContainer, {
                   text: qrPayload,
-                  width: 112,
-                  height: 112,
+                  width: 120,
+                  height: 120,
                   colorDark: "#0A2540",
                   colorLight: "#FFFFFF",
                   correctLevel: QRCode.CorrectLevel.M,
