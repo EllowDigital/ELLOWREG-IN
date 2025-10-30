@@ -32,7 +32,7 @@ exports.handler = async (event) => {
   let dbClient;
   try {
     dbClient = await pool.connect();
-  const statsQuery = `
+    const statsQuery = `
       SELECT
         (SELECT COUNT(*) FROM registrations) AS total_registrations,
         (SELECT MAX(timestamp) FROM registrations) AS last_registration_time,

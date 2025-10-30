@@ -1,6 +1,6 @@
 {
   "name": "EMRS Verification",
-  "short_name": "EMRS Verify",
+  "short_name": "EMRS - EllowDigital",
   "description": "Verify EMRS passes, manage check-ins, and sync with EllowDigital systems on the go.",
   "start_url": "/verify.html",
   "scope": "/",

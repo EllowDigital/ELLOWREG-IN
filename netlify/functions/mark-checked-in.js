@@ -41,7 +41,7 @@ exports.handler = async (event) => {
     // 4. Database Update: Set the check-in time and flag the record for sync.
     // We use COALESCE to prevent accidentally overwriting an existing check-in time.
     // This query updates the record and returns the new data in a single operation.
-  const updateQuery = `
+    const updateQuery = `
       UPDATE registrations
       SET
         checked_in_at = NOW(),
@@ -49,7 +49,7 @@ exports.handler = async (event) => {
       WHERE registration_id = $1
       RETURNING registration_id, name, checked_in_at;
     `;
-  const { rows } = await dbClient.query(updateQuery, [normalizedRegistrationId]);
+    const { rows } = await dbClient.query(updateQuery, [normalizedRegistrationId]);
 
     if (rows.length === 0) {
       return {

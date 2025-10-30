@@ -41,19 +41,19 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(request.url);
     if (url.origin === self.location.origin && request.mode === 'navigate') {
-            event.respondWith(
-                fetch(request)
-                    .then((response) => {
-                        const copy = response.clone();
-                        caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
-                        return response;
-                    })
-                    .catch(() =>
-                        caches
-                            .match(request)
-                            .then((cached) => cached || caches.match('/verify.html') || caches.match('/admin.html'))
-                    )
-            );
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    const copy = response.clone();
+                    caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
+                    return response;
+                })
+                .catch(() =>
+                    caches
+                        .match(request)
+                        .then((cached) => cached || caches.match('/verify.html') || caches.match('/admin.html'))
+                )
+        );
         return;
     }
 
