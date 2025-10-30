@@ -158,6 +158,10 @@
       font-weight: 700;
     }
 
+    .overview-header p {
+      max-width: 420px;
+    }
+
     .search-input-group {
       max-width: 360px;
     }
@@ -204,6 +208,24 @@
         text-align: center;
       }
 
+      .widget-icon {
+        margin: 0 auto;
+      }
+
+      .overview-header {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .overview-header>div {
+        width: 100%;
+      }
+
+      .overview-header p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
       .actions-group {
         flex-direction: column;
         align-items: stretch;
@@ -217,6 +239,10 @@
 
       .navbar .btn {
         width: 100%;
+      }
+
+      .stats-card {
+        padding: 1.25rem;
       }
 
       .table thead {
@@ -296,7 +322,7 @@
 
     <main class="container-xxl py-4">
       <section id="overview" class="mb-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 overview-header">
           <div>
             <h1 class="page-title mb-1">Control Center</h1>
             <p class="text-muted mb-0">
@@ -307,11 +333,11 @@
         <div class="row g-4">
           <div class="col-12 col-sm-6 col-xl-3">
             <div class="glass-card stats-card h-100">
-              <div class="d-flex align-items-center">
+              <div class="stats-card-body">
                 <div class="widget-icon">
                   <i class="fas fa-users"></i>
                 </div>
-                <div class="ms-3 text-start">
+                <div class="stats-card-info">
                   <div class="stat-label">Total Registrations</div>
                   <div class="stat-value" id="totalRegCount">
                     <div class="spinner-border spinner-border-sm"></div>
@@ -322,11 +348,11 @@
           </div>
           <div class="col-12 col-sm-6 col-xl-3">
             <div class="glass-card stats-card h-100">
-              <div class="d-flex align-items-center">
+              <div class="stats-card-body">
                 <div class="widget-icon">
                   <i class="fas fa-bolt"></i>
                 </div>
-                <div class="ms-3 text-start">
+                <div class="stats-card-info">
                   <div class="stat-label">Last 24 Hours</div>
                   <div class="stat-value" id="registrationsLast24Hours">
                     <div class="spinner-border spinner-border-sm"></div>
@@ -337,11 +363,11 @@
           </div>
           <div class="col-12 col-sm-6 col-xl-3">
             <div class="glass-card stats-card h-100">
-              <div class="d-flex align-items-center">
+              <div class="stats-card-body">
                 <div class="widget-icon">
                   <i class="fas fa-clock"></i>
                 </div>
-                <div class="ms-3 text-start">
+                <div class="stats-card-info">
                   <div class="stat-label">Last Registration</div>
                   <div class="stat-value fs-5" id="lastRegTime">
                     <div class="spinner-border spinner-border-sm"></div>
@@ -352,11 +378,11 @@
           </div>
           <div class="col-12 col-sm-6 col-xl-3">
             <div class="glass-card stats-card h-100">
-              <div class="d-flex align-items-center">
+              <div class="stats-card-body">
                 <div class="widget-icon">
                   <i class="fas fa-user-check"></i>
                 </div>
-                <div class="ms-3 text-start">
+                <div class="stats-card-info">
                   <div class="stat-label">Checked In</div>
                   <div class="stat-value" id="checkedInCount">
                     <div class="spinner-border spinner-border-sm"></div>

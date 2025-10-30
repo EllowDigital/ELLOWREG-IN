@@ -75,15 +75,18 @@ exports.handler = async () => {
     const recordsToAppend = [];
     const updateRequests = [];
     for (const dbRecord of dbRecordsToSync) {
+      // --- MODIFIED SECTION ---
+      // This array maps the DB columns to the Google Sheet columns
+      // and has been updated to match your new schema.
+      // REMOVED: dbRecord.company, dbRecord.address, dbRecord.day
+      // ADDED:   dbRecord.email
       const newRowData = [
         dbRecord.registration_id,
         dbRecord.name,
-        dbRecord.company,
         dbRecord.phone,
-        dbRecord.address,
+        dbRecord.email, // ADDED
         dbRecord.city,
         dbRecord.state,
-        dbRecord.day,
         dbRecord.payment_id || "N/A",
         new Date(dbRecord.timestamp).toLocaleString("en-IN", {
           timeZone: "Asia/Kolkata",
@@ -91,10 +94,12 @@ exports.handler = async () => {
         dbRecord.image_url,
         dbRecord.checked_in_at
           ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", {
-              timeZone: "Asia/Kolkata",
-            })
+            timeZone: "Asia/Kolkata",
+          })
           : "N/A",
       ];
+      // --- END MODIFIED SECTION ---
+
       if (sheetMap.has(dbRecord.registration_id)) {
         const { rowNumber } = sheetMap.get(dbRecord.registration_id);
         updateRequests.push({

@@ -1,201 +1,339 @@
-// /netlify/functions/sync-with-google-sheets.js
+// /netlify/functions/submit-registration.js
 
-const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
+const cloudinary = require("cloudinary").v2;
+const busboy = require("busboy");
+const crypto = require("crypto");
+const { pool } = require("./utils");
 
-// --- Configuration ---
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const SHEET_NAME = "Registrations";
-const API_CHUNK_SIZE = 500; // Process 500 records per API call to stay within limits.
+// --- Constants ---
+const CLOUDINARY_FOLDER = "emrs-profile-images";
 
-/**
- * A highly scalable serverless function to synchronize up to 10,000+ records
- * from a Postgres database to a Google Sheet using an "Upsert" strategy.
- *
- * Key features for scalability:
- * - Efficiently fetches only registration IDs from the sheet to build a lookup map.
- * - Chunks API requests (updates and appends) to avoid hitting Google's payload size limits.
- * - Uses a reliable, serverless-friendly database connection pool.
- */
-exports.handler = async () => {
-  console.log(
-    `[SYNC START] Starting Upsert Sync Process @ ${new Date().toISOString()}`,
-  );
-  if (!SPREADSHEET_ID) {
-    console.error("[SYNC FAIL] Missing GOOGLE_SHEET_ID environment variable.");
+// --- Cloudinary Configuration ---
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
+// Flag: Ensure required Cloudinary credentials are present at runtime.
+const CLOUDINARY_ENABLED = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET,
+);
+
+// Helper function to parse multipart form data
+const parseMultipartForm = (event) =>
+  new Promise((resolve, reject) => {
+    const contentType =
+      event.headers["content-type"] || event.headers["Content-Type"];
+    if (!contentType)
+      return reject(new Error("Request is missing 'Content-Type' header."));
+
+    const bb = busboy({
+      headers: { "content-type": contentType },
+      limits: { fileSize: 10 * 1024 * 1024 },
+    });
+    const fields = {};
+    const files = {};
+
+    bb.on("file", (name, file, info) => {
+      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (!allowedTypes.includes(info.mimeType)) {
+        return reject(
+          new Error(`Invalid file type. Only JPG and PNG are allowed.`),
+        );
+      }
+      const chunks = [];
+      file.on("data", (chunk) => chunks.push(chunk));
+      file.on("limit", () =>
+        reject(new Error(`File '${info.filename}' exceeds the 5MB limit.`)),
+      );
+      file.on("end", () => {
+        files[name] = {
+          filename: info.filename,
+          content: Buffer.concat(chunks),
+          contentType: info.mimeType,
+        };
+      });
+    });
+
+    bb.on("field", (name, value) => {
+      fields[name] = value;
+    });
+    bb.on("close", () => {
+      resolve({ fields, files });
+    });
+    bb.on("error", (err) =>
+      reject(new Error(`Error parsing form data: ${err.message}`)),
+    );
+    bb.end(
+      Buffer.from(event.body, event.isBase64Encoded ? "base64" : "binary"),
+    );
+  });
+
+// Helper function to upload to Cloudinary
+const uploadToCloudinary = (buffer, folder) =>
+  new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "auto" },
+      (err, result) => {
+        if (err)
+          return reject(new Error(`Cloudinary upload failed: ${err.message}`));
+        if (!result)
+          return reject(new Error("Cloudinary returned an empty result."));
+        resolve(result);
+      },
+    );
+    uploadStream.end(buffer);
+  });
+
+// --- Main Handler Function ---
+exports.handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
+  }
+
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL environment variable is not configured.");
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Server configuration error." }),
+      body: JSON.stringify({
+        status: "error",
+        error: "Server misconfiguration: database connection is unavailable.",
+      }),
     };
   }
 
   let dbClient;
   try {
-    dbClient = await pool.connect();
+    const { fields, files } = await parseMultipartForm(event);
+    const { name, phone, email, district, state } = fields;
+    const { profileImage } = files;
 
-    // 1. Fetch records from the database that need syncing.
-    const { rows: dbRecordsToSync } = await dbClient.query(
-      "SELECT * FROM registrations WHERE needs_sync = true ORDER BY timestamp ASC",
-    );
+    // --- FINAL IMPROVEMENT: Strict Server-Side Validation ---
+    const trimmedName = name ? name.trim() : "";
+    const trimmedPhone = phone ? phone.trim() : "";
+    const trimmedEmail = email ? email.trim() : "";
+    const trimmedCity = district ? district.trim() : "";
+    const trimmedState = state ? state.trim() : "";
+    const normalizedEmail = trimmedEmail.toLowerCase();
 
-    if (dbRecordsToSync.length === 0) {
-      console.log("[SYNC INFO] No records to sync. Job finished.");
+    const validationErrors = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    if (trimmedName.length < 3)
+      validationErrors.push("Full Name must be at least 3 characters.");
+    if (!/^[6-9]\d{9}$/.test(trimmedPhone))
+      validationErrors.push(
+        "A valid 10-digit Indian phone number is required.",
+      );
+    if (!emailRegex.test(trimmedEmail))
+      validationErrors.push("A valid email address is required.");
+    if (trimmedCity.length < 2)
+      validationErrors.push(
+        "Please enter your city or district (min. 2 characters).",
+      );
+    if (trimmedState.length < 2)
+      validationErrors.push("State is a required field.");
+    if (!profileImage) validationErrors.push("A profile photo is required.");
+
+    if (validationErrors.length > 0) {
       return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "No records to sync." }),
+        statusCode: 400, // Bad Request
+        body: JSON.stringify({
+          status: "validation_error",
+          errors: validationErrors,
+        }),
       };
     }
-    console.log(
-      `[DB] Found ${dbRecordsToSync.length} records marked for sync.`,
-    );
+    // --- End Validation Block ---
 
-    // 2. Efficiently fetch ONLY the ID column from the Google Sheet to build a lookup map.
-    const sheets = await getGoogleSheetsClient();
-    const sheetResponse = await retryWithBackoff(
-      () =>
-        sheets.spreadsheets.values.get({
-          spreadsheetId: SPREADSHEET_ID,
-          range: `${SHEET_NAME}!A:A`, // OPTIMIZED: Fetch only column A
-        }),
-      "Google Sheets Get IDs",
-    );
+    dbClient = await pool.connect();
+    const existingUserQuery = "SELECT * FROM registrations WHERE phone = $1";
+    const { rows } = await dbClient.query(existingUserQuery, [trimmedPhone]);
 
-    const sheetValues = sheetResponse.data.values || [];
-    const sheetMap = new Map(); // Map of registration_id -> { rowNumber }
-    sheetValues.forEach((row, index) => {
-      const regId = row[0];
-      if (regId) {
-        sheetMap.set(regId, { rowNumber: index + 1 });
+    if (rows.length > 0) {
+      const existingRecord = rows[0];
+      const updateAssignments = ["needs_sync = true"];
+      const updateValues = [];
+
+      if (normalizedEmail && normalizedEmail !== (existingRecord.email || "")) {
+        updateValues.push(normalizedEmail);
+        updateAssignments.push(`email = $${updateValues.length}`);
+        existingRecord.email = normalizedEmail;
       }
-    });
-    console.log(
-      `[GSheet] Mapped ${sheetMap.size} existing rows from the sheet.`,
-    );
 
-    // 3. Categorize records for append or update operations.
-    const recordsToAppend = [];
-    const updateRequests = [];
-    for (const dbRecord of dbRecordsToSync) {
-      // --- MODIFIED SECTION ---
-      // This array maps the DB columns to the Google Sheet columns
-      // and has been updated to match your new schema.
-      // REMOVED: dbRecord.company, dbRecord.address, dbRecord.day
-      // ADDED:   dbRecord.email
-      const newRowData = [
-        dbRecord.registration_id,
-        dbRecord.name,
-        dbRecord.phone,
-        dbRecord.email, // ADDED
-        dbRecord.city,
-        dbRecord.state,
-        dbRecord.payment_id || "N/A",
-        new Date(dbRecord.timestamp).toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata",
-        }),
-        dbRecord.image_url,
-        dbRecord.checked_in_at
-          ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", {
-            timeZone: "Asia/Kolkata",
-          })
-          : "N/A",
-      ];
-      // --- END MODIFIED SECTION ---
-
-      if (sheetMap.has(dbRecord.registration_id)) {
-        const { rowNumber } = sheetMap.get(dbRecord.registration_id);
-        updateRequests.push({
-          range: `${SHEET_NAME}!A${rowNumber}`,
-          values: [newRowData],
-        });
-      } else {
-        recordsToAppend.push(newRowData);
+      if (trimmedCity && trimmedCity !== (existingRecord.city || "")) {
+        updateValues.push(trimmedCity);
+        updateAssignments.push(`city = $${updateValues.length}`);
+        existingRecord.city = trimmedCity;
       }
-    }
-    console.log(
-      `[SYNC PLAN] Records to update: ${updateRequests.length}. Records to append: ${recordsToAppend.length}.`,
-    );
 
-    // 4. Execute API calls in safe, manageable chunks.
-    if (updateRequests.length > 0) {
-      console.log(
-        `[GSheet] Processing ${updateRequests.length} updates in chunks of ${API_CHUNK_SIZE}...`,
+      if (trimmedState && trimmedState !== (existingRecord.state || "")) {
+        updateValues.push(trimmedState);
+        updateAssignments.push(`state = $${updateValues.length}`);
+        existingRecord.state = trimmedState;
+      }
+
+      const wherePlaceholderIndex = updateValues.length + 1;
+      updateValues.push(trimmedPhone);
+      await dbClient.query(
+        `UPDATE registrations SET ${updateAssignments.join(", ")} WHERE phone = $${wherePlaceholderIndex}`,
+        updateValues,
       );
-      for (let i = 0; i < updateRequests.length; i += API_CHUNK_SIZE) {
-        const chunk = updateRequests.slice(i, i + API_CHUNK_SIZE);
-        await retryWithBackoff(
-          () =>
-            sheets.spreadsheets.values.batchUpdate({
-              spreadsheetId: SPREADSHEET_ID,
-              resource: { valueInputOption: "USER_ENTERED", data: chunk },
-            }),
-          `Google Sheets Batch Update Chunk ${i / API_CHUNK_SIZE + 1}`,
-        );
-        console.log(` -> Updated chunk starting at index ${i}.`);
-      }
-      console.log("[GSheet] All update chunks processed successfully.");
+
+      const registrationData = {
+        registrationId: existingRecord.registration_id,
+        name: existingRecord.name,
+        phone: existingRecord.phone,
+        email: existingRecord.email,
+        city: existingRecord.city,
+        state: existingRecord.state,
+        profileImageUrl: existingRecord.image_url,
+      };
+      return {
+        statusCode: 409, // Conflict
+        body: JSON.stringify({
+          status: "exists",
+          error: "This phone number is already registered.",
+          registrationData,
+        }),
+      };
     }
 
-    if (recordsToAppend.length > 0) {
-      console.log(
-        `[GSheet] Processing ${recordsToAppend.length} appends in chunks of ${API_CHUNK_SIZE}...`,
+    if (!CLOUDINARY_ENABLED) {
+      console.error(
+        "Cloudinary credentials are missing. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment.",
       );
-      for (let i = 0; i < recordsToAppend.length; i += API_CHUNK_SIZE) {
-        const chunk = recordsToAppend.slice(i, i + API_CHUNK_SIZE);
-        await retryWithBackoff(
-          () =>
-            sheets.spreadsheets.values.append({
-              spreadsheetId: SPREADSHEET_ID,
-              range: SHEET_NAME,
-              valueInputOption: "USER_ENTERED",
-              resource: { values: chunk },
-            }),
-          `Google Sheets Append Chunk ${i / API_CHUNK_SIZE + 1}`,
-        );
-        console.log(` -> Appended chunk starting at index ${i}.`);
-      }
-      console.log("[GSheet] All append chunks processed successfully.");
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          status: "error",
+          error:
+            "Cloudinary disabled: missing credentials. Contact the administrator or set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.",
+        }),
+      };
     }
 
-    // 5. Mark all processed records as synced in a single, efficient database transaction.
-    const allProcessedIds = dbRecordsToSync.map(
-      (record) => record.registration_id,
-    );
-    await dbClient.query(
-      "UPDATE registrations SET needs_sync = false WHERE registration_id = ANY($1::text[])",
-      [allProcessedIds],
-    );
-    console.log(
-      `[DB] Successfully marked ${allProcessedIds.length} records as synced.`,
-    );
+    let uploadResult;
+    try {
+      uploadResult = await uploadToCloudinary(
+        profileImage.content,
+        CLOUDINARY_FOLDER,
+      );
+    } catch (cloudErr) {
+      console.error(
+        "Cloudinary upload failed:",
+        cloudErr && cloudErr.message ? cloudErr.message : cloudErr,
+      );
+      if (cloudErr && cloudErr.stack) console.error(cloudErr.stack);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          status: "error",
+          error: `Cloudinary upload failed: ${cloudErr && cloudErr.message ? cloudErr.message : "unknown error"}`,
+        }),
+      };
+    }
+
+    const registrationId = `EMRS-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+    const registrationTimestamp = new Date();
+
+    const insertQuery = `INSERT INTO registrations (registration_id, name, phone, email, city, state, image_url, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;`;
+    const values = [
+      registrationId,
+      trimmedName,
+      trimmedPhone,
+      normalizedEmail,
+      trimmedCity || null,
+      trimmedState || null,
+      uploadResult.secure_url,
+      registrationTimestamp,
+    ];
+    const result = await dbClient.query(insertQuery, values);
+    const newRecord = result.rows[0];
 
     return {
       statusCode: 200,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: "Sync successful.",
-        updated: updateRequests.length,
-        appended: recordsToAppend.length,
+        status: "success",
+        registrationData: {
+          registrationId: newRecord.registration_id,
+          name: newRecord.name,
+          phone: newRecord.phone,
+          email: newRecord.email,
+          city: newRecord.city,
+          state: newRecord.state,
+          profileImageUrl: newRecord.image_url,
+        },
       }),
     };
-  } catch (error) {
-    console.error(
-      "[SYNC FAIL] The synchronization process failed critically.",
-      {
-        errorMessage: error.message,
-        googleApiError: error.response?.data?.error,
-      },
-    );
+  } catch (err) {
+    console.error("SUBMIT_REGISTRATION_ERROR:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: "Failed to synchronize data.",
-        details: error.message,
+        status: "error",
+        error: "An internal server error occurred.",
+        details: err.message,
       }),
     };
   } finally {
     if (dbClient) {
       dbClient.release();
-      console.log(
-        "[SYNC END] Database client released. Sync process finished.",
-      );
     }
   }
 };
+
+// --- Step 4: Perform LIVE Sync with Google Sheets to handle updates/inserts ---
+// console.log(`Live syncing registration ${newRecord.registration_id} to Google Sheets...`);
+// try {
+//   const sheets = await getGoogleSheetsClient();
+//   // Fetch only the phone number column for efficiency
+//   const sheetResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!D:D` }), 'Google Sheets Get Phones');
+//   const phoneColumn = sheetResponse.data.values || [];
+
+//   // Find the row index of the matching phone number.
+//   let targetRowIndex = -1;
+//   for (let i = 0; i < phoneColumn.length; i++) {
+//     if (phoneColumn[i][0] === newRecord.phone) {
+//       // Sheet row numbers are 1-based.
+//       targetRowIndex = i + 1;
+//       break;
+//     }
+//   }
+
+//   const newRowData = [
+//     newRecord.registration_id, newRecord.name, newRecord.company, newRecord.phone,
+//     newRecord.address, newRecord.city, newRecord.state, newRecord.day,
+//     newRecord.payment_id || 'N/A',
+//     new Date(newRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+//     newRecord.image_url,
+//   ];
+
+//   if (targetRowIndex !== -1) {
+//     // Phone found: Update the existing row to prevent duplicates.
+//     console.log(`Phone ${newRecord.phone} found in Sheet at row ${targetRowIndex}. Updating.`);
+//     await retryWithBackoff(() => sheets.spreadsheets.values.update({
+//       spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A${targetRowIndex}`,
+//       valueInputOption: "USER_ENTERED", resource: { values: [newRowData] },
+//     }), 'Google Sheets Update');
+//   } else {
+//     // Phone not found: Append a new row for the new user.
+//     console.log(`Phone ${newRecord.phone} not found in Sheet. Appending new row.`);
+//     await retryWithBackoff(() => sheets.spreadsheets.values.append({
+//       spreadsheetId: SPREADSHEET_ID, range: `${SHEET_NAME}!A1`,
+//       valueInputOption: "USER_ENTERED", resource: { values: [newRowData] },
+//     }), 'Google Sheets Append');
+//   }
+//   console.log(`Successfully live synced registration ${newRecord.registration_id}.`);
+// } catch (sheetsError) {
+//   // If live sync fails, log it. The scheduled sync job will eventually correct it.
+//   console.error(`CRITICAL: LIVE sync to Google Sheets failed for ${newRecord.registration_id}. The scheduled sync will fix this later.`, sheetsError);
+// }
