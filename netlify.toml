@@ -4,9 +4,6 @@
   publish = "."
   functions = "netlify/functions"
 
-[dev]
-  command = "npm run dev"
-
 [[redirects]]
   from = "/admin"
   to = "/admin.html"

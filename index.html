@@ -22,16 +22,17 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="EMRS by EllowDigital" />
   <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="EMRS by EllowDigital – Get Your E-Pass" />
-    <meta name="twitter:description"
-      content="Manage registrations and download personalized e-passes for any event using EMRS by EllowDigital." />
-    <meta name="twitter:image" content="https://your-epass-site.com/assets/unnamed.jpg" />
+  <meta name="twitter:title" content="EMRS by EllowDigital – Get Your E-Pass" />
+  <meta name="twitter:description"
+    content="Manage registrations and download personalized e-passes for any event using EMRS by EllowDigital." />
+  <meta name="twitter:image" content="https://your-epass-site.com/assets/unnamed.jpg" />
 
   <meta name="theme-color" content="#ffffff" />
   <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -53,7 +54,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
     defer></script>
-    <script type="application/ld+json">
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -1394,6 +1395,15 @@
         if (alertEl) alertEl.style.display = "none";
       }, 8000);
     });
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .catch((err) => console.warn("Service worker registration failed", err));
+      });
+    }
   </script>
 </body>
 

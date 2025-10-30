@@ -8,12 +8,29 @@
     <meta name="description" content="Verify EMRS e-passes quickly via QR scan or manual lookup." />
     <meta name="author" content="EllowDigital" />
     <title>Verify E-Pass – EMRS</title>
+    <link rel="canonical" href="https://your-epass-site.com/verify.html" />
+    <meta property="og:title" content="Verify EMRS Pass" />
+    <meta property="og:description" content="Scan QR codes or search manually to verify EMRS attendees on the go." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-epass-site.com/verify.html" />
+    <meta property="og:image" content="https://your-epass-site.com/assets/favicon/android-chrome-512x512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Verify EMRS Pass" />
+    <meta name="twitter:description" content="Scan QR codes or search manually to verify EMRS attendees on the go." />
+    <meta name="twitter:image" content="https://your-epass-site.com/assets/favicon/android-chrome-512x512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="EMRS Verify" />
     <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/dist/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="assets/css/tailwind-built.css" />
+
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -24,6 +41,25 @@
             background: radial-gradient(circle at top, #edf2f9 0%, #e0e7f1 45%, #d6deeb 100%);
             font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             min-height: 100vh;
+        }
+
+        #qr-reader {
+            width: 100%;
+            max-width: 22rem;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+        }
+
+        @supports not (aspect-ratio: 1 / 1) {
+            #qr-reader {
+                height: 22rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #qr-reader {
+                max-width: min(18rem, 90vw);
+            }
         }
 
         .card-surface {
@@ -51,6 +87,17 @@
             background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.85), transparent);
             border-radius: 999px;
             animation: sweep 2.2s ease-in-out infinite;
+        }
+
+        .scan-laser {
+            max-width: 22rem;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 640px) {
+            .scan-laser {
+                max-width: min(18rem, 90vw);
+            }
         }
 
         @keyframes sweep {
@@ -125,61 +172,74 @@
                     class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
                     <i class="fas fa-home"></i> Main Page
                 </a>
+                <button id="logoutBtn" type="button"
+                    class="hidden inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-600 transition hover:border-rose-300 hover:text-rose-700">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="flex-1 flex items-center justify-center px-4 py-10">
+    <main class="flex-1 flex justify-center px-4 py-8 sm:py-10">
         <div class="w-full max-w-5xl">
-            <div class="grid gap-6">
-                <!-- Scanner Block -->
-                <section id="scannerBlock" class="card-surface p-8 transition" data-block="scanner">
-                    <div class="flex flex-col gap-6 md:flex-row">
-                        <div class="md:w-1/2">
-                            <h2 class="text-2xl font-semibold text-slate-900">QR Scanner</h2>
-                            <p class="mt-2 text-sm leading-6 text-slate-500">Point the camera at the visitor's QR code
-                                to validate
-                                their pass instantly. Keep the code inside the boundary for best results.</p>
-                            <div class="relative mt-6 rounded-2xl bg-slate-100 p-4">
-                                <div class="scan-laser relative overflow-hidden rounded-2xl" style="min-height: 280px;">
-                                    <div id="qr-reader" class="h-[280px] w-full"></div>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex flex-wrap gap-3">
-                                <button id="toggleCameraBtn"
-                                    class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
-                                    <i class="fas fa-video"></i> <span>Turn Camera Off</span>
-                                </button>
-                                <button id="manualTriggerBtn"
-                                    class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700">
-                                    <i class="fas fa-keyboard"></i> Verify Manually
-                                </button>
-                            </div>
+            <div class="grid gap-6 lg:gap-8">
+                <section id="loginBlock" class="card-surface hidden p-6 sm:p-8 transition" data-block="login">
+                    <div class="mx-auto max-w-md text-center">
+                        <div
+                            class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                            <i class="fas fa-lock text-2xl"></i>
                         </div>
-                        <div class="md:w-1/2 flex flex-col justify-center">
-                            <div
-                                class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-6 text-indigo-900 shadow-inner">
-                                <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">How it works
-                                </p>
-                                <ul class="mt-3 space-y-3 text-sm leading-6">
-                                    <li class="flex gap-3"><span
-                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">1</span>
-                                        Allow camera access; the scanner activates automatically.</li>
-                                    <li class="flex gap-3"><span
-                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">2</span>
-                                        Hold the QR code 15-20 cm from the camera until it's detected.</li>
-                                    <li class="flex gap-3"><span
-                                            class="mt-1 h-6 w-6 rounded-full bg-white text-center text-xs font-semibold text-indigo-500 shadow">3</span>
-                                        If scanning fails, switch to manual entry or keep scanning.</li>
-                                </ul>
+                        <h2 class="mt-6 text-2xl font-semibold text-slate-900">Staff Sign-In</h2>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">
+                            Enter the admin password once to unlock scanning and manual verification for this session.
+                        </p>
+                        <form id="loginForm" class="mt-6 space-y-4">
+                            <div class="text-left">
+                                <label for="loginPasswordInput" class="block text-sm font-semibold text-slate-700">Admin
+                                    Password</label>
+                                <input id="loginPasswordInput" type="password" autocomplete="current-password"
+                                    class="mt-2 w-full rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                    placeholder="Enter password" required />
                             </div>
-                        </div>
+                            <p id="loginErrorMessage" class="hidden text-sm font-semibold text-rose-600"></p>
+                            <button id="loginSubmitBtn" type="submit"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-700">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Sign In</span>
+                            </button>
+                        </form>
                     </div>
                 </section>
 
-                <!-- Manual Block -->
+                <section id="scannerBlock" class="card-surface hidden p-6 sm:p-8 transition" data-block="scanner">
+                    <div class="flex flex-col gap-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-slate-900">QR Scanner</h2>
+                            <p class="mt-2 text-sm leading-6 text-slate-500">Point the camera at the visitor's QR code
+                                to validate their pass instantly. Keep the code inside the boundary for best results.
+                            </p>
+                        </div>
+                        <div class="relative rounded-2xl bg-slate-100 p-4 sm:p-6">
+                            <div class="scan-laser relative overflow-hidden rounded-2xl">
+                                <div id="qr-reader"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <button id="toggleCameraBtn" type="button"
+                                class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+                                <i class="fas fa-video"></i> <span>Turn Camera Off</span>
+                            </button>
+                            <button id="manualTriggerBtn" type="button"
+                                class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700">
+                                <i class="fas fa-keyboard"></i> Verify Manually
+                            </button>
+                        </div>
+                        <p id="scannerErrorMessage" class="hidden text-sm font-semibold text-red-600"></p>
+                    </div>
+                </section>
+
                 <section id="manualBlock" class="card-surface hidden p-8 transition" data-block="manual">
-                    <div class="max-w-xl">
+                    <div class="mx-auto max-w-xl">
                         <h2 class="text-2xl font-semibold text-slate-900">Manual Verification</h2>
                         <p class="mt-2 text-sm leading-6 text-slate-500">Enter the registration ID exactly as shown on
                             the e-pass.</p>
@@ -189,11 +249,11 @@
                             <input id="manualInput" type="text" placeholder="EMRS-2025-0001"
                                 class="w-full rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
                             <div class="flex flex-wrap gap-3 pt-2">
-                                <button id="manualSearchBtn"
+                                <button id="manualSearchBtn" type="button"
                                     class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-700">
                                     <i class="fas fa-search"></i> Search
                                 </button>
-                                <button id="backToScannerBtn"
+                                <button id="backToScannerBtn" type="button"
                                     class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800">
                                     <i class="fas fa-arrow-left"></i> Back to Scanner
                                 </button>
@@ -202,18 +262,17 @@
                     </div>
                 </section>
 
-                <!-- Result Block -->
-                <section id="resultBlock" class="card-surface hidden p-8 transition" data-block="result">
-                    <div class="flex flex-col gap-6 md:flex-row">
-                        <div class="md:w-1/3 flex justify-center">
+                <section id="resultBlock" class="card-surface hidden p-6 sm:p-8 transition" data-block="result">
+                    <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
+                        <div class="flex justify-center lg:w-1/3">
                             <div class="relative">
                                 <img id="resultPhoto" src="" alt="Profile"
-                                    class="h-48 w-48 rounded-full border-4 border-white shadow-xl object-cover" />
+                                    class="h-40 w-40 rounded-full border-4 border-white object-cover shadow-xl sm:h-48 sm:w-48" />
                                 <span
                                     class="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-green-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow">Verified</span>
                             </div>
                         </div>
-                        <div class="md:w-2/3">
+                        <div class="lg:w-2/3">
                             <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">Attendee Details
                             </p>
                             <h2 id="resultName" class="mt-2 text-3xl font-semibold text-slate-900"></h2>
@@ -234,11 +293,11 @@
                                 </div>
                             </div>
                             <div class="mt-6 flex flex-wrap gap-3">
-                                <button id="checkedInBtn"
+                                <button id="checkedInBtn" type="button"
                                     class="inline-flex items-center gap-2 rounded-full bg-green-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-green-700">
                                     <i class="fas fa-check"></i> Mark as Checked-In
                                 </button>
-                                <button id="newScanBtn"
+                                <button id="newScanBtn" type="button"
                                     class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800">
                                     <i class="fas fa-redo"></i> New Scan
                                 </button>
@@ -250,7 +309,6 @@
         </div>
     </main>
 
-    <!-- Scan Failure Modal -->
     <div id="scanFailureModal" class="fixed inset-0 z-40 hidden items-center justify-center">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative modal-card text-center">
@@ -260,17 +318,16 @@
             <h3 class="mt-4 text-xl font-semibold text-slate-900">No QR detected yet</h3>
             <p class="mt-2 text-sm text-slate-500">Would you like to keep scanning or switch to manual verification?</p>
             <div class="mt-5 flex flex-col gap-2">
-                <button id="keepScanningBtn"
+                <button id="keepScanningBtn" type="button"
                     class="w-full rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Keep
                     Scanning</button>
-                <button id="switchManualBtn"
+                <button id="switchManualBtn" type="button"
                     class="w-full rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900">Type
                     Manually</button>
             </div>
         </div>
     </div>
 
-    <!-- Not Found Modal -->
     <div id="notFoundModal" class="fixed inset-0 z-40 hidden items-center justify-center">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative modal-card text-center">
@@ -286,7 +343,7 @@
             <p class="mt-2 text-sm text-slate-500">We couldn't match that registration ID. Please check and try again.
             </p>
             <div class="mt-5 flex flex-col gap-2">
-                <button id="notFoundCloseBtn"
+                <button id="notFoundCloseBtn" type="button"
                     class="w-full rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Try
                     Another</button>
             </div>
@@ -299,357 +356,666 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" defer></script>
     <script>
-        const blocks = {
-            scanner: document.getElementById('scannerBlock'),
-            manual: document.getElementById('manualBlock'),
-            result: document.getElementById('resultBlock')
-        };
+        (() => {
+            const ADMIN_KEY_STORAGE_KEY = 'EMRS_ADMIN_SESSION_KEY';
+            const AUTH_REQUIRED_CODE = 'AUTH_REQUIRED';
+            const HTML5_QRCODE_SRC = 'assets/vendor/html5-qrcode.min.js';
+            const SCAN_TIMEOUT_MS = 6500;
 
-        const modals = {
-            scanFailure: document.getElementById('scanFailureModal'),
-            notFound: document.getElementById('notFoundModal')
-        };
-
-        const elements = {
-            toggleCameraBtn: document.getElementById('toggleCameraBtn'),
-            manualTriggerBtn: document.getElementById('manualTriggerBtn'),
-            manualInput: document.getElementById('manualInput'),
-            manualSearchBtn: document.getElementById('manualSearchBtn'),
-            backToScannerBtn: document.getElementById('backToScannerBtn'),
-            keepScanningBtn: document.getElementById('keepScanningBtn'),
-            switchManualBtn: document.getElementById('switchManualBtn'),
-            notFoundCloseBtn: document.getElementById('notFoundCloseBtn'),
-            resultPhoto: document.getElementById('resultPhoto'),
-            resultName: document.getElementById('resultName'),
-            resultRegId: document.getElementById('resultRegId'),
-            resultPassType: document.getElementById('resultPassType'),
-            resultStatus: document.getElementById('resultStatus'),
-            checkedInBtn: document.getElementById('checkedInBtn'),
-            newScanBtn: document.getElementById('newScanBtn'),
-            notFoundIcon: document.getElementById('notFoundIcon')
-        };
-
-        const ADMIN_KEY_STORAGE_KEY = 'EMRS_ADMIN_SESSION_KEY';
-
-        let html5QrCode;
-        let isCameraActive = false;
-        let scanFailureTimer = null;
-
-        const state = {
-            adminKey: sessionStorage.getItem(ADMIN_KEY_STORAGE_KEY) || null,
-            currentRegistrationId: null,
-            currentRecord: null
-        };
-
-        const SCAN_TIMEOUT_MS = 6500;
-
-        const showBlock = (target) => {
-            Object.entries(blocks).forEach(([key, section]) => {
-                if (key === target) {
-                    section.classList.remove('hidden');
-                } else {
-                    section.classList.add('hidden');
+            if (typeof sessionStorage !== 'undefined') {
+                try {
+                    sessionStorage.removeItem(ADMIN_KEY_STORAGE_KEY);
+                } catch (storageError) {
+                    console.warn('Unable to reset stored admin key', storageError);
                 }
-            });
-        };
-
-        const showModal = (modal) => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        };
-
-        const hideModal = (modal) => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        };
-
-        const resetScanTimer = () => {
-            if (scanFailureTimer) {
-                clearTimeout(scanFailureTimer);
             }
-            scanFailureTimer = setTimeout(() => {
-                if (isCameraActive && blocks.scanner && !blocks.scanner.classList.contains('hidden')) {
-                    showModal(modals.scanFailure);
-                }
-            }, SCAN_TIMEOUT_MS);
-        };
 
-        const ensureAdminKey = async () => {
-            if (state.adminKey) {
-                return state.adminKey;
-            }
-            const password = prompt('Admin authentication required. Enter admin password to continue.');
-            if (!password) {
-                throw new Error('Admin password is required to verify passes.');
-            }
-            const response = await fetch('/.netlify/functions/admin-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
-            });
-            if (!response.ok) {
-                throw new Error('Authentication failed. Please check the password and try again.');
-            }
-            const data = await response.json();
-            state.adminKey = data.secretKey;
-            sessionStorage.setItem(ADMIN_KEY_STORAGE_KEY, state.adminKey);
-            return state.adminKey;
-        };
-
-        const clearAdminKey = () => {
-            state.adminKey = null;
-            sessionStorage.removeItem(ADMIN_KEY_STORAGE_KEY);
-        };
-
-        const authorizedFetch = async (url, options = {}, retry = true) => {
-            const adminKey = await ensureAdminKey();
-            const mergedHeaders = {
-                ...(options.headers || {}),
-                'x-admin-key': adminKey
+            const blocks = {
+                login: document.getElementById('loginBlock'),
+                scanner: document.getElementById('scannerBlock'),
+                manual: document.getElementById('manualBlock'),
+                result: document.getElementById('resultBlock')
             };
-            const response = await fetch(url, { ...options, headers: mergedHeaders });
-            if (response.status === 401 && retry) {
-                clearAdminKey();
-                return authorizedFetch(url, options, false);
-            }
-            return response;
-        };
 
-        const formatDateTime = (value) => {
-            if (!value) {
-                return '';
-            }
-            const date = new Date(value);
-            return new Intl.DateTimeFormat('en-IN', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-            }).format(date);
-        };
+            const modals = {
+                scanFailure: document.getElementById('scanFailureModal'),
+                notFound: document.getElementById('notFoundModal')
+            };
 
-        const startCamera = async () => {
-            if (isCameraActive) return;
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode('qr-reader');
-            }
-            try {
-                await html5QrCode.start(
-                    { facingMode: 'environment' },
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1
-                    },
-                    onScanSuccess,
-                    onScanFailure
-                );
-                isCameraActive = true;
-                elements.toggleCameraBtn.querySelector('span').textContent = 'Turn Camera Off';
-                elements.toggleCameraBtn.querySelector('i').className = 'fas fa-video-slash';
-                resetScanTimer();
-            } catch (error) {
-                console.error('Camera start failed:', error);
-                alert('Unable to start camera. Please allow camera permissions or try another device.');
-            }
-        };
+            const elements = {
+                toggleCameraBtn: document.getElementById('toggleCameraBtn'),
+                manualTriggerBtn: document.getElementById('manualTriggerBtn'),
+                manualInput: document.getElementById('manualInput'),
+                manualSearchBtn: document.getElementById('manualSearchBtn'),
+                backToScannerBtn: document.getElementById('backToScannerBtn'),
+                keepScanningBtn: document.getElementById('keepScanningBtn'),
+                switchManualBtn: document.getElementById('switchManualBtn'),
+                notFoundCloseBtn: document.getElementById('notFoundCloseBtn'),
+                resultPhoto: document.getElementById('resultPhoto'),
+                resultName: document.getElementById('resultName'),
+                resultRegId: document.getElementById('resultRegId'),
+                resultPassType: document.getElementById('resultPassType'),
+                resultStatus: document.getElementById('resultStatus'),
+                checkedInBtn: document.getElementById('checkedInBtn'),
+                newScanBtn: document.getElementById('newScanBtn'),
+                notFoundIcon: document.getElementById('notFoundIcon'),
+                scannerErrorMessage: document.getElementById('scannerErrorMessage'),
+                loginForm: document.getElementById('loginForm'),
+                loginPasswordInput: document.getElementById('loginPasswordInput'),
+                loginSubmitBtn: document.getElementById('loginSubmitBtn'),
+                loginErrorMessage: document.getElementById('loginErrorMessage'),
+                logoutBtn: document.getElementById('logoutBtn')
+            };
 
-        const stopCamera = async () => {
-            if (!isCameraActive || !html5QrCode) return;
-            await html5QrCode.stop().catch(() => null);
-            await html5QrCode.clear().catch(() => null);
-            isCameraActive = false;
-            if (scanFailureTimer) {
-                clearTimeout(scanFailureTimer);
-            }
-            elements.toggleCameraBtn.querySelector('span').textContent = 'Turn Camera On';
-            elements.toggleCameraBtn.querySelector('i').className = 'fas fa-video';
-        };
-
-        const fetchRegistration = async (registrationId) => {
-            const trimmedId = registrationId.trim().toUpperCase();
-            if (!trimmedId) {
-                return null;
-            }
-            const response = await authorizedFetch(
-                `/.netlify/functions/search-user?registrationId=${encodeURIComponent(trimmedId)}`,
-                { method: 'GET' }
-            );
-            if (response.status === 404) {
-                return null;
-            }
-            if (!response.ok) {
-                const { error } = await response.json().catch(() => ({ error: 'Unexpected error occurred.' }));
-                throw new Error(error || 'Unable to look up registration.');
-            }
-            const data = await response.json();
-            return Array.isArray(data) ? data[0] : data;
-        };
-
-        const populateResult = (record) => {
-            const placeholder = 'https://cdn.jsdelivr.net/gh/ellowdigital/assets@main/images/avatar-placeholder.png';
-            elements.resultPhoto.src = record.image_url || placeholder;
-            elements.resultName.textContent = record.name || 'Unnamed Attendee';
-            elements.resultRegId.textContent = record.registration_id;
-            elements.resultPassType.textContent = record.payment_id ? 'Paid Registration' : 'Standard Pass';
-            elements.resultStatus.textContent = record.checked_in_at
-                ? `Checked In • ${formatDateTime(record.checked_in_at)}`
-                : 'Not Checked In';
-            state.currentRegistrationId = record.registration_id;
-            state.currentRecord = record;
-        };
-
-        const onScanSuccess = async (decodedText) => {
-            if (!decodedText) {
+            if (!elements.loginForm) {
                 return;
             }
-            if (scanFailureTimer) {
-                clearTimeout(scanFailureTimer);
-            }
-            await stopCamera();
-            try {
-                const record = await fetchRegistration(decodedText.trim());
-                if (!record) {
-                    showNotFound();
-                    await startCamera();
-                    return;
-                }
-                populateResult(record);
-                showBlock('result');
-            } catch (error) {
-                console.error('Lookup failed:', error);
-                alert(error.message || 'Unable to verify the pass.');
-                await startCamera();
-            }
-        };
 
-        const onScanFailure = () => {
-            // Intentionally silent but keep timer running
-        };
+            const loginButtonDefaultText = elements.loginSubmitBtn?.querySelector('span')?.textContent?.trim() || 'Sign In';
 
-        const showNotFound = () => {
-            elements.notFoundIcon.classList.remove('shake');
-            void elements.notFoundIcon.offsetWidth;
-            elements.notFoundIcon.classList.add('shake');
-            showModal(modals.notFound);
-        };
+            const state = {
+                adminKey: null,
+                currentRegistrationId: null,
+                currentRecord: null,
+                cameraPermissionGranted: false
+            };
 
-        const performManualSearch = async () => {
-            const inputValue = elements.manualInput.value.trim();
-            if (!inputValue) {
-                elements.manualInput.focus();
-                return;
-            }
-            try {
-                const record = await fetchRegistration(inputValue);
-                if (!record) {
-                    showNotFound();
-                    return;
-                }
-                populateResult(record);
-                showBlock('result');
-            } catch (error) {
-                alert(error.message || 'Unable to verify the pass.');
-            }
-        };
+            let html5QrCode = null;
+            let isCameraActive = false;
+            let scanFailureTimer = null;
 
-        const markRegistrationCheckedIn = async () => {
-            if (!state.currentRegistrationId) {
-                return;
-            }
-            const response = await authorizedFetch('/.netlify/functions/mark-checked-in', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ registrationId: state.currentRegistrationId })
-            });
-            if (!response.ok) {
-                const { error } = await response.json().catch(() => ({ error: 'Unable to mark check-in.' }));
-                throw new Error(error || 'Unable to mark check-in.');
-            }
-            const result = await response.json();
-            if (result?.data?.checked_in_at) {
-                state.currentRecord.checked_in_at = result.data.checked_in_at;
-                elements.resultStatus.textContent = `Checked In • ${formatDateTime(result.data.checked_in_at)}`;
-            }
-            return result;
-        };
+            const loadHtml5Qrcode = (() => {
+                let loaderPromise = null;
+                return () => {
+                    if (window.Html5Qrcode) {
+                        return Promise.resolve();
+                    }
+                    if (!loaderPromise) {
+                        loaderPromise = new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = HTML5_QRCODE_SRC;
+                            script.async = true;
+                            script.onload = () => {
+                                if (window.Html5Qrcode) {
+                                    resolve();
+                                } else {
+                                    reject(new Error('QR scanner failed to initialize.'));
+                                }
+                            };
+                            script.onerror = () => reject(new Error('Unable to load QR scanner library.'));
+                            document.head.appendChild(script);
+                        });
+                    }
+                    return loaderPromise;
+                };
+            })();
 
-        const resetToScanner = async () => {
-            showBlock('scanner');
-            elements.manualInput.value = '';
-            state.currentRegistrationId = null;
-            state.currentRecord = null;
-            await startCamera();
-        };
-
-        elements.toggleCameraBtn.addEventListener('click', async () => {
-            if (isCameraActive) {
-                await stopCamera();
-            } else {
-                await startCamera();
-            }
-        });
-
-        elements.manualTriggerBtn.addEventListener('click', async () => {
-            await stopCamera();
-            showBlock('manual');
-            elements.manualInput.focus();
-        });
-
-        elements.manualSearchBtn.addEventListener('click', performManualSearch);
-        elements.manualInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                performManualSearch();
-            }
-        });
-
-        elements.backToScannerBtn.addEventListener('click', resetToScanner);
-
-        elements.keepScanningBtn.addEventListener('click', () => {
-            hideModal(modals.scanFailure);
-            resetScanTimer();
-        });
-
-        elements.switchManualBtn.addEventListener('click', async () => {
-            hideModal(modals.scanFailure);
-            await stopCamera();
-            showBlock('manual');
-            elements.manualInput.focus();
-        });
-
-        elements.notFoundCloseBtn.addEventListener('click', () => {
-            hideModal(modals.notFound);
-            if (blocks.manual.classList.contains('hidden')) {
-                resetScanTimer();
-            }
-        });
-
-        elements.newScanBtn.addEventListener('click', resetToScanner);
-
-        elements.checkedInBtn.addEventListener('click', async () => {
-            if (!state.currentRegistrationId) {
-                return;
-            }
-            elements.checkedInBtn.disabled = true;
-            try {
-                await markRegistrationCheckedIn();
-                confetti({
-                    particleCount: 120,
-                    spread: 70,
-                    origin: { y: 0.6 }
+            function showBlock(target) {
+                Object.entries(blocks).forEach(([key, section]) => {
+                    if (!section) {
+                        return;
+                    }
+                    if (key === target) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
                 });
-                await new Promise((resolve) => setTimeout(resolve, 1200));
-                await resetToScanner();
-            } catch (error) {
-                alert(error.message || 'Could not mark check-in.');
-            } finally {
-                elements.checkedInBtn.disabled = false;
             }
-        });
 
-        window.addEventListener('load', async () => {
-            showBlock('scanner');
-            await startCamera();
-        });
+            function showModal(modal) {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function hideModal(modal) {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            function setScannerError(message) {
+                if (!elements.scannerErrorMessage) {
+                    return;
+                }
+                if (message) {
+                    elements.scannerErrorMessage.textContent = message;
+                    elements.scannerErrorMessage.classList.remove('hidden');
+                } else {
+                    elements.scannerErrorMessage.textContent = '';
+                    elements.scannerErrorMessage.classList.add('hidden');
+                }
+            }
+
+            function setLoginError(message) {
+                if (!elements.loginErrorMessage) {
+                    return;
+                }
+                if (message) {
+                    elements.loginErrorMessage.textContent = message;
+                    elements.loginErrorMessage.classList.remove('hidden');
+                } else {
+                    elements.loginErrorMessage.textContent = '';
+                    elements.loginErrorMessage.classList.add('hidden');
+                }
+            }
+
+            function setLoginLoading(isLoading) {
+                if (!elements.loginSubmitBtn) {
+                    return;
+                }
+                elements.loginSubmitBtn.disabled = isLoading;
+                const label = elements.loginSubmitBtn.querySelector('span');
+                if (label) {
+                    label.textContent = isLoading ? 'Signing In...' : loginButtonDefaultText;
+                }
+            }
+
+            async function stopCamera() {
+                if (!html5QrCode) {
+                    return;
+                }
+                if (isCameraActive && typeof html5QrCode.stop === 'function') {
+                    try {
+                        await html5QrCode.stop();
+                    } catch (stopError) {
+                        console.warn('Unable to stop camera cleanly', stopError);
+                    }
+                }
+                if (typeof html5QrCode.clear === 'function') {
+                    try {
+                        await html5QrCode.clear();
+                    } catch (clearError) {
+                        console.warn('Unable to clear QR scanner display', clearError);
+                    }
+                }
+                isCameraActive = false;
+                if (elements.toggleCameraBtn) {
+                    const label = elements.toggleCameraBtn.querySelector('span');
+                    const icon = elements.toggleCameraBtn.querySelector('i');
+                    if (label) {
+                        label.textContent = 'Turn Camera On';
+                    }
+                    if (icon) {
+                        icon.className = 'fas fa-video';
+                    }
+                }
+                if (scanFailureTimer) {
+                    clearTimeout(scanFailureTimer);
+                    scanFailureTimer = null;
+                }
+                setScannerError('');
+            }
+
+            async function showLogin(message = '') {
+                await stopCamera();
+                state.currentRegistrationId = null;
+                state.currentRecord = null;
+                showBlock('login');
+                setLoginLoading(false);
+                setLoginError(message);
+                setScannerError('');
+                if (elements.logoutBtn) {
+                    elements.logoutBtn.classList.add('hidden');
+                }
+                if (elements.loginPasswordInput) {
+                    elements.loginPasswordInput.value = '';
+                    try {
+                        elements.loginPasswordInput.focus({ preventScroll: true });
+                    } catch (focusError) {
+                        elements.loginPasswordInput.focus();
+                    }
+                }
+            }
+
+            function createAuthError(message = 'Authentication required') {
+                const error = new Error(message);
+                error.code = AUTH_REQUIRED_CODE;
+                return error;
+            }
+
+            function clearAdminKey() {
+                state.adminKey = null;
+                if (typeof sessionStorage !== 'undefined') {
+                    try {
+                        sessionStorage.removeItem(ADMIN_KEY_STORAGE_KEY);
+                    } catch (storageError) {
+                        console.warn('Unable to clear stored admin key', storageError);
+                    }
+                }
+            }
+
+            async function ensureCameraPermission() {
+                if (state.cameraPermissionGranted) {
+                    return;
+                }
+                if (!navigator.mediaDevices?.getUserMedia) {
+                    throw new Error('Camera access is not supported on this device.');
+                }
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } },
+                    audio: false
+                });
+                stream.getTracks().forEach((track) => track.stop());
+                state.cameraPermissionGranted = true;
+            }
+
+            function resetScanTimer() {
+                if (scanFailureTimer) {
+                    clearTimeout(scanFailureTimer);
+                }
+                scanFailureTimer = setTimeout(() => {
+                    if (isCameraActive && blocks.scanner && !blocks.scanner.classList.contains('hidden')) {
+                        showModal(modals.scanFailure);
+                    }
+                }, SCAN_TIMEOUT_MS);
+            }
+
+            async function startCamera() {
+                if (isCameraActive || !state.adminKey) {
+                    return;
+                }
+                try {
+                    await loadHtml5Qrcode();
+                } catch (loaderError) {
+                    console.error(loaderError);
+                    setScannerError(loaderError.message || 'Unable to load QR scanner.');
+                    return;
+                }
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode('qr-reader');
+                }
+                try {
+                    await ensureCameraPermission();
+                } catch (permissionError) {
+                    console.error('Camera permission error:', permissionError);
+                    setScannerError(permissionError.message || 'Camera permission is required to scan codes.');
+                    return;
+                }
+                try {
+                    await html5QrCode.start(
+                        { facingMode: 'environment' },
+                        { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 },
+                        onScanSuccess,
+                        onScanFailure
+                    );
+                    isCameraActive = true;
+                    setScannerError('');
+                    if (elements.toggleCameraBtn) {
+                        const label = elements.toggleCameraBtn.querySelector('span');
+                        const icon = elements.toggleCameraBtn.querySelector('i');
+                        if (label) {
+                            label.textContent = 'Turn Camera Off';
+                        }
+                        if (icon) {
+                            icon.className = 'fas fa-video-slash';
+                        }
+                    }
+                    resetScanTimer();
+                } catch (startError) {
+                    console.error('Camera start failed:', startError);
+                    setScannerError('Unable to start the camera. Please allow permissions or try another device.');
+                }
+            }
+
+            async function authorizedFetch(url, options = {}) {
+                if (!state.adminKey) {
+                    await showLogin('Please sign in to continue.');
+                    throw createAuthError();
+                }
+                const mergedHeaders = {
+                    ...(options.headers || {}),
+                    'x-admin-key': state.adminKey
+                };
+                const response = await fetch(url, { ...options, headers: mergedHeaders });
+                if (response.status === 401) {
+                    clearAdminKey();
+                    await showLogin('Session expired. Please sign in again.');
+                    throw createAuthError('Session expired. Please sign in again.');
+                }
+                return response;
+            }
+
+            function formatDateTime(value) {
+                if (!value) {
+                    return '';
+                }
+                const date = new Date(value);
+                return new Intl.DateTimeFormat('en-IN', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                }).format(date);
+            }
+
+            async function fetchRegistration(registrationId) {
+                const trimmedId = registrationId.trim().toUpperCase();
+                if (!trimmedId) {
+                    return null;
+                }
+                const response = await authorizedFetch(
+                    `/.netlify/functions/search-user?registrationId=${encodeURIComponent(trimmedId)}`,
+                    { method: 'GET' }
+                );
+                if (response.status === 404) {
+                    return null;
+                }
+                if (!response.ok) {
+                    const { error } = await response.json().catch(() => ({ error: 'Unexpected error occurred.' }));
+                    throw new Error(error || 'Unable to look up registration.');
+                }
+                const data = await response.json();
+                return Array.isArray(data) ? data[0] : data;
+            }
+
+            function populateResult(record) {
+                const placeholder = 'https://cdn.jsdelivr.net/gh/ellowdigital/assets@main/images/avatar-placeholder.png';
+                elements.resultPhoto.src = record.image_url || placeholder;
+                elements.resultName.textContent = record.name || 'Unnamed Attendee';
+                elements.resultRegId.textContent = record.registration_id;
+                elements.resultPassType.textContent = record.payment_id ? 'Paid Registration' : 'Standard Pass';
+                elements.resultStatus.textContent = record.checked_in_at
+                    ? `Checked In • ${formatDateTime(record.checked_in_at)}`
+                    : 'Not Checked In';
+                state.currentRegistrationId = record.registration_id;
+                state.currentRecord = record;
+            }
+
+            async function onScanSuccess(decodedText) {
+                if (!decodedText) {
+                    return;
+                }
+                if (scanFailureTimer) {
+                    clearTimeout(scanFailureTimer);
+                }
+                await stopCamera();
+                try {
+                    const record = await fetchRegistration(decodedText.trim());
+                    if (!record) {
+                        showNotFound();
+                        await resetToScanner();
+                        return;
+                    }
+                    populateResult(record);
+                    showBlock('result');
+                } catch (error) {
+                    if (error.code === AUTH_REQUIRED_CODE) {
+                        return;
+                    }
+                    console.error('Lookup failed:', error);
+                    alert(error.message || 'Unable to verify the pass.');
+                    await resetToScanner();
+                }
+            }
+
+            function onScanFailure() {
+                // keep timer running silently
+            }
+
+            function showNotFound() {
+                if (!elements.notFoundIcon) {
+                    return;
+                }
+                elements.notFoundIcon.classList.remove('shake');
+                void elements.notFoundIcon.offsetWidth;
+                elements.notFoundIcon.classList.add('shake');
+                showModal(modals.notFound);
+            }
+
+            async function performManualSearch() {
+                if (!elements.manualInput) {
+                    return;
+                }
+                const inputValue = elements.manualInput.value.trim();
+                if (!inputValue) {
+                    elements.manualInput.focus();
+                    return;
+                }
+                await stopCamera();
+                try {
+                    const record = await fetchRegistration(inputValue);
+                    if (!record) {
+                        showNotFound();
+                        return;
+                    }
+                    populateResult(record);
+                    showBlock('result');
+                } catch (error) {
+                    if (error.code === AUTH_REQUIRED_CODE) {
+                        return;
+                    }
+                    alert(error.message || 'Unable to verify the pass.');
+                }
+            }
+
+            async function markRegistrationCheckedIn() {
+                if (!state.currentRegistrationId) {
+                    return;
+                }
+                const response = await authorizedFetch('/.netlify/functions/mark-checked-in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ registrationId: state.currentRegistrationId })
+                });
+                if (!response.ok) {
+                    const { error } = await response.json().catch(() => ({ error: 'Unable to mark check-in.' }));
+                    throw new Error(error || 'Unable to mark check-in.');
+                }
+                const result = await response.json();
+                if (result?.data?.checked_in_at) {
+                    state.currentRecord.checked_in_at = result.data.checked_in_at;
+                    elements.resultStatus.textContent = `Checked In • ${formatDateTime(result.data.checked_in_at)}`;
+                }
+                return result;
+            }
+
+            async function resetToScanner() {
+                if (!state.adminKey) {
+                    await showLogin();
+                    return;
+                }
+                showBlock('scanner');
+                if (elements.manualInput) {
+                    elements.manualInput.value = '';
+                }
+                state.currentRegistrationId = null;
+                state.currentRecord = null;
+                setScannerError('');
+                await startCamera();
+            }
+
+            function handleScanFailureModalClose() {
+                hideModal(modals.scanFailure);
+                resetScanTimer();
+            }
+
+            if (elements.toggleCameraBtn) {
+                elements.toggleCameraBtn.addEventListener('click', async () => {
+                    if (!state.adminKey) {
+                        await showLogin();
+                        return;
+                    }
+                    if (isCameraActive) {
+                        await stopCamera();
+                    } else {
+                        await startCamera();
+                    }
+                });
+            }
+
+            if (elements.manualTriggerBtn) {
+                elements.manualTriggerBtn.addEventListener('click', async () => {
+                    if (!state.adminKey) {
+                        await showLogin();
+                        return;
+                    }
+                    await stopCamera();
+                    showBlock('manual');
+                    if (elements.manualInput) {
+                        elements.manualInput.focus();
+                    }
+                    setScannerError('');
+                });
+            }
+
+            if (elements.manualSearchBtn) {
+                elements.manualSearchBtn.addEventListener('click', performManualSearch);
+            }
+
+            if (elements.manualInput) {
+                elements.manualInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        performManualSearch();
+                    }
+                });
+            }
+
+            if (elements.backToScannerBtn) {
+                elements.backToScannerBtn.addEventListener('click', resetToScanner);
+            }
+
+            if (elements.keepScanningBtn) {
+                elements.keepScanningBtn.addEventListener('click', handleScanFailureModalClose);
+            }
+
+            if (elements.switchManualBtn) {
+                elements.switchManualBtn.addEventListener('click', async () => {
+                    hideModal(modals.scanFailure);
+                    await stopCamera();
+                    showBlock('manual');
+                    if (elements.manualInput) {
+                        elements.manualInput.focus();
+                    }
+                    setScannerError('');
+                });
+            }
+
+            if (elements.notFoundCloseBtn) {
+                elements.notFoundCloseBtn.addEventListener('click', () => {
+                    hideModal(modals.notFound);
+                    if (blocks.manual && blocks.manual.classList.contains('hidden') && state.adminKey) {
+                        resetScanTimer();
+                    }
+                });
+            }
+
+            if (elements.newScanBtn) {
+                elements.newScanBtn.addEventListener('click', resetToScanner);
+            }
+
+            if (elements.checkedInBtn) {
+                elements.checkedInBtn.addEventListener('click', async () => {
+                    if (!state.currentRegistrationId) {
+                        return;
+                    }
+                    elements.checkedInBtn.disabled = true;
+                    try {
+                        await markRegistrationCheckedIn();
+                        if (typeof confetti === 'function') {
+                            confetti({
+                                particleCount: 120,
+                                spread: 70,
+                                origin: { y: 0.6 }
+                            });
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, 1200));
+                        await resetToScanner();
+                    } catch (error) {
+                        if (error.code !== AUTH_REQUIRED_CODE) {
+                            alert(error.message || 'Could not mark check-in.');
+                        }
+                    } finally {
+                        elements.checkedInBtn.disabled = false;
+                    }
+                });
+            }
+
+            elements.loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const password = elements.loginPasswordInput.value.trim();
+                if (!password) {
+                    setLoginError('Please enter the admin password.');
+                    elements.loginPasswordInput.focus();
+                    return;
+                }
+                setLoginError('');
+                setLoginLoading(true);
+                try {
+                    const response = await fetch('/.netlify/functions/admin-login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Incorrect password. Please try again.');
+                    }
+                    const data = await response.json();
+                    if (!data?.secretKey) {
+                        throw new Error('Unexpected response from server.');
+                    }
+                    state.adminKey = data.secretKey;
+                    setLoginError('');
+                    showBlock('scanner');
+                    if (elements.logoutBtn) {
+                        elements.logoutBtn.classList.remove('hidden');
+                    }
+                    elements.loginPasswordInput.value = '';
+                    await startCamera();
+                } catch (error) {
+                    setLoginError(error.message || 'Unable to sign in. Please try again.');
+                    if (elements.loginPasswordInput && typeof elements.loginPasswordInput.select === 'function') {
+                        elements.loginPasswordInput.select();
+                    }
+                } finally {
+                    setLoginLoading(false);
+                }
+            });
+
+            if (elements.logoutBtn) {
+                elements.logoutBtn.addEventListener('click', async () => {
+                    elements.logoutBtn.disabled = true;
+                    try {
+                        await stopCamera();
+                        clearAdminKey();
+                        await showLogin('Signed out successfully.');
+                    } finally {
+                        elements.logoutBtn.disabled = false;
+                    }
+                });
+            }
+
+            window.addEventListener('load', async () => {
+                if (state.adminKey) {
+                    showBlock('scanner');
+                    if (elements.logoutBtn) {
+                        elements.logoutBtn.classList.remove('hidden');
+                    }
+                    await startCamera();
+                } else {
+                    await showLogin();
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (scanFailureTimer) {
+                    clearTimeout(scanFailureTimer);
+                }
+            });
+        })();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker
+                    .register('/service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            });
+        }
     </script>
 </body>
 

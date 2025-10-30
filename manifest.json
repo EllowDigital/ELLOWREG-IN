@@ -1,8 +1,8 @@
 {
-  "name": "EMRS Admin Console",
-  "short_name": "EMRS Admin",
-  "description": "Manage registrations, sync data, and export attendee insights with the EMRS Admin Console by EllowDigital.",
-  "start_url": "/admin.html",
+  "name": "EMRS Verification",
+  "short_name": "EMRS Verify",
+  "description": "Verify EMRS passes, manage check-ins, and sync with EllowDigital systems on the go.",
+  "start_url": "/verify.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0a2540",
@@ -22,9 +22,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Open Admin Dashboard",
-      "short_name": "Dashboard",
-      "url": "/admin.html",
+      "name": "Verify Pass",
+      "short_name": "Verify",
+      "url": "/verify.html",
       "icons": [
         {
           "src": "assets/favicon/android-chrome-192x192.png",
@@ -34,9 +34,9 @@
       ]
     },
     {
-      "name": "Verify Registrations",
-      "short_name": "Verify",
-      "url": "/verify.html"
+      "name": "Admin Console",
+      "short_name": "Admin",
+      "url": "/admin.html"
     }
   ],
   "categories": [
