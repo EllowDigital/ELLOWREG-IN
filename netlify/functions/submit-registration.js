@@ -98,6 +98,17 @@ exports.handler = async (event) => {
     };
   }
 
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL environment variable is not configured.");
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        status: "error",
+        error: "Server misconfiguration: database connection is unavailable.",
+      }),
+    };
+  }
+
   let dbClient;
   try {
     const { fields, files } = await parseMultipartForm(event);
@@ -110,6 +121,7 @@ exports.handler = async (event) => {
     const trimmedEmail = email ? email.trim() : "";
     const trimmedCity = district ? district.trim() : "";
     const trimmedState = state ? state.trim() : "";
+    const normalizedEmail = trimmedEmail.toLowerCase();
 
     const validationErrors = [];
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -150,10 +162,10 @@ exports.handler = async (event) => {
       const updateAssignments = ["needs_sync = true"];
       const updateValues = [];
 
-      if (trimmedEmail && trimmedEmail !== (existingRecord.email || "")) {
-        updateValues.push(trimmedEmail);
+      if (normalizedEmail && normalizedEmail !== (existingRecord.email || "")) {
+        updateValues.push(normalizedEmail);
         updateAssignments.push(`email = $${updateValues.length}`);
-        existingRecord.email = trimmedEmail;
+        existingRecord.email = normalizedEmail;
       }
 
       if (trimmedCity && trimmedCity !== (existingRecord.city || "")) {
@@ -237,7 +249,7 @@ exports.handler = async (event) => {
       registrationId,
       trimmedName,
       trimmedPhone,
-      trimmedEmail,
+      normalizedEmail,
       trimmedCity || null,
       trimmedState || null,
       uploadResult.secure_url,

@@ -9,17 +9,15 @@ const { google } = require("googleapis");
  * A robust, serverless-friendly PostgreSQL connection pool.
  * This configuration is essential for reliability in a serverless environment.
  */
-// Determine whether to enable SSL for the database connection. Many managed providers
-// require SSL, but local development/Postgres instances often reject it. Honour an
-// explicit DATABASE_SSL env flag first, otherwise infer from the connection string.
+// Determine whether to enable SSL for the database connection. Production Neon requires
+// SSL, but the local Netlify dev server should connect without it. Honour an explicit
+// DATABASE_SSL override if provided; otherwise rely on NODE_ENV that the Netlify CLI sets.
 const shouldUseSSL = (() => {
   const override = process.env.DATABASE_SSL;
   if (override) {
     return override.toLowerCase() === "true";
   }
-
-  const url = process.env.DATABASE_URL || "";
-  return !/localhost|127\.0\.0\.1|::1/i.test(url);
+  return process.env.NODE_ENV === "production";
 })();
 
 const poolConfig = {
@@ -28,15 +26,13 @@ const poolConfig = {
   // CRITICAL: Increased timeout to handle serverless cold starts without failing.
   connectionTimeoutMillis: 15000, // 15 seconds
   idleTimeoutMillis: 30000, // 30 seconds
+  ssl: shouldUseSSL
+    ? {
+        // Managed Postgres providers (including Neon) typically require TLS in production.
+        rejectUnauthorized: false,
+      }
+    : false,
 };
-
-if (shouldUseSSL) {
-  poolConfig.ssl = {
-    // This is often required by managed database providers.
-    // For production, ensure you are using a valid CA-signed certificate.
-    rejectUnauthorized: false,
-  };
-}
 
 const pool = new Pool(poolConfig);
 

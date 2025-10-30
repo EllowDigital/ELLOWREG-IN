@@ -918,6 +918,21 @@
         // --- State ---
         let compressedImageFile = null;
         let existingUserData = null;
+        const defaultPhotoUrl = imagePreview.getAttribute("src");
+
+        const normalizeRegistrationData = (raw) => {
+          if (!raw) return null;
+          return {
+            registrationId: raw.registrationId || raw.registration_id || "",
+            name: raw.name || "",
+            phone: raw.phone || "",
+            email: raw.email || "",
+            city: raw.city || "",
+            state: raw.state || "",
+            profileImageUrl:
+              raw.profileImageUrl || raw.image_url || defaultPhotoUrl,
+          };
+        };
 
         // --- UI & UX Functions ---
         function setButtonLoading(button, isLoading) {
@@ -954,7 +969,15 @@
           infoModal.show();
         }
 
-        async function generateAndDownloadPass(userData) {
+        async function generateAndDownloadPass(rawData) {
+          const userData = normalizeRegistrationData(rawData);
+          if (!userData) {
+            showInfoModal(
+              "Download Failed",
+              "We could not load your pass details. Please try again.",
+            );
+            return;
+          }
           const passElement = createPassElement(userData);
           document.body.appendChild(passElement);
 
@@ -982,14 +1005,22 @@
         }
 
         // --- E-Pass Generation ---
-        function createPassElement(data) {
+        function createPassElement(rawData) {
+          const data = normalizeRegistrationData(rawData);
+          if (!data) {
+            throw new Error("Invalid registration data.");
+          }
           const template = document
             .getElementById("id-card-template")
             .cloneNode(true);
           const card = template.firstElementChild;
           card.style.display = "block";
 
-          card.querySelector(".id-card-photo").src = data.profileImageUrl;
+          const photoEl = card.querySelector(".id-card-photo");
+          if (photoEl) {
+            photoEl.src = data.profileImageUrl || defaultPhotoUrl;
+            photoEl.alt = `${data.name || "Guest"} profile photo`;
+          }
           card.querySelector(".id-card-name").textContent = data.name;
           card.querySelector(".id-card-reg-number").textContent =
             data.registrationId;
@@ -1154,23 +1185,34 @@
             const result = await response.json();
 
             if (response.status === 409 && result.status === "exists") {
-              existingUserData = result.registrationData;
-              modalUserName.textContent = result.registrationData.name;
+              const normalizedData = normalizeRegistrationData(
+                result.registrationData,
+              );
+              existingUserData = normalizedData;
+              modalUserName.textContent = normalizedData?.name || "Guest";
               registeredModal.show();
             } else if (response.ok && result.status === "success") {
-              const newPassElement = createPassElement(result.registrationData);
+              const registrationData = normalizeRegistrationData(
+                result.registrationData,
+              );
+              if (!registrationData) {
+                throw new Error("Server did not return registration data.");
+              }
+              existingUserData = registrationData;
+              const newPassElement = createPassElement(registrationData);
               idCardWrapper.innerHTML = "";
               idCardWrapper.appendChild(newPassElement);
               formContainer.classList.add("d-none");
               successView.classList.remove("d-none");
               document.querySelector(".registration-wrapper").scrollIntoView();
               downloadBtn.onclick = () =>
-                generateAndDownloadPass(result.registrationData);
+                generateAndDownloadPass(existingUserData);
             } else {
+              const serverMessage =
+                result.error || result.details || "Unexpected server error.";
               // Throw an error with the server-provided message, or a generic one
               const error = new Error(
-                result.error ||
-                  `A server error occurred (Status: ${response.status}).`,
+                `${serverMessage} (Status: ${response.status})`,
               );
               error.response = response; // Attach response for more context
               throw error;
@@ -1236,9 +1278,9 @@
               throw new Error(result.error || "Could not find registration.");
             }
 
-            // Success! Show the 'already registered' modal with the found data
-            existingUserData = result;
-            modalUserName.textContent = result.name;
+            const normalized = normalizeRegistrationData(result);
+            existingUserData = normalized;
+            modalUserName.textContent = normalized?.name || "Guest";
             lostPassModal.hide();
             registeredModal.show();
           } catch (err) {
