@@ -26,10 +26,13 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
   const parsedPage = parseInt(params.page, 10);
   const parsedLimit = parseInt(params.limit, 10);
-  const rawSearch = typeof params.search === "string" ? params.search.trim() : "";
+  const rawSearch =
+    typeof params.search === "string" ? params.search.trim() : "";
   const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const requestedLimit =
-    Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : DEFAULT_PAGE_SIZE;
+    Number.isFinite(parsedLimit) && parsedLimit > 0
+      ? parsedLimit
+      : DEFAULT_PAGE_SIZE;
   const pageSize = Math.min(requestedLimit, MAX_PAGE_SIZE);
   let dbClient;
   try {
@@ -49,7 +52,9 @@ exports.handler = async (event) => {
     const safePage = Math.min(Math.max(page, 1), totalPages);
     const offset = (safePage - 1) * pageSize;
 
-    const selectParams = searchTerm ? [searchTerm, pageSize, offset] : [pageSize, offset];
+    const selectParams = searchTerm
+      ? [searchTerm, pageSize, offset]
+      : [pageSize, offset];
     const limitIndex = searchTerm ? 2 : 1;
     const offsetIndex = searchTerm ? 3 : 2;
 
@@ -59,7 +64,10 @@ exports.handler = async (event) => {
          ORDER BY timestamp DESC
          LIMIT $${limitIndex} OFFSET $${offsetIndex}`;
 
-    const { rows: registrationRows } = await dbClient.query(selectQuery, selectParams);
+    const { rows: registrationRows } = await dbClient.query(
+      selectQuery,
+      selectParams,
+    );
 
     return {
       statusCode: 200,

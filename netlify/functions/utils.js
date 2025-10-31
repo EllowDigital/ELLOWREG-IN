@@ -28,9 +28,9 @@ const poolConfig = {
   idleTimeoutMillis: 30000, // 30 seconds
   ssl: shouldUseSSL
     ? {
-      // Managed Postgres providers (including Neon) typically require TLS in production.
-      rejectUnauthorized: false,
-    }
+        // Managed Postgres providers (including Neon) typically require TLS in production.
+        rejectUnauthorized: false,
+      }
     : false,
 };
 

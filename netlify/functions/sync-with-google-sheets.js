@@ -110,7 +110,9 @@ exports.handler = async (event = {}) => {
       }
       console.log(`[GSheet] Wrote ${sheetRows.length} rows to the sheet.`);
     } else {
-      console.log("[GSheet] No registrations to publish; sheet left blank below headers.");
+      console.log(
+        "[GSheet] No registrations to publish; sheet left blank below headers.",
+      );
     }
 
     await dbClient.query(
@@ -142,7 +144,9 @@ exports.handler = async (event = {}) => {
   } finally {
     if (dbClient) {
       dbClient.release();
-      console.log("[SYNC END] Database client released. Sync process finished.");
+      console.log(
+        "[SYNC END] Database client released. Sync process finished.",
+      );
     }
   }
 };

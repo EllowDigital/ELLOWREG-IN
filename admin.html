@@ -1,1188 +1,1504 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description"
-    content="EMRS Admin Console by EllowDigital. Manage registrations, sync Google Sheets, and export attendee insights from any device." />
-  <meta name="keywords"
-    content="EMRS admin, EllowDigital, event registration dashboard, attendee management, google sheets sync" />
-  <meta name="author" content="EllowDigital" />
-  <link rel="canonical" href="https://get-epass.netlify.app/admin.html" />
-  <title>EMRS Admin Console – EllowDigital</title>
-  <meta property="og:title" content="EMRS Admin Console – EllowDigital" />
-  <meta property="og:description"
-    content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://get-epass.netlify.app/admin.html" />
-  <meta property="og:image" content="https://get-epass.netlify.app/assets/favicon/android-chrome-512x512.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="EMRS Admin Console – EllowDigital" />
-  <meta name="twitter:description"
-    content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console." />
-  <meta name="twitter:image" content="https://get-epass.netlify.app/assets/favicon/android-chrome-512x512.png" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#0a2540" />
-  <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="apple-mobile-web-app-title" content="EMRS Admin" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
-  <style>
-    :root {
-      --primary-color: #0a2540;
-      --secondary-color: #1b3a73;
-      --surface: rgba(255, 255, 255, 0.9);
-      --muted: #6c757d;
-      --danger: #dc3545;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: radial-gradient(circle at top, #edf2f9 0%, #e0e7f1 45%, #d6deeb 100%);
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        "Helvetica Neue",
-        Arial;
-      color: var(--primary-color);
-    }
-
-    .center-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 6rem);
-      padding: 3rem 1.25rem;
-    }
-
-    .login-brand {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(10, 37, 64, 0.08);
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      margin: 0 auto 1rem;
-    }
-
-    .glass-card {
-      background: var(--surface);
-      border-radius: 1.25rem;
-      box-shadow: 0 20px 40px rgba(10, 37, 64, 0.15);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(10, 37, 64, 0.05);
-    }
-
-    .navbar.glass-card {
-      padding: 1rem 1.5rem;
-      margin: 2rem auto 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .navbar-brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
-
-    .navbar-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .badge-soft {
-      background: rgba(10, 37, 64, 0.1);
-      color: var(--primary-color);
-      border-radius: 999px;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.02rem;
-      text-transform: uppercase;
-    }
-
-    .page-title {
-      font-size: 2.25rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
-
-    .section-heading {
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .overview-header p {
-      max-width: 460px;
-      color: var(--muted);
-    }
-
-    .stats-card {
-      padding: 1.5rem;
-      border-radius: 1.25rem;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: inset 0 0 0 1px rgba(10, 37, 64, 0.04);
-      height: 100%;
-    }
-
-    .stats-card-body {
-      display: flex;
-      gap: 1.25rem;
-      align-items: center;
-    }
-
-    .widget-icon {
-      width: 3.25rem;
-      height: 3.25rem;
-      border-radius: 0.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(13, 110, 253, 0.12);
-      color: #0c5adb;
-      font-size: 1.35rem;
-    }
-
-    .stat-label {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05rem;
-      color: var(--muted);
-    }
-
-    .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
-
-    .registrations-toolbar {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .toolbar-header {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-
-    .toolbar-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      color: var(--muted);
-    }
-
-    .toolbar-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .toolbar-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: stretch;
-    }
-
-    .page-size-control {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(10, 37, 64, 0.06);
-      padding: 0.35rem 0.75rem;
-      border-radius: 0.75rem;
-    }
-
-    .action-block {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      min-width: 180px;
-    }
-
-    .btn-pill {
-      border-radius: 999px;
-      font-weight: 600;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-    }
-
-    .toolbar-actions .btn {
-      min-width: 140px;
-      border-radius: 0.9rem;
-      font-weight: 600;
-      box-shadow: 0 8px 18px rgba(10, 37, 64, 0.12);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .toolbar-actions .btn:hover,
-    .toolbar-actions .btn:focus {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 26px rgba(10, 37, 64, 0.18);
-    }
-
-    /* --- CHANGED --- */
-    .search-form {
-      width: 100%;
-    }
-
-    .search-input-group {
-      /* max-width: 460px; <-- REMOVED */
-      width: 100%;
-    }
-
-    /* --- END CHANGE --- */
-
-    .download-hint {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.85rem 1.1rem;
-      border-radius: 1rem;
-      background: rgba(10, 37, 64, 0.08);
-      color: var(--primary-color);
-    }
-
-    .download-hint i {
-      font-size: 1rem;
-      margin-top: 0.15rem;
-    }
-
-    .chip {
-      display: inline-flex;
-      gap: 0.35rem;
-      align-items: center;
-      padding: 0.4rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(13, 110, 253, 0.12);
-      color: var(--primary-color);
-      font-weight: 600;
-      font-size: 0.75rem;
-      letter-spacing: 0.04rem;
-      text-transform: uppercase;
-    }
-
-    .table thead {
-      font-size: 0.78rem;
-      letter-spacing: 0.04rem;
-      text-transform: uppercase;
-    }
-
-    .table td {
-      vertical-align: middle;
-      font-size: 0.95rem;
-    }
-
-    .table-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 1rem;
-      z-index: 5;
-    }
-
-    .actions-group {
-      display: inline-flex;
-      gap: 0.5rem;
-    }
-
-    .status-message {
-      min-height: 1.15rem;
-      transition: opacity 0.2s ease;
-    }
-
-    .footer-credit {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .heart-blink {
-      color: var(--danger);
-      animation: heartbeat 1.6s infinite;
-    }
-
-    @keyframes heartbeat {
-
-      0%,
-      100% {
-        transform: scale(1);
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="EMRS Admin Console by EllowDigital. Manage registrations, sync Google Sheets, and export attendee insights from any device."
+    />
+    <meta
+      name="keywords"
+      content="EMRS admin, EllowDigital, event registration dashboard, attendee management, google sheets sync"
+    />
+    <meta name="author" content="EllowDigital" />
+    <link rel="canonical" href="https://get-epass.netlify.app/admin.html" />
+    <title>EMRS Admin Console – EllowDigital</title>
+    <meta property="og:title" content="EMRS Admin Console – EllowDigital" />
+    <meta
+      property="og:description"
+      content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://get-epass.netlify.app/admin.html"
+    />
+    <meta
+      property="og:image"
+      content="https://get-epass.netlify.app/assets/favicon/android-chrome-512x512.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EMRS Admin Console – EllowDigital" />
+    <meta
+      name="twitter:description"
+      content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console."
+    />
+    <meta
+      name="twitter:image"
+      content="https://get-epass.netlify.app/assets/favicon/android-chrome-512x512.png"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a2540" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon/favicon-16x16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="EMRS Admin" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #0a2540;
+        --secondary-color: #1b3a73;
+        --surface: rgba(255, 255, 255, 0.9);
+        --muted: #6c757d;
+        --danger: #dc3545;
       }
 
-      50% {
-        transform: scale(1.2);
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: radial-gradient(
+          circle at top,
+          #edf2f9 0%,
+          #e0e7f1 45%,
+          #d6deeb 100%
+        );
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        color: var(--primary-color);
       }
-    }
 
-    @media (min-width: 992px) {
-      .toolbar-controls {
-        flex-direction: row;
+      .center-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 6rem);
+        padding: 3rem 1.25rem;
+      }
+
+      .login-brand {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 37, 64, 0.08);
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin: 0 auto 1rem;
+      }
+
+      .glass-card {
+        background: var(--surface);
+        border-radius: 1.25rem;
+        box-shadow: 0 20px 40px rgba(10, 37, 64, 0.15);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(10, 37, 64, 0.05);
+      }
+
+      .navbar.glass-card {
+        padding: 1rem 1.5rem;
+        margin: 2rem auto 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
         align-items: center;
         justify-content: space-between;
       }
 
+      .navbar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .navbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .badge-soft {
+        background: rgba(10, 37, 64, 0.1);
+        color: var(--primary-color);
+        border-radius: 999px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.02rem;
+        text-transform: uppercase;
+      }
+
+      .page-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .section-heading {
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      .overview-header p {
+        max-width: 460px;
+        color: var(--muted);
+      }
+
+      .stats-card {
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: inset 0 0 0 1px rgba(10, 37, 64, 0.04);
+        height: 100%;
+      }
+
+      .stats-card-body {
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+      }
+
+      .widget-icon {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 110, 253, 0.12);
+        color: #0c5adb;
+        font-size: 1.35rem;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+        color: var(--muted);
+      }
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .registrations-toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .toolbar-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .toolbar-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        color: var(--muted);
+      }
+
+      .toolbar-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: stretch;
+      }
+
+      .page-size-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(10, 37, 64, 0.06);
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.75rem;
+      }
+
+      .action-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 180px;
+      }
+
+      .btn-pill {
+        border-radius: 999px;
+        font-weight: 600;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+
+      .toolbar-actions .btn {
+        min-width: 140px;
+        border-radius: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 8px 18px rgba(10, 37, 64, 0.12);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .toolbar-actions .btn:hover,
+      .toolbar-actions .btn:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 26px rgba(10, 37, 64, 0.18);
+      }
+
       /* --- CHANGED --- */
       .search-form {
-        flex: 1 1 50%;
-        /* Let it grow */
-        margin-right: 1.5rem;
-        width: auto;
+        width: 100%;
       }
 
       .search-input-group {
-        /* width: 100%; <-- REMOVED, already set in base */
-        max-width: 550px;
-        /* Added a max-width */
+        /* max-width: 460px; <-- REMOVED */
+        width: 100%;
       }
 
       /* --- END CHANGE --- */
 
-      .toolbar-actions {
-        justify-content: flex-end;
-        gap: 1rem;
-      }
-    }
-
-    @media (max-width: 991.98px) {
-      .search-input-group {
-        width: 100%;
-      }
-
-      .toolbar-actions {
-        flex-direction: column;
-        align-items: stretch;
+      .download-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.85rem 1.1rem;
+        border-radius: 1rem;
+        background: rgba(10, 37, 64, 0.08);
+        color: var(--primary-color);
       }
 
-      .toolbar-actions .btn {
-        min-width: 100%;
-      }
-    }
-
-    @media (max-width: 767.98px) {
-      .stats-card-body {
-        flex-direction: column;
-        text-align: center;
+      .download-hint i {
+        font-size: 1rem;
+        margin-top: 0.15rem;
       }
 
-      .overview-header {
-        text-align: center;
+      .chip {
+        display: inline-flex;
+        gap: 0.35rem;
+        align-items: center;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(13, 110, 253, 0.12);
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.04rem;
+        text-transform: uppercase;
+      }
+
+      .table thead {
+        font-size: 0.78rem;
+        letter-spacing: 0.04rem;
+        text-transform: uppercase;
+      }
+
+      .table td {
+        vertical-align: middle;
+        font-size: 0.95rem;
+      }
+
+      .table-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        display: flex;
+        align-items: center;
         justify-content: center;
+        border-radius: 1rem;
+        z-index: 5;
       }
 
-      .overview-header>div {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 575.98px) {
-      .page-title {
-        font-size: 1.85rem;
+      .actions-group {
+        display: inline-flex;
+        gap: 0.5rem;
       }
 
-      .navbar.glass-card {
-        padding: 1rem;
+      .status-message {
+        min-height: 1.15rem;
+        transition: opacity 0.2s ease;
       }
 
-      .navbar-actions {
-        width: 100%;
-        justify-content: stretch;
+      .footer-credit {
+        color: var(--muted);
+        font-size: 0.9rem;
       }
 
-      .navbar-actions .btn {
-        flex: 1 1 100%;
+      .heart-blink {
+        color: var(--danger);
+        animation: heartbeat 1.6s infinite;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div id="login-container" class="center-container">
-    <div class="card shadow border-0" style="max-width: 24rem; width: 100%;">
-      <div class="card-body p-4">
-        <div class="login-brand">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-        <h1 class="h4 text-center mb-3">EMRS Admin Access</h1>
-        <p class="text-muted text-center mb-4">Enter the administrator passphrase to unlock the control panel.</p>
-        <form id="loginForm" novalidate>
-          <div class="mb-3">
-            <label for="passwordInput" class="form-label fw-semibold">Administrator Key</label>
-            <input type="password" class="form-control" id="passwordInput" placeholder="••••••" required />
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      @media (min-width: 992px) {
+        .toolbar-controls {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        /* --- CHANGED --- */
+        .search-form {
+          flex: 1 1 50%;
+          /* Let it grow */
+          margin-right: 1.5rem;
+          width: auto;
+        }
+
+        .search-input-group {
+          /* width: 100%; <-- REMOVED, already set in base */
+          max-width: 550px;
+          /* Added a max-width */
+        }
+
+        /* --- END CHANGE --- */
+
+        .toolbar-actions {
+          justify-content: flex-end;
+          gap: 1rem;
+        }
+      }
+
+      @media (max-width: 991.98px) {
+        .search-input-group {
+          width: 100%;
+        }
+
+        .toolbar-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .toolbar-actions .btn {
+          min-width: 100%;
+        }
+      }
+
+      @media (max-width: 767.98px) {
+        .stats-card-body {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .overview-header {
+          text-align: center;
+          justify-content: center;
+        }
+
+        .overview-header > div {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .page-title {
+          font-size: 1.85rem;
+        }
+
+        .navbar.glass-card {
+          padding: 1rem;
+        }
+
+        .navbar-actions {
+          width: 100%;
+          justify-content: stretch;
+        }
+
+        .navbar-actions .btn {
+          flex: 1 1 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="login-container" class="center-container">
+      <div class="card shadow border-0" style="max-width: 24rem; width: 100%">
+        <div class="card-body p-4">
+          <div class="login-brand">
+            <i class="fas fa-shield-alt"></i>
           </div>
-          <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
-          <button type="submit" class="btn btn-primary btn-pill w-100" id="loginBtn">
-            <span class="button-text">Unlock Dashboard</span>
-            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-          </button>
-        </form>
+          <h1 class="h4 text-center mb-3">EMRS Admin Access</h1>
+          <p class="text-muted text-center mb-4">
+            Enter the administrator passphrase to unlock the control panel.
+          </p>
+          <form id="loginForm" novalidate>
+            <div class="mb-3">
+              <label for="passwordInput" class="form-label fw-semibold"
+                >Administrator Key</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="passwordInput"
+                placeholder="••••••"
+                required
+              />
+            </div>
+            <div
+              id="loginError"
+              class="alert alert-danger d-none"
+              role="alert"
+            ></div>
+            <button
+              type="submit"
+              class="btn btn-primary btn-pill w-100"
+              id="loginBtn"
+            >
+              <span class="button-text">Unlock Dashboard</span>
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="dashboard-container" class="d-none flex-grow-1 w-100">
-    <div class="container-xxl px-3 px-md-4 pb-5">
-      <nav class="navbar glass-card">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-          <i class="fas fa-solar-panel"></i>
-          <span>EMRS Admin Console</span>
-        </a>
-        <div class="navbar-actions">
-          <span class="badge-soft" id="lastRefreshLabel">Updated --</span>
-          <a class="btn btn-outline-primary btn-pill" href="verify.html">
-            <i class="fas fa-qrcode me-2"></i>Verify Passes
+    <div id="dashboard-container" class="d-none flex-grow-1 w-100">
+      <div class="container-xxl px-3 px-md-4 pb-5">
+        <nav class="navbar glass-card">
+          <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <i class="fas fa-solar-panel"></i>
+            <span>EMRS Admin Console</span>
           </a>
-          <a class="btn btn-outline-secondary btn-pill" href="index.html">
-            <i class="fas fa-home me-2"></i>Main Site
-          </a>
-          <a class="btn btn-outline-success btn-pill" href="form.html">
-            <i class="fas fa-user-plus me-2"></i>Register Attendee
-          </a>
-          <button type="button" class="btn btn-outline-secondary btn-pill" id="checkStatusBtn">
-            <i class="fas fa-heartbeat me-2"></i>System Status
-          </button>
-          <button type="button" class="btn btn-outline-primary btn-pill" id="refreshDashboardBtn">
-            <span class="button-text"><i class="fas fa-sync-alt me-2"></i>Refresh</span>
-            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-          </button>
-          <button type="button" class="btn btn-danger btn-pill" id="logoutBtn">
-            <i class="fas fa-sign-out-alt me-2"></i>Logout
-          </button>
-        </div>
-      </nav>
-
-      <main>
-        <section class="glass-card p-4 mb-4" id="overview">
-          <div class="overview-header d-flex flex-wrap align-items-start justify-content-between mb-4 gap-3">
-            <div>
-              <h2 class="page-title mb-2">Welcome back</h2>
-              <p class="mb-0">Track registration velocity, manage attendees, and keep exports in sync with Sheets in
-                real time.</p>
-            </div>
+          <div class="navbar-actions">
+            <span class="badge-soft" id="lastRefreshLabel">Updated --</span>
+            <a class="btn btn-outline-primary btn-pill" href="verify.html">
+              <i class="fas fa-qrcode me-2"></i>Verify Passes
+            </a>
+            <a class="btn btn-outline-secondary btn-pill" href="index.html">
+              <i class="fas fa-home me-2"></i>Main Site
+            </a>
+            <a class="btn btn-outline-success btn-pill" href="form.html">
+              <i class="fas fa-user-plus me-2"></i>Register Attendee
+            </a>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-pill"
+              id="checkStatusBtn"
+            >
+              <i class="fas fa-heartbeat me-2"></i>System Status
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-pill"
+              id="refreshDashboardBtn"
+            >
+              <span class="button-text"
+                ><i class="fas fa-sync-alt me-2"></i>Refresh</span
+              >
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-pill"
+              id="logoutBtn"
+            >
+              <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </button>
           </div>
-          <div class="row g-3">
-            <div class="col-12 col-sm-6 col-xxl-3">
-              <div class="stats-card">
-                <div class="stats-card-body">
-                  <div class="widget-icon"><i class="fas fa-users"></i></div>
-                  <div class="stats-card-info">
-                    <div class="stat-label">Total Registrations</div>
-                    <div class="stat-value" id="totalRegCount">
-                      <div class="spinner-border spinner-border-sm"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-xxl-3">
-              <div class="stats-card">
-                <div class="stats-card-body">
-                  <div class="widget-icon"><i class="fas fa-bolt"></i></div>
-                  <div class="stats-card-info">
-                    <div class="stat-label">Last 24 Hours</div>
-                    <div class="stat-value" id="registrationsLast24Hours">
-                      <div class="spinner-border spinner-border-sm"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-xxl-3">
-              <div class="stats-card">
-                <div class="stats-card-body">
-                  <div class="widget-icon"><i class="fas fa-clock"></i></div>
-                  <div class="stats-card-info">
-                    <div class="stat-label">Last Registration</div>
-                    <div class="stat-value fs-5" id="lastRegTime">
-                      <div class="spinner-border spinner-border-sm"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-xxl-3">
-              <div class="stats-card">
-                <div class="stats-card-body">
-                  <div class="widget-icon"><i class="fas fa-user-check"></i></div>
-                  <div class="stats-card-info">
-                    <div class="stat-label">Checked In</div>
-                    <div class="stat-value" id="checkedInCount">
-                      <div class="spinner-border spinner-border-sm"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        </nav>
 
-        <section id="registrations" class="glass-card p-4">
-          <div class="registrations-toolbar mb-4">
-            <div class="toolbar-header">
+        <main>
+          <section class="glass-card p-4 mb-4" id="overview">
+            <div
+              class="overview-header d-flex flex-wrap align-items-start justify-content-between mb-4 gap-3"
+            >
               <div>
-                <h2 class="section-heading mb-1">Recent Registrations</h2>
-                <p class="text-muted small mb-0">Paginated roster of confirmed attendees in reverse chronological order.
+                <h2 class="page-title mb-2">Welcome back</h2>
+                <p class="mb-0">
+                  Track registration velocity, manage attendees, and keep
+                  exports in sync with Sheets in real time.
                 </p>
               </div>
-              <div class="toolbar-meta">
-                <span class="chip"><i class="fas fa-clock"></i> Export</span>
-                <span>Last download <span class="fw-semibold" id="lastExportTime">Never</span></span>
-              </div>
-            </div>
-            <div class="toolbar-controls">
-              <form id="registrationsSearchForm" class="search-form" novalidate>
-                <div class="input-group input-group-sm search-input-group">
-                  <input type="search" class="form-control" id="registrationsSearchInput"
-                    placeholder="Search name, email, phone, or Reg ID" aria-label="Search registrations" />
-                  <button class="btn btn-outline-primary" type="submit">
-                    <i class="fas fa-search me-1"></i>Search </button>
-                  <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">Clear</button>
-                </div>
-              </form>
-              <div class="toolbar-actions">
-                <div class="page-size-control">
-                  <label for="pageSizeSelect" class="small text-muted mb-0">Rows</label>
-                  <select id="pageSizeSelect" class="form-select form-select-sm">
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                  </select>
-                </div>
-                <div class="action-block">
-                  <button id="refreshTableBtn" class="btn btn-outline-primary btn-pill">
-                    <span class="button-text"><i class="fas fa-sync-alt me-2"></i>Reload</span>
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                  </button>
-                  <div class="small text-muted status-message"></div>
-                </div>
-                <div class="action-block">
-                  <button id="syncSheetsBtn" class="btn btn-outline-success btn-pill"
-                    data-loading-label="Syncing&hellip;">
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    <span class="button-text"><i class="fas fa-sync me-2"></i>Sync Sheets</span>
-                  </button>
-                  <div id="syncStatus" class="small text-muted status-message"></div>
-                </div>
-                <div class="action-block">
-                  <button id="exportBtn" class="btn btn-success btn-pill" data-loading-label="Preparing&hellip;">
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    <span class="button-text"><i class="fas fa-file-excel me-2"></i>Download Excel</span>
-                  </button>
-                  <div id="exportStatus" class="small text-muted status-message"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="download-hint mb-3">
-            <i class="fas fa-lightbulb"></i>
-            <span><strong>Heads up:</strong> Allow pop-ups so the Excel download can start automatically.</span>
-          </div>
-          <div class="table-responsive position-relative">
-            <div id="registrationsLoading" class="table-overlay d-none">
-              <div class="spinner-border text-primary" role="status"></div>
-            </div>
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Reg ID</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Phone</th>
-                  <th scope="col" class="d-none d-lg-table-cell">Email</th>
-                  <th scope="col" class="d-none d-md-table-cell">City</th>
-                  <th scope="col" class="d-none d-lg-table-cell">State</th>
-                  <th scope="col">Registered</th>
-                  <th scope="col">Check-In</th>
-                  <th scope="col" class="text-end text-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="registrationsTableBody">
-                <tr>
-                  <td colspan="9" class="text-center text-muted py-4">Loading registrations...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="registrationsError" class="alert alert-danger mt-3 d-none" role="alert"></div>
-          <div id="registrationsFeedback" class="alert alert-success mt-3 d-none" role="alert"></div>
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3">
-            <div class="text-muted small" id="paginationStatus">Showing 0 of 0</div>
-            <div class="d-flex align-items-center gap-2">
-              <button id="paginationPrev" class="btn btn-outline-secondary btn-sm" disabled>
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <span class="small fw-semibold" id="paginationIndicator">1 / 1</span>
-              <button id="paginationNext" class="btn btn-outline-secondary btn-sm" disabled>
-                <i class="fas fa-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-  </div>
-
-  <div class="modal fade" id="systemStatusModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-heartbeat me-2 text-primary"></i>System Health</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p class="text-muted small mb-3">Live status for core infrastructure services powering EMRS.</p>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-database fa-fw me-2 text-primary"></i>Database</span>
-              <span id="status-database" class="badge bg-light text-dark">
-                <div class="spinner-border spinner-border-sm"></div>
-              </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cloud fa-fw me-2 text-info"></i>Cloudinary</span>
-              <span id="status-cloudinary" class="badge bg-light text-dark">
-                <div class="spinner-border spinner-border-sm"></div>
-              </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-file-excel fa-fw me-2 text-success"></i>Google Sheets</span>
-              <span id="status-googleSheets" class="badge bg-light text-dark">
-                <div class="spinner-border spinner-border-sm"></div>
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-pill" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary btn-pill" id="refreshSystemStatusBtn">
-            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-            <span class="button-text"><i class="fas fa-sync-alt me-2"></i>Refresh</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="editRegistrationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Update Registration</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form id="editRegistrationForm" novalidate>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Registration ID</label>
-              <input type="text" class="form-control" id="editRegistrationId" readonly />
-            </div>
-            <div class="mb-3">
-              <label for="editNameInput" class="form-label fw-semibold">Full Name</label>
-              <input type="text" class="form-control" id="editNameInput" required />
-            </div>
-            <div class="mb-3">
-              <label for="editPhoneInput" class="form-label fw-semibold">Phone</label>
-              <input type="tel" class="form-control" id="editPhoneInput" required />
-            </div>
-            <div class="mb-3">
-              <label for="editEmailInput" class="form-label fw-semibold">Email</label>
-              <input type="email" class="form-control" id="editEmailInput" />
             </div>
             <div class="row g-3">
-              <div class="col-sm-6">
-                <label for="editCityInput" class="form-label fw-semibold">City</label>
-                <input type="text" class="form-control" id="editCityInput" />
+              <div class="col-12 col-sm-6 col-xxl-3">
+                <div class="stats-card">
+                  <div class="stats-card-body">
+                    <div class="widget-icon"><i class="fas fa-users"></i></div>
+                    <div class="stats-card-info">
+                      <div class="stat-label">Total Registrations</div>
+                      <div class="stat-value" id="totalRegCount">
+                        <div class="spinner-border spinner-border-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="col-sm-6">
-                <label for="editStateInput" class="form-label fw-semibold">State</label>
-                <input type="text" class="form-control" id="editStateInput" />
+              <div class="col-12 col-sm-6 col-xxl-3">
+                <div class="stats-card">
+                  <div class="stats-card-body">
+                    <div class="widget-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="stats-card-info">
+                      <div class="stat-label">Last 24 Hours</div>
+                      <div class="stat-value" id="registrationsLast24Hours">
+                        <div class="spinner-border spinner-border-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-6 col-xxl-3">
+                <div class="stats-card">
+                  <div class="stats-card-body">
+                    <div class="widget-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stats-card-info">
+                      <div class="stat-label">Last Registration</div>
+                      <div class="stat-value fs-5" id="lastRegTime">
+                        <div class="spinner-border spinner-border-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-6 col-xxl-3">
+                <div class="stats-card">
+                  <div class="stats-card-body">
+                    <div class="widget-icon">
+                      <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stats-card-info">
+                      <div class="stat-label">Checked In</div>
+                      <div class="stat-value" id="checkedInCount">
+                        <div class="spinner-border spinner-border-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="editRegistrationSubmitBtn">
-              <span class="button-text">Save Changes</span>
-              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-            </button>
-          </div>
-        </form>
+          </section>
+
+          <section id="registrations" class="glass-card p-4">
+            <div class="registrations-toolbar mb-4">
+              <div class="toolbar-header">
+                <div>
+                  <h2 class="section-heading mb-1">Recent Registrations</h2>
+                  <p class="text-muted small mb-0">
+                    Paginated roster of confirmed attendees in reverse
+                    chronological order.
+                  </p>
+                </div>
+                <div class="toolbar-meta">
+                  <span class="chip"><i class="fas fa-clock"></i> Export</span>
+                  <span
+                    >Last download
+                    <span class="fw-semibold" id="lastExportTime"
+                      >Never</span
+                    ></span
+                  >
+                </div>
+              </div>
+              <div class="toolbar-controls">
+                <form
+                  id="registrationsSearchForm"
+                  class="search-form"
+                  novalidate
+                >
+                  <div class="input-group input-group-sm search-input-group">
+                    <input
+                      type="search"
+                      class="form-control"
+                      id="registrationsSearchInput"
+                      placeholder="Search name, email, phone, or Reg ID"
+                      aria-label="Search registrations"
+                    />
+                    <button class="btn btn-outline-primary" type="submit">
+                      <i class="fas fa-search me-1"></i>Search
+                    </button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      id="clearSearchBtn"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </form>
+                <div class="toolbar-actions">
+                  <div class="page-size-control">
+                    <label for="pageSizeSelect" class="small text-muted mb-0"
+                      >Rows</label
+                    >
+                    <select
+                      id="pageSizeSelect"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </div>
+                  <div class="action-block">
+                    <button
+                      id="refreshTableBtn"
+                      class="btn btn-outline-primary btn-pill"
+                    >
+                      <span class="button-text"
+                        ><i class="fas fa-sync-alt me-2"></i>Reload</span
+                      >
+                      <span
+                        class="spinner-border spinner-border-sm d-none"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    </button>
+                    <div class="small text-muted status-message"></div>
+                  </div>
+                  <div class="action-block">
+                    <button
+                      id="syncSheetsBtn"
+                      class="btn btn-outline-success btn-pill"
+                      data-loading-label="Syncing&hellip;"
+                    >
+                      <span
+                        class="spinner-border spinner-border-sm d-none"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      <span class="button-text"
+                        ><i class="fas fa-sync me-2"></i>Sync Sheets</span
+                      >
+                    </button>
+                    <div
+                      id="syncStatus"
+                      class="small text-muted status-message"
+                    ></div>
+                  </div>
+                  <div class="action-block">
+                    <button
+                      id="exportBtn"
+                      class="btn btn-success btn-pill"
+                      data-loading-label="Preparing&hellip;"
+                    >
+                      <span
+                        class="spinner-border spinner-border-sm d-none"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      <span class="button-text"
+                        ><i class="fas fa-file-excel me-2"></i>Download
+                        Excel</span
+                      >
+                    </button>
+                    <div
+                      id="exportStatus"
+                      class="small text-muted status-message"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="download-hint mb-3">
+              <i class="fas fa-lightbulb"></i>
+              <span
+                ><strong>Heads up:</strong> Allow pop-ups so the Excel download
+                can start automatically.</span
+              >
+            </div>
+            <div class="table-responsive position-relative">
+              <div id="registrationsLoading" class="table-overlay d-none">
+                <div class="spinner-border text-primary" role="status"></div>
+              </div>
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Reg ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Email</th>
+                    <th scope="col" class="d-none d-md-table-cell">City</th>
+                    <th scope="col" class="d-none d-lg-table-cell">State</th>
+                    <th scope="col">Registered</th>
+                    <th scope="col">Check-In</th>
+                    <th scope="col" class="text-end text-nowrap">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="registrationsTableBody">
+                  <tr>
+                    <td colspan="9" class="text-center text-muted py-4">
+                      Loading registrations...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              id="registrationsError"
+              class="alert alert-danger mt-3 d-none"
+              role="alert"
+            ></div>
+            <div
+              id="registrationsFeedback"
+              class="alert alert-success mt-3 d-none"
+              role="alert"
+            ></div>
+            <div
+              class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3"
+            >
+              <div class="text-muted small" id="paginationStatus">
+                Showing 0 of 0
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <button
+                  id="paginationPrev"
+                  class="btn btn-outline-secondary btn-sm"
+                  disabled
+                >
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="small fw-semibold" id="paginationIndicator"
+                  >1 / 1</span
+                >
+                <button
+                  id="paginationNext"
+                  class="btn btn-outline-secondary btn-sm"
+                  disabled
+                >
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="deleteRegistrationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Delete Registration</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form id="deleteRegistrationForm" novalidate>
+    <div
+      class="modal fade"
+      id="systemStatusModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-heartbeat me-2 text-primary"></i>System Health
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
           <div class="modal-body">
-            <input type="hidden" id="deleteRegistrationId" />
-            <p class="mb-0" id="deleteRegistrationSummary"></p>
+            <p class="text-muted small mb-3">
+              Live status for core infrastructure services powering EMRS.
+            </p>
+            <ul class="list-group list-group-flush">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <span
+                  ><i class="fas fa-database fa-fw me-2 text-primary"></i
+                  >Database</span
+                >
+                <span id="status-database" class="badge bg-light text-dark">
+                  <div class="spinner-border spinner-border-sm"></div>
+                </span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <span
+                  ><i class="fas fa-cloud fa-fw me-2 text-info"></i
+                  >Cloudinary</span
+                >
+                <span id="status-cloudinary" class="badge bg-light text-dark">
+                  <div class="spinner-border spinner-border-sm"></div>
+                </span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <span
+                  ><i class="fas fa-file-excel fa-fw me-2 text-success"></i
+                  >Google Sheets</span
+                >
+                <span id="status-googleSheets" class="badge bg-light text-dark">
+                  <div class="spinner-border spinner-border-sm"></div>
+                </span>
+              </li>
+            </ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
-              <span class="button-text">Delete</span>
-              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-pill"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-pill"
+              id="refreshSystemStatusBtn"
+            >
+              <span
+                class="spinner-border spinner-border-sm d-none"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span class="button-text"
+                ><i class="fas fa-sync-alt me-2"></i>Refresh</span
+              >
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <footer class="text-center py-4 mt-auto">
-    <p class="footer-credit mb-0">
-      Made with <span class="heart-blink">&#10084;</span> by
-      <a href="https://ellow.in/" target="_blank" class="fw-bold text-decoration-none text-muted">EllowDigital</a>
-    </p>
-  </footer>
+    <div
+      class="modal fade"
+      id="editRegistrationModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Registration</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="editRegistrationForm" novalidate>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Registration ID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editRegistrationId"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editNameInput" class="form-label fw-semibold"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editNameInput"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editPhoneInput" class="form-label fw-semibold"
+                  >Phone</label
+                >
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="editPhoneInput"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editEmailInput" class="form-label fw-semibold"
+                  >Email</label
+                >
+                <input type="email" class="form-control" id="editEmailInput" />
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label for="editCityInput" class="form-label fw-semibold"
+                    >City</label
+                  >
+                  <input type="text" class="form-control" id="editCityInput" />
+                </div>
+                <div class="col-sm-6">
+                  <label for="editStateInput" class="form-label fw-semibold"
+                    >State</label
+                  >
+                  <input type="text" class="form-control" id="editStateInput" />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="editRegistrationSubmitBtn"
+              >
+                <span class="button-text">Save Changes</span>
+                <span
+                  class="spinner-border spinner-border-sm d-none"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register('/service-worker.js')
-          .catch((error) => console.error('Service worker registration failed:', error));
-      });
-    }
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      let ADMIN_SECRET_KEY = null;
+    <div
+      class="modal fade"
+      id="deleteRegistrationModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Registration</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="deleteRegistrationForm" novalidate>
+            <div class="modal-body">
+              <input type="hidden" id="deleteRegistrationId" />
+              <p class="mb-0" id="deleteRegistrationSummary"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-danger"
+                id="confirmDeleteBtn"
+              >
+                <span class="button-text">Delete</span>
+                <span
+                  class="spinner-border spinner-border-sm d-none"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-      const DEFAULT_PAGE_SIZE = 10;
-      const state = {
-        currentPage: 1,
-        totalPages: 1,
-        totalRecords: 0,
-        pageSize: DEFAULT_PAGE_SIZE,
-        searchTerm: "",
-        currentRecords: [],
-      };
+    <footer class="text-center py-4 mt-auto">
+      <p class="footer-credit mb-0">
+        Made with <span class="heart-blink">&#10084;</span> by
+        <a
+          href="https://ellow.in/"
+          target="_blank"
+          class="fw-bold text-decoration-none text-muted"
+          >EllowDigital</a
+        >
+      </p>
+    </footer>
 
-      const AUTO_REFRESH_INTERVAL_MS = 45000;
-      let lastChangeToken = null;
-      let autoRefreshTimeoutId = null;
-      let autoRefreshController = null;
-  let autoRefreshEnabled = false;
-      let isPollingForChanges = false;
-      let isPerformingFullRefresh = false;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .catch((error) =>
+              console.error("Service worker registration failed:", error),
+            );
+        });
+      }
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let ADMIN_SECRET_KEY = null;
 
-      const loginContainer = document.getElementById("login-container");
-      const dashboardContainer = document.getElementById("dashboard-container");
-      const loginForm = document.getElementById("loginForm");
-      const loginBtn = document.getElementById("loginBtn");
-      const passwordInput = document.getElementById("passwordInput");
-      const loginError = document.getElementById("loginError");
-      const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
-      const logoutBtn = document.getElementById("logoutBtn");
-      const lastRefreshLabel = document.getElementById("lastRefreshLabel");
-
-      let totalRegCountEl,
-        registrationsLast24HoursEl,
-        lastRegTimeEl,
-        checkedInCountEl,
-        exportBtn,
-        exportStatus,
-        syncSheetsBtn,
-        syncStatus,
-        refreshSystemStatusBtn,
-        checkStatusBtn,
-        lastExportTimeEl,
-        pageSizeSelect,
-        registrationsLoadingOverlay,
-        registrationsTableBody,
-        registrationsErrorEl,
-        registrationsFeedbackEl,
-        paginationStatusEl,
-        paginationIndicatorEl,
-        paginationPrevBtn,
-        paginationNextBtn,
-        refreshTableBtn,
-        registrationsSearchForm,
-        registrationsSearchInput,
-        clearSearchBtn,
-        editRegistrationForm,
-        editRegistrationId,
-        editNameInput,
-        editPhoneInput,
-        editEmailInput,
-        editCityInput,
-        editStateInput,
-        editRegistrationSubmitBtn,
-        deleteRegistrationForm,
-        deleteRegistrationId,
-        deleteRegistrationSummary,
-        confirmDeleteBtn;
-
-      let editModalInstance;
-      let deleteModalInstance;
-      let systemStatusModalInstance;
-      const statusTimers = new Map();
-
-      const setButtonLoading = (btn, isLoading) => {
-        if (!btn) return;
-        const textEl = btn.querySelector(".button-text");
-        const spinnerEl = btn.querySelector(".spinner-border");
-
-        if (textEl && !btn.dataset.defaultLabel) {
-          btn.dataset.defaultLabel = textEl.innerHTML;
-        }
-
-        btn.disabled = isLoading;
-
-        if (spinnerEl) {
-          spinnerEl.classList.toggle("d-none", !isLoading);
-          spinnerEl.setAttribute("aria-hidden", (!isLoading).toString());
-        }
-
-        if (textEl) {
-          const loadingLabel = btn.dataset.loadingLabel;
-          if (isLoading && loadingLabel) {
-            textEl.innerHTML = loadingLabel;
-          } else if (!isLoading && btn.dataset.defaultLabel) {
-            textEl.innerHTML = btn.dataset.defaultLabel;
-          }
-          textEl.classList.toggle("opacity-50", isLoading && !loadingLabel);
-        }
-      };
-
-      const setStatusMessage = (
-        element,
-        key,
-        message,
-        variant = "muted",
-        autoClear = false,
-      ) => {
-        if (!element) return;
-        const classMap = {
-          success: "text-success",
-          danger: "text-danger",
-          muted: "text-muted",
+        const DEFAULT_PAGE_SIZE = 10;
+        const state = {
+          currentPage: 1,
+          totalPages: 1,
+          totalRecords: 0,
+          pageSize: DEFAULT_PAGE_SIZE,
+          searchTerm: "",
+          currentRecords: [],
         };
-        element.textContent = message;
-        element.classList.remove("text-muted", "text-success", "text-danger");
-        element.classList.add(classMap[variant] || "text-muted");
 
-        const existingTimer = statusTimers.get(key);
-        if (existingTimer) {
-          clearTimeout(existingTimer);
-          statusTimers.delete(key);
-        }
+        const AUTO_REFRESH_INTERVAL_MS = 45000;
+        let lastChangeToken = null;
+        let autoRefreshTimeoutId = null;
+        let autoRefreshController = null;
+        let autoRefreshEnabled = false;
+        let isPollingForChanges = false;
+        let isPerformingFullRefresh = false;
 
-        if (autoClear) {
-          const timer = setTimeout(() => {
-            element.textContent = "";
-            element.classList.remove("text-success", "text-danger");
-            element.classList.add("text-muted");
+        const loginContainer = document.getElementById("login-container");
+        const dashboardContainer = document.getElementById(
+          "dashboard-container",
+        );
+        const loginForm = document.getElementById("loginForm");
+        const loginBtn = document.getElementById("loginBtn");
+        const passwordInput = document.getElementById("passwordInput");
+        const loginError = document.getElementById("loginError");
+        const refreshDashboardBtn = document.getElementById(
+          "refreshDashboardBtn",
+        );
+        const logoutBtn = document.getElementById("logoutBtn");
+        const lastRefreshLabel = document.getElementById("lastRefreshLabel");
+
+        let totalRegCountEl,
+          registrationsLast24HoursEl,
+          lastRegTimeEl,
+          checkedInCountEl,
+          exportBtn,
+          exportStatus,
+          syncSheetsBtn,
+          syncStatus,
+          refreshSystemStatusBtn,
+          checkStatusBtn,
+          lastExportTimeEl,
+          pageSizeSelect,
+          registrationsLoadingOverlay,
+          registrationsTableBody,
+          registrationsErrorEl,
+          registrationsFeedbackEl,
+          paginationStatusEl,
+          paginationIndicatorEl,
+          paginationPrevBtn,
+          paginationNextBtn,
+          refreshTableBtn,
+          registrationsSearchForm,
+          registrationsSearchInput,
+          clearSearchBtn,
+          editRegistrationForm,
+          editRegistrationId,
+          editNameInput,
+          editPhoneInput,
+          editEmailInput,
+          editCityInput,
+          editStateInput,
+          editRegistrationSubmitBtn,
+          deleteRegistrationForm,
+          deleteRegistrationId,
+          deleteRegistrationSummary,
+          confirmDeleteBtn;
+
+        let editModalInstance;
+        let deleteModalInstance;
+        let systemStatusModalInstance;
+        const statusTimers = new Map();
+
+        const setButtonLoading = (btn, isLoading) => {
+          if (!btn) return;
+          const textEl = btn.querySelector(".button-text");
+          const spinnerEl = btn.querySelector(".spinner-border");
+
+          if (textEl && !btn.dataset.defaultLabel) {
+            btn.dataset.defaultLabel = textEl.innerHTML;
+          }
+
+          btn.disabled = isLoading;
+
+          if (spinnerEl) {
+            spinnerEl.classList.toggle("d-none", !isLoading);
+            spinnerEl.setAttribute("aria-hidden", (!isLoading).toString());
+          }
+
+          if (textEl) {
+            const loadingLabel = btn.dataset.loadingLabel;
+            if (isLoading && loadingLabel) {
+              textEl.innerHTML = loadingLabel;
+            } else if (!isLoading && btn.dataset.defaultLabel) {
+              textEl.innerHTML = btn.dataset.defaultLabel;
+            }
+            textEl.classList.toggle("opacity-50", isLoading && !loadingLabel);
+          }
+        };
+
+        const setStatusMessage = (
+          element,
+          key,
+          message,
+          variant = "muted",
+          autoClear = false,
+        ) => {
+          if (!element) return;
+          const classMap = {
+            success: "text-success",
+            danger: "text-danger",
+            muted: "text-muted",
+          };
+          element.textContent = message;
+          element.classList.remove("text-muted", "text-success", "text-danger");
+          element.classList.add(classMap[variant] || "text-muted");
+
+          const existingTimer = statusTimers.get(key);
+          if (existingTimer) {
+            clearTimeout(existingTimer);
             statusTimers.delete(key);
-          }, 5500);
-          statusTimers.set(key, timer);
-        }
-      };
+          }
 
-      const updateLastRefreshLabel = () => {
-        if (!lastRefreshLabel) return;
-        lastRefreshLabel.textContent = `Updated ${new Date().toLocaleString("en-IN", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}`;
-      };
+          if (autoClear) {
+            const timer = setTimeout(() => {
+              element.textContent = "";
+              element.classList.remove("text-success", "text-danger");
+              element.classList.add("text-muted");
+              statusTimers.delete(key);
+            }, 5500);
+            statusTimers.set(key, timer);
+          }
+        };
 
-      const displayLastExportTime = () => {
-        if (!lastExportTimeEl) lastExportTimeEl = document.getElementById("lastExportTime");
-        const lastExportTimestamp = localStorage.getItem("lastExportTimestamp");
-        if (lastExportTimestamp) {
-          const date = new Date(lastExportTimestamp);
-          lastExportTimeEl.textContent = date.toLocaleString("en-IN", {
+        const updateLastRefreshLabel = () => {
+          if (!lastRefreshLabel) return;
+          lastRefreshLabel.textContent = `Updated ${new Date().toLocaleString(
+            "en-IN",
+            {
+              dateStyle: "medium",
+              timeStyle: "short",
+            },
+          )}`;
+        };
+
+        const displayLastExportTime = () => {
+          if (!lastExportTimeEl)
+            lastExportTimeEl = document.getElementById("lastExportTime");
+          const lastExportTimestamp = localStorage.getItem(
+            "lastExportTimestamp",
+          );
+          if (lastExportTimestamp) {
+            const date = new Date(lastExportTimestamp);
+            lastExportTimeEl.textContent = date.toLocaleString("en-IN", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            });
+          } else {
+            lastExportTimeEl.textContent = "Never";
+          }
+        };
+
+        const fetchChangeToken = async ({ signal } = {}) => {
+          if (!ADMIN_SECRET_KEY) {
+            throw new Error("Not authenticated.");
+          }
+          const response = await fetch("/.netlify/functions/get-change-token", {
+            headers: { "x-admin-key": ADMIN_SECRET_KEY },
+            signal,
+            cache: "no-store",
+          });
+          if (!response.ok) {
+            const message = await response.text();
+            throw new Error(
+              message || `Change token request failed (${response.status})`,
+            );
+          }
+          return response.json();
+        };
+
+        const refreshChangeToken = async () => {
+          try {
+            const data = await fetchChangeToken();
+            if (data?.token) {
+              lastChangeToken = data.token;
+            }
+            return data;
+          } catch (error) {
+            console.warn("Change token refresh failed:", error);
+            return null;
+          }
+        };
+
+        const performFullRefresh = async ({
+          includeStatus = false,
+          loadingButton = null,
+          tokenHint = null,
+        } = {}) => {
+          if (isPerformingFullRefresh) {
+            return;
+          }
+          isPerformingFullRefresh = true;
+          if (loadingButton) {
+            setButtonLoading(loadingButton, true);
+          }
+          try {
+            const tasks = [
+              fetchDashboardStats(),
+              loadRegistrations(state.currentPage),
+            ];
+            if (includeStatus) {
+              tasks.push(checkSystemStatus());
+            }
+            await Promise.all(tasks);
+            displayLastExportTime();
+            if (tokenHint) {
+              lastChangeToken = tokenHint;
+            } else {
+              await refreshChangeToken();
+            }
+          } catch (error) {
+            console.error("Full refresh error:", error);
+          } finally {
+            if (loadingButton) {
+              setButtonLoading(loadingButton, false);
+            }
+            isPerformingFullRefresh = false;
+          }
+        };
+
+        const stopAutoRefresh = (resetToken = false) => {
+          autoRefreshEnabled = false;
+          if (autoRefreshTimeoutId) {
+            clearTimeout(autoRefreshTimeoutId);
+            autoRefreshTimeoutId = null;
+          }
+          if (autoRefreshController) {
+            autoRefreshController.abort();
+            autoRefreshController = null;
+          }
+          if (resetToken) {
+            lastChangeToken = null;
+          }
+        };
+
+        const scheduleAutoRefresh = () => {
+          if (!autoRefreshEnabled) {
+            return;
+          }
+          if (autoRefreshTimeoutId) {
+            clearTimeout(autoRefreshTimeoutId);
+          }
+          autoRefreshTimeoutId = window.setTimeout(
+            runAutoRefreshCycle,
+            AUTO_REFRESH_INTERVAL_MS,
+          );
+        };
+
+        const runAutoRefreshCycle = async () => {
+          if (!autoRefreshEnabled) {
+            return;
+          }
+          if (!ADMIN_SECRET_KEY) {
+            scheduleAutoRefresh();
+            return;
+          }
+          if (isPollingForChanges || isPerformingFullRefresh) {
+            scheduleAutoRefresh();
+            return;
+          }
+
+          isPollingForChanges = true;
+          const controller = new AbortController();
+          autoRefreshController = controller;
+
+          try {
+            const data = await fetchChangeToken({ signal: controller.signal });
+            if (!data?.token) {
+              return;
+            }
+            if (!lastChangeToken) {
+              lastChangeToken = data.token;
+            } else if (data.token !== lastChangeToken) {
+              await performFullRefresh({ tokenHint: data.token });
+            }
+          } catch (error) {
+            if (error.name !== "AbortError") {
+              console.warn("Auto refresh poll failed:", error);
+            }
+          } finally {
+            autoRefreshController = null;
+            isPollingForChanges = false;
+            scheduleAutoRefresh();
+          }
+        };
+
+        const startAutoRefresh = () => {
+          if (autoRefreshEnabled) {
+            return;
+          }
+          autoRefreshEnabled = true;
+          runAutoRefreshCycle();
+        };
+
+        const setStatusIndicator = (elementId, status) => {
+          const el = document.getElementById(elementId);
+          if (!el) return;
+          const config = {
+            ok: {
+              class: "bg-success text-white",
+              text: "Operational",
+            },
+            error: {
+              class: "bg-danger text-white",
+              text: "Down",
+            },
+          };
+          const current = config[status] || {
+            class: "bg-warning text-dark",
+            text: "Unknown",
+          };
+          el.className = `badge ${current.class} p-2`;
+          el.textContent = current.text;
+        };
+
+        const escapeHtml = (unsafe) => {
+          if (unsafe === undefined || unsafe === null) return "";
+          return unsafe
+            .toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        };
+
+        const formatDateTime = (value) => {
+          if (!value) return "--";
+          return new Date(value).toLocaleString("en-IN", {
             dateStyle: "medium",
             timeStyle: "short",
           });
-        } else {
-          lastExportTimeEl.textContent = "Never";
-        }
-      };
+        };
 
-      const fetchChangeToken = async ({ signal } = {}) => {
-        if (!ADMIN_SECRET_KEY) {
-          throw new Error("Not authenticated.");
-        }
-        const response = await fetch("/.netlify/functions/get-change-token", {
-          headers: { "x-admin-key": ADMIN_SECRET_KEY },
-          signal,
-          cache: "no-store",
-        });
-        if (!response.ok) {
-          const message = await response.text();
-          throw new Error(message || `Change token request failed (${response.status})`);
-        }
-        return response.json();
-      };
-
-      const refreshChangeToken = async () => {
-        try {
-          const data = await fetchChangeToken();
-          if (data?.token) {
-            lastChangeToken = data.token;
+        const setTableLoading = (isLoading) => {
+          if (registrationsLoadingOverlay) {
+            registrationsLoadingOverlay.classList.toggle("d-none", !isLoading);
           }
-          return data;
-        } catch (error) {
-          console.warn("Change token refresh failed:", error);
-          return null;
-        }
-      };
+          if (paginationPrevBtn) paginationPrevBtn.disabled = isLoading;
+          if (paginationNextBtn) paginationNextBtn.disabled = isLoading;
+        };
 
-      const performFullRefresh = async ({
-        includeStatus = false,
-        loadingButton = null,
-        tokenHint = null,
-      } = {}) => {
-        if (isPerformingFullRefresh) {
-          return;
-        }
-        isPerformingFullRefresh = true;
-        if (loadingButton) {
-          setButtonLoading(loadingButton, true);
-        }
-        try {
-          const tasks = [
-            fetchDashboardStats(),
-            loadRegistrations(state.currentPage),
-          ];
-          if (includeStatus) {
-            tasks.push(checkSystemStatus());
-          }
-          await Promise.all(tasks);
-          displayLastExportTime();
-          if (tokenHint) {
-            lastChangeToken = tokenHint;
+        const updatePaginationUI = () => {
+          if (!paginationStatusEl || !paginationIndicatorEl) return;
+          if (state.totalRecords === 0) {
+            paginationStatusEl.textContent = "No registrations on record.";
           } else {
-            await refreshChangeToken();
+            const start = (state.currentPage - 1) * state.pageSize + 1;
+            const end = Math.min(
+              state.totalRecords,
+              state.currentPage * state.pageSize,
+            );
+            paginationStatusEl.textContent = `Showing ${start} - ${end} of ${state.totalRecords}`;
           }
-        } catch (error) {
-          console.error("Full refresh error:", error);
-        } finally {
-          if (loadingButton) {
-            setButtonLoading(loadingButton, false);
-          }
-          isPerformingFullRefresh = false;
-        }
-      };
-
-      const stopAutoRefresh = (resetToken = false) => {
-        autoRefreshEnabled = false;
-        if (autoRefreshTimeoutId) {
-          clearTimeout(autoRefreshTimeoutId);
-          autoRefreshTimeoutId = null;
-        }
-        if (autoRefreshController) {
-          autoRefreshController.abort();
-          autoRefreshController = null;
-        }
-        if (resetToken) {
-          lastChangeToken = null;
-        }
-      };
-
-      const scheduleAutoRefresh = () => {
-        if (!autoRefreshEnabled) {
-          return;
-        }
-        if (autoRefreshTimeoutId) {
-          clearTimeout(autoRefreshTimeoutId);
-        }
-        autoRefreshTimeoutId = window.setTimeout(
-          runAutoRefreshCycle,
-          AUTO_REFRESH_INTERVAL_MS,
-        );
-      };
-
-      const runAutoRefreshCycle = async () => {
-        if (!autoRefreshEnabled) {
-          return;
-        }
-        if (!ADMIN_SECRET_KEY) {
-          scheduleAutoRefresh();
-          return;
-        }
-        if (isPollingForChanges || isPerformingFullRefresh) {
-          scheduleAutoRefresh();
-          return;
-        }
-
-        isPollingForChanges = true;
-        const controller = new AbortController();
-        autoRefreshController = controller;
-
-        try {
-          const data = await fetchChangeToken({ signal: controller.signal });
-          if (!data?.token) {
-            return;
-          }
-          if (!lastChangeToken) {
-            lastChangeToken = data.token;
-          } else if (data.token !== lastChangeToken) {
-            await performFullRefresh({ tokenHint: data.token });
-          }
-        } catch (error) {
-          if (error.name !== "AbortError") {
-            console.warn("Auto refresh poll failed:", error);
-          }
-        } finally {
-          autoRefreshController = null;
-          isPollingForChanges = false;
-          scheduleAutoRefresh();
-        }
-      };
-
-      const startAutoRefresh = () => {
-        if (autoRefreshEnabled) {
-          return;
-        }
-        autoRefreshEnabled = true;
-        runAutoRefreshCycle();
-      };
-
-      const setStatusIndicator = (elementId, status) => {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        const config = {
-          ok: {
-            class: "bg-success text-white",
-            text: "Operational"
-          },
-          error: {
-            class: "bg-danger text-white",
-            text: "Down"
-          },
+          paginationIndicatorEl.textContent = `${state.currentPage} / ${state.totalPages}`;
+          if (paginationPrevBtn)
+            paginationPrevBtn.disabled = state.currentPage <= 1;
+          if (paginationNextBtn)
+            paginationNextBtn.disabled = state.currentPage >= state.totalPages;
         };
-        const current = config[status] || {
-          class: "bg-warning text-dark",
-          text: "Unknown",
+
+        const setFeedbackMessage = (variant, message) => {
+          if (!registrationsFeedbackEl) return;
+          registrationsFeedbackEl.className = `alert alert-${variant} mt-3`;
+          registrationsFeedbackEl.textContent = message;
+          registrationsFeedbackEl.classList.remove("d-none");
         };
-        el.className = `badge ${current.class} p-2`;
-        el.textContent = current.text;
-      };
 
-      const escapeHtml = (unsafe) => {
-        if (unsafe === undefined || unsafe === null) return "";
-        return unsafe
-          .toString()
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      };
+        const clearFeedbackMessage = () => {
+          if (!registrationsFeedbackEl) return;
+          registrationsFeedbackEl.classList.add("d-none");
+          registrationsFeedbackEl.textContent = "";
+        };
 
-      const formatDateTime = (value) => {
-        if (!value) return "--";
-        return new Date(value).toLocaleString("en-IN", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        });
-      };
+        const syncSearchUI = () => {
+          if (!clearSearchBtn) return;
+          clearSearchBtn.disabled = state.searchTerm.length === 0;
+        };
 
-      const setTableLoading = (isLoading) => {
-        if (registrationsLoadingOverlay) {
-          registrationsLoadingOverlay.classList.toggle("d-none", !isLoading);
-        }
-        if (paginationPrevBtn) paginationPrevBtn.disabled = isLoading;
-        if (paginationNextBtn) paginationNextBtn.disabled = isLoading;
-      };
-
-      const updatePaginationUI = () => {
-        if (!paginationStatusEl || !paginationIndicatorEl) return;
-        if (state.totalRecords === 0) {
-          paginationStatusEl.textContent = "No registrations on record.";
-        } else {
-          const start = (state.currentPage - 1) * state.pageSize + 1;
-          const end = Math.min(state.totalRecords, state.currentPage * state.pageSize);
-          paginationStatusEl.textContent = `Showing ${start} - ${end} of ${state.totalRecords}`;
-        }
-        paginationIndicatorEl.textContent = `${state.currentPage} / ${state.totalPages}`;
-        if (paginationPrevBtn) paginationPrevBtn.disabled = state.currentPage <= 1;
-        if (paginationNextBtn) paginationNextBtn.disabled = state.currentPage >= state.totalPages;
-      };
-
-      const setFeedbackMessage = (variant, message) => {
-        if (!registrationsFeedbackEl) return;
-        registrationsFeedbackEl.className = `alert alert-${variant} mt-3`;
-        registrationsFeedbackEl.textContent = message;
-        registrationsFeedbackEl.classList.remove("d-none");
-      };
-
-      const clearFeedbackMessage = () => {
-        if (!registrationsFeedbackEl) return;
-        registrationsFeedbackEl.classList.add("d-none");
-        registrationsFeedbackEl.textContent = "";
-      };
-
-      const syncSearchUI = () => {
-        if (!clearSearchBtn) return;
-        clearSearchBtn.disabled = state.searchTerm.length === 0;
-      };
-
-      const renderRegistrations = (records = []) => {
-        if (!registrationsTableBody) return;
-        if (!Array.isArray(records) || records.length === 0) {
-          registrationsTableBody.innerHTML = `
+        const renderRegistrations = (records = []) => {
+          if (!registrationsTableBody) return;
+          if (!Array.isArray(records) || records.length === 0) {
+            registrationsTableBody.innerHTML = `
             <tr>
               <td colspan="9" class="text-center text-muted py-4">
                 No registrations found.
               </td>
             </tr>
           `;
-          return;
-        }
+            return;
+          }
 
-        const rowsHtml = records
-          .map((entry) => {
-            const registeredAt = formatDateTime(entry.timestamp);
-            const checkInBadge = entry.checked_in_at ?
-              `<span class="badge bg-success">Checked in</span><div class="text-muted small mt-1">${formatDateTime(entry.checked_in_at)}</div>` :
-              '<span class="badge bg-warning text-dark">Pending</span>';
-            const phoneCell = entry.phone ?
-              `<a href="tel:${escapeHtml(entry.phone)}" class="text-decoration-none">${escapeHtml(entry.phone)}</a>` :
-              "--";
-            const emailCell = entry.email ?
-              `<a href="mailto:${escapeHtml(entry.email)}" class="text-decoration-none">${escapeHtml(entry.email)}</a>` :
-              "--";
-            return `
+          const rowsHtml = records
+            .map((entry) => {
+              const registeredAt = formatDateTime(entry.timestamp);
+              const checkInBadge = entry.checked_in_at
+                ? `<span class="badge bg-success">Checked in</span><div class="text-muted small mt-1">${formatDateTime(entry.checked_in_at)}</div>`
+                : '<span class="badge bg-warning text-dark">Pending</span>';
+              const phoneCell = entry.phone
+                ? `<a href="tel:${escapeHtml(entry.phone)}" class="text-decoration-none">${escapeHtml(entry.phone)}</a>`
+                : "--";
+              const emailCell = entry.email
+                ? `<a href="mailto:${escapeHtml(entry.email)}" class="text-decoration-none">${escapeHtml(entry.email)}</a>`
+                : "--";
+              return `
               <tr>
                 <td class="fw-semibold">${escapeHtml(entry.registration_id) || "--"}</td>
                 <td>${escapeHtml(entry.name) || "--"}</td>
@@ -1206,552 +1522,653 @@
                 </td>
               </tr>
             `;
-          })
-          .join("");
-        registrationsTableBody.innerHTML = rowsHtml;
-      };
-
-      const makeApiCall = async (endpoint, options = {}) => {
-        if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
-        const headers = {
-          "x-admin-key": ADMIN_SECRET_KEY,
-          ...(options.body ? {
-            "Content-Type": "application/json"
-          } : {}),
-          ...options.headers,
+            })
+            .join("");
+          registrationsTableBody.innerHTML = rowsHtml;
         };
-        try {
-          const response = await fetch(endpoint, {
-            ...options,
-            headers
-          });
-          const isJson = response.headers.get("content-type")?.includes("application/json");
-          const responseData = isJson ? await response.json() : null;
 
-          if (!response.ok) {
-            const errorMessage =
-              responseData?.error || responseData?.message || `Request failed: ${response.status}`;
-            throw new Error(errorMessage);
+        const makeApiCall = async (endpoint, options = {}) => {
+          if (!ADMIN_SECRET_KEY) throw new Error("Not authenticated.");
+          const headers = {
+            "x-admin-key": ADMIN_SECRET_KEY,
+            ...(options.body
+              ? {
+                  "Content-Type": "application/json",
+                }
+              : {}),
+            ...options.headers,
+          };
+          try {
+            const response = await fetch(endpoint, {
+              ...options,
+              headers,
+            });
+            const isJson = response.headers
+              .get("content-type")
+              ?.includes("application/json");
+            const responseData = isJson ? await response.json() : null;
+
+            if (!response.ok) {
+              const errorMessage =
+                responseData?.error ||
+                responseData?.message ||
+                `Request failed: ${response.status}`;
+              throw new Error(errorMessage);
+            }
+
+            return responseData;
+          } catch (error) {
+            throw new Error(error.message || "A network error occurred.");
           }
+        };
 
-          return responseData;
-        } catch (error) {
-          throw new Error(error.message || "A network error occurred.");
-        }
-      };
-
-      const loadRegistrations = async (page = 1, options = {}) => {
-        const {
-          showButtonLoading = false
-        } = options;
-        if (showButtonLoading && refreshTableBtn) {
-          setButtonLoading(refreshTableBtn, true);
-        }
-        setTableLoading(true);
-        if (registrationsErrorEl) {
-          registrationsErrorEl.classList.add("d-none");
-        }
-        try {
-          const params = new URLSearchParams({
-            page: String(page),
-            limit: String(state.pageSize),
-          });
-          if (state.searchTerm) {
-            params.set("search", state.searchTerm);
-          }
-          const data = await makeApiCall(`/.netlify/functions/list-registrations?${params.toString()}`);
-          const {
-            results = [],
-            total = 0,
-            page: resolvedPage = 1,
-            pageSize: resolvedPageSize = state.pageSize,
-            totalPages: resolvedTotalPages = 1,
-          } = data || {};
-
-          state.totalRecords = total;
-          state.pageSize = resolvedPageSize;
-          state.currentPage = resolvedPage;
-          state.totalPages = Math.max(1, resolvedTotalPages);
-          state.currentRecords = Array.isArray(results) ? results : [];
-
-          if (pageSizeSelect && Number(pageSizeSelect.value) !== Number(state.pageSize)) {
-            pageSizeSelect.value = String(state.pageSize);
-          }
-
-          renderRegistrations(state.currentRecords);
-          updatePaginationUI();
-          updateLastRefreshLabel();
-        } catch (error) {
-          console.error("Registrations fetch error:", error);
-          state.currentRecords = [];
-          renderRegistrations([]);
-          if (registrationsErrorEl) {
-            registrationsErrorEl.textContent = `Unable to load registrations: ${error.message}`;
-            registrationsErrorEl.classList.remove("d-none");
-          }
-        } finally {
-          setTableLoading(false);
+        const loadRegistrations = async (page = 1, options = {}) => {
+          const { showButtonLoading = false } = options;
           if (showButtonLoading && refreshTableBtn) {
-            setButtonLoading(refreshTableBtn, false);
+            setButtonLoading(refreshTableBtn, true);
           }
-        }
-      };
-
-      const fetchDashboardStats = async () => {
-        try {
-          const data = await makeApiCall("/.netlify/functions/get-stats");
-          if (totalRegCountEl)
-            totalRegCountEl.textContent = Number(data.totalRegistrations || 0).toLocaleString("en-IN");
-          if (registrationsLast24HoursEl)
-            registrationsLast24HoursEl.textContent = Number(data.registrationsLast24Hours || 0).toLocaleString("en-IN");
-          if (lastRegTimeEl)
-            lastRegTimeEl.textContent = data.lastRegistrationTime ? formatDateTime(data.lastRegistrationTime) : "N/A";
-          if (checkedInCountEl)
-            checkedInCountEl.textContent = Number(data.totalCheckedIn || 0).toLocaleString("en-IN");
-        } catch (err) {
-          console.error("Stats fetch error:", err);
-          if (totalRegCountEl) totalRegCountEl.textContent = "Error";
-          if (registrationsLast24HoursEl) registrationsLast24HoursEl.textContent = "Error";
-          if (lastRegTimeEl) lastRegTimeEl.textContent = "Error";
-          if (checkedInCountEl) checkedInCountEl.textContent = "Error";
-        }
-      };
-
-      const checkSystemStatus = async (options = {}) => {
-        const {
-          showButtonLoading = false
-        } = options;
-        if (showButtonLoading && refreshSystemStatusBtn) {
-          setButtonLoading(refreshSystemStatusBtn, true);
-        }
-        ["database", "cloudinary", "googleSheets"].forEach((id) => {
-          const el = document.getElementById(`status-${id}`);
-          if (el) {
-            el.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
+          setTableLoading(true);
+          if (registrationsErrorEl) {
+            registrationsErrorEl.classList.add("d-none");
           }
-        });
-        try {
-          const statuses = await makeApiCall("/.netlify/functions/check-status");
-          setStatusIndicator("status-database", statuses.database.status);
-          setStatusIndicator("status-cloudinary", statuses.cloudinary.status);
-          setStatusIndicator("status-googleSheets", statuses.googleSheets.status);
-        } catch (err) {
-          ["database", "cloudinary", "googleSheets"].forEach((id) => setStatusIndicator(`status-${id}`, "error"));
-          console.error("Status check error:", err);
-        }
-        if (showButtonLoading && refreshSystemStatusBtn) {
-          setButtonLoading(refreshSystemStatusBtn, false);
-        }
-      };
+          try {
+            const params = new URLSearchParams({
+              page: String(page),
+              limit: String(state.pageSize),
+            });
+            if (state.searchTerm) {
+              params.set("search", state.searchTerm);
+            }
+            const data = await makeApiCall(
+              `/.netlify/functions/list-registrations?${params.toString()}`,
+            );
+            const {
+              results = [],
+              total = 0,
+              page: resolvedPage = 1,
+              pageSize: resolvedPageSize = state.pageSize,
+              totalPages: resolvedTotalPages = 1,
+            } = data || {};
 
-      const handleExport = async () => {
-        setButtonLoading(exportBtn, true);
-        setStatusMessage(exportStatus, "export", "Preparing download...", "muted", false);
-        try {
-          const result = await makeApiCall("/.netlify/functions/export-data");
-          window.open(result.downloadUrl, "_blank");
-          setStatusMessage(exportStatus, "export", "Download started!", "success", true);
-          const now = new Date();
-          localStorage.setItem("lastExportTimestamp", now.toISOString());
-          displayLastExportTime();
-        } catch (err) {
-          setStatusMessage(exportStatus, "export", `Failed: ${err.message}`, "danger", true);
-        } finally {
-          setButtonLoading(exportBtn, false);
-        }
-      };
+            state.totalRecords = total;
+            state.pageSize = resolvedPageSize;
+            state.currentPage = resolvedPage;
+            state.totalPages = Math.max(1, resolvedTotalPages);
+            state.currentRecords = Array.isArray(results) ? results : [];
 
-      const syncSheets = async ({
-        showButtonLoading = false,
-        statusPrefix = "Sync",
-      } = {}) => {
-        const buttonRef = syncSheetsBtn;
-        const statusRef = syncStatus;
-        if (showButtonLoading && buttonRef) {
-          setButtonLoading(buttonRef, true);
-        }
-        if (statusRef) {
-          setStatusMessage(statusRef, "sync", `${statusPrefix} in progress...`, "muted", false);
-        }
-        try {
-          const result = await makeApiCall("/.netlify/functions/sync-with-google-sheets", {
-            method: "POST"
+            if (
+              pageSizeSelect &&
+              Number(pageSizeSelect.value) !== Number(state.pageSize)
+            ) {
+              pageSizeSelect.value = String(state.pageSize);
+            }
+
+            renderRegistrations(state.currentRecords);
+            updatePaginationUI();
+            updateLastRefreshLabel();
+          } catch (error) {
+            console.error("Registrations fetch error:", error);
+            state.currentRecords = [];
+            renderRegistrations([]);
+            if (registrationsErrorEl) {
+              registrationsErrorEl.textContent = `Unable to load registrations: ${error.message}`;
+              registrationsErrorEl.classList.remove("d-none");
+            }
+          } finally {
+            setTableLoading(false);
+            if (showButtonLoading && refreshTableBtn) {
+              setButtonLoading(refreshTableBtn, false);
+            }
+          }
+        };
+
+        const fetchDashboardStats = async () => {
+          try {
+            const data = await makeApiCall("/.netlify/functions/get-stats");
+            if (totalRegCountEl)
+              totalRegCountEl.textContent = Number(
+                data.totalRegistrations || 0,
+              ).toLocaleString("en-IN");
+            if (registrationsLast24HoursEl)
+              registrationsLast24HoursEl.textContent = Number(
+                data.registrationsLast24Hours || 0,
+              ).toLocaleString("en-IN");
+            if (lastRegTimeEl)
+              lastRegTimeEl.textContent = data.lastRegistrationTime
+                ? formatDateTime(data.lastRegistrationTime)
+                : "N/A";
+            if (checkedInCountEl)
+              checkedInCountEl.textContent = Number(
+                data.totalCheckedIn || 0,
+              ).toLocaleString("en-IN");
+          } catch (err) {
+            console.error("Stats fetch error:", err);
+            if (totalRegCountEl) totalRegCountEl.textContent = "Error";
+            if (registrationsLast24HoursEl)
+              registrationsLast24HoursEl.textContent = "Error";
+            if (lastRegTimeEl) lastRegTimeEl.textContent = "Error";
+            if (checkedInCountEl) checkedInCountEl.textContent = "Error";
+          }
+        };
+
+        const checkSystemStatus = async (options = {}) => {
+          const { showButtonLoading = false } = options;
+          if (showButtonLoading && refreshSystemStatusBtn) {
+            setButtonLoading(refreshSystemStatusBtn, true);
+          }
+          ["database", "cloudinary", "googleSheets"].forEach((id) => {
+            const el = document.getElementById(`status-${id}`);
+            if (el) {
+              el.innerHTML =
+                '<div class="spinner-border spinner-border-sm"></div>';
+            }
           });
-          const rowCount = Number(result?.rowsSynced ?? 0);
+          try {
+            const statuses = await makeApiCall(
+              "/.netlify/functions/check-status",
+            );
+            setStatusIndicator("status-database", statuses.database.status);
+            setStatusIndicator("status-cloudinary", statuses.cloudinary.status);
+            setStatusIndicator(
+              "status-googleSheets",
+              statuses.googleSheets.status,
+            );
+          } catch (err) {
+            ["database", "cloudinary", "googleSheets"].forEach((id) =>
+              setStatusIndicator(`status-${id}`, "error"),
+            );
+            console.error("Status check error:", err);
+          }
+          if (showButtonLoading && refreshSystemStatusBtn) {
+            setButtonLoading(refreshSystemStatusBtn, false);
+          }
+        };
+
+        const handleExport = async () => {
+          setButtonLoading(exportBtn, true);
+          setStatusMessage(
+            exportStatus,
+            "export",
+            "Preparing download...",
+            "muted",
+            false,
+          );
+          try {
+            const result = await makeApiCall("/.netlify/functions/export-data");
+            window.open(result.downloadUrl, "_blank");
+            setStatusMessage(
+              exportStatus,
+              "export",
+              "Download started!",
+              "success",
+              true,
+            );
+            const now = new Date();
+            localStorage.setItem("lastExportTimestamp", now.toISOString());
+            displayLastExportTime();
+          } catch (err) {
+            setStatusMessage(
+              exportStatus,
+              "export",
+              `Failed: ${err.message}`,
+              "danger",
+              true,
+            );
+          } finally {
+            setButtonLoading(exportBtn, false);
+          }
+        };
+
+        const syncSheets = async ({
+          showButtonLoading = false,
+          statusPrefix = "Sync",
+        } = {}) => {
+          const buttonRef = syncSheetsBtn;
+          const statusRef = syncStatus;
+          if (showButtonLoading && buttonRef) {
+            setButtonLoading(buttonRef, true);
+          }
           if (statusRef) {
             setStatusMessage(
               statusRef,
               "sync",
-              `Google Sheet updated (${rowCount.toLocaleString("en-IN")} rows).`,
-              "success",
-              true,
+              `${statusPrefix} in progress...`,
+              "muted",
+              false,
             );
           }
-          return result;
-        } catch (err) {
-          if (statusRef) {
-            setStatusMessage(statusRef, "sync", `Sync failed: ${err.message}`, "danger", true);
+          try {
+            const result = await makeApiCall(
+              "/.netlify/functions/sync-with-google-sheets",
+              {
+                method: "POST",
+              },
+            );
+            const rowCount = Number(result?.rowsSynced ?? 0);
+            if (statusRef) {
+              setStatusMessage(
+                statusRef,
+                "sync",
+                `Google Sheet updated (${rowCount.toLocaleString("en-IN")} rows).`,
+                "success",
+                true,
+              );
+            }
+            return result;
+          } catch (err) {
+            if (statusRef) {
+              setStatusMessage(
+                statusRef,
+                "sync",
+                `Sync failed: ${err.message}`,
+                "danger",
+                true,
+              );
+            }
+            throw err;
+          } finally {
+            if (showButtonLoading && buttonRef) {
+              setButtonLoading(buttonRef, false);
+            }
           }
-          throw err;
-        } finally {
-          if (showButtonLoading && buttonRef) {
-            setButtonLoading(buttonRef, false);
+        };
+
+        const handleSyncSheets = () => {
+          syncSheets({
+            showButtonLoading: true,
+            statusPrefix: "Manual sync",
+          }).catch((error) => console.warn("Manual sync failed:", error));
+        };
+
+        const handleLogout = () => {
+          ADMIN_SECRET_KEY = null;
+          stopAutoRefresh(true);
+          state.currentPage = 1;
+          state.totalPages = 1;
+          state.totalRecords = 0;
+          state.pageSize = DEFAULT_PAGE_SIZE;
+          state.searchTerm = "";
+          state.currentRecords = [];
+          dashboardContainer.classList.add("d-none");
+          loginContainer.classList.remove("d-none");
+          loginForm.reset();
+          clearFeedbackMessage();
+          statusTimers.forEach((timer) => clearTimeout(timer));
+          statusTimers.clear();
+          if (exportStatus) {
+            exportStatus.textContent = "";
+            exportStatus.classList.remove("text-success", "text-danger");
+            exportStatus.classList.add("text-muted");
           }
-        }
-      };
+          if (syncStatus) {
+            syncStatus.textContent = "";
+            syncStatus.classList.remove("text-success", "text-danger");
+            syncStatus.classList.add("text-muted");
+          }
+          passwordInput.focus();
+          setButtonLoading(loginBtn, false);
+        };
 
-      const handleSyncSheets = () => {
-        syncSheets({
-          showButtonLoading: true,
-          statusPrefix: "Manual sync",
-        }).catch((error) => console.warn("Manual sync failed:", error));
-      };
-
-      const handleLogout = () => {
-        ADMIN_SECRET_KEY = null;
-  stopAutoRefresh(true);
-        state.currentPage = 1;
-        state.totalPages = 1;
-        state.totalRecords = 0;
-        state.pageSize = DEFAULT_PAGE_SIZE;
-        state.searchTerm = "";
-        state.currentRecords = [];
-        dashboardContainer.classList.add("d-none");
-        loginContainer.classList.remove("d-none");
-        loginForm.reset();
-        clearFeedbackMessage();
-        statusTimers.forEach((timer) => clearTimeout(timer));
-        statusTimers.clear();
-        if (exportStatus) {
-          exportStatus.textContent = "";
-          exportStatus.classList.remove("text-success", "text-danger");
-          exportStatus.classList.add("text-muted");
-        }
-        if (syncStatus) {
-          syncStatus.textContent = "";
-          syncStatus.classList.remove("text-success", "text-danger");
-          syncStatus.classList.add("text-muted");
-        }
-        passwordInput.focus();
-        setButtonLoading(loginBtn, false);
-      };
-
-      const handleSearchSubmit = (event) => {
-        event.preventDefault();
-        if (!registrationsSearchInput) return;
-        state.searchTerm = registrationsSearchInput.value.trim();
-        state.currentPage = 1;
-        clearFeedbackMessage();
-        loadRegistrations(1);
-        syncSearchUI();
-      };
-
-      const handleClearSearch = () => {
-        if (!registrationsSearchInput) return;
-        registrationsSearchInput.value = "";
-        if (!state.searchTerm) {
+        const handleSearchSubmit = (event) => {
+          event.preventDefault();
+          if (!registrationsSearchInput) return;
+          state.searchTerm = registrationsSearchInput.value.trim();
+          state.currentPage = 1;
+          clearFeedbackMessage();
+          loadRegistrations(1);
           syncSearchUI();
-          return;
-        }
-        state.searchTerm = "";
-        state.currentPage = 1;
-        clearFeedbackMessage();
-        loadRegistrations(1);
-        syncSearchUI();
-      };
+        };
 
-      const getRecordByRegistrationId = (registrationId) =>
-        state.currentRecords.find((record) => record.registration_id === registrationId);
+        const handleClearSearch = () => {
+          if (!registrationsSearchInput) return;
+          registrationsSearchInput.value = "";
+          if (!state.searchTerm) {
+            syncSearchUI();
+            return;
+          }
+          state.searchTerm = "";
+          state.currentPage = 1;
+          clearFeedbackMessage();
+          loadRegistrations(1);
+          syncSearchUI();
+        };
 
-      const openEditModal = (record) => {
-        if (!editModalInstance || !record) return;
-        if (editRegistrationForm) {
-          editRegistrationForm.reset();
-        }
-        editRegistrationId.value = record.registration_id || "";
-        editNameInput.value = record.name || "";
-        editPhoneInput.value = record.phone || "";
-        editEmailInput.value = record.email || "";
-        editCityInput.value = record.city || "";
-        editStateInput.value = record.state || "";
-        editModalInstance.show();
-      };
+        const getRecordByRegistrationId = (registrationId) =>
+          state.currentRecords.find(
+            (record) => record.registration_id === registrationId,
+          );
 
-      const openDeleteModal = (record) => {
-        if (!deleteModalInstance || !record) return;
-        deleteRegistrationId.value = record.registration_id || "";
-        deleteRegistrationSummary.textContent = `Remove ${record.name || "this registration"} (Reg ID: ${record.registration_id})? This cannot be undone.`;
-        deleteModalInstance.show();
-      };
+        const openEditModal = (record) => {
+          if (!editModalInstance || !record) return;
+          if (editRegistrationForm) {
+            editRegistrationForm.reset();
+          }
+          editRegistrationId.value = record.registration_id || "";
+          editNameInput.value = record.name || "";
+          editPhoneInput.value = record.phone || "";
+          editEmailInput.value = record.email || "";
+          editCityInput.value = record.city || "";
+          editStateInput.value = record.state || "";
+          editModalInstance.show();
+        };
 
-      const handleEditSubmit = async (event) => {
-        event.preventDefault();
-        if (!editRegistrationSubmitBtn) return;
-        setButtonLoading(editRegistrationSubmitBtn, true);
-        clearFeedbackMessage();
-        try {
-          const normalizeField = (value) => {
-            if (typeof value !== "string") return value;
-            const trimmed = value.trim();
-            return trimmed.length === 0 ? null : trimmed;
-          };
+        const openDeleteModal = (record) => {
+          if (!deleteModalInstance || !record) return;
+          deleteRegistrationId.value = record.registration_id || "";
+          deleteRegistrationSummary.textContent = `Remove ${record.name || "this registration"} (Reg ID: ${record.registration_id})? This cannot be undone.`;
+          deleteModalInstance.show();
+        };
 
-          const payload = {
-            registrationId: editRegistrationId.value,
-            name: normalizeField(editNameInput.value),
-            phone: normalizeField(editPhoneInput.value),
-            email: normalizeField(editEmailInput.value),
-            city: normalizeField(editCityInput.value),
-            state: normalizeField(editStateInput.value),
-          };
-
-          await makeApiCall("/.netlify/functions/update-registration", {
-            method: "PUT",
-            body: JSON.stringify(payload),
-          });
-          editModalInstance.hide();
-          setFeedbackMessage("success", "Registration updated successfully.");
-          await loadRegistrations(state.currentPage);
+        const handleEditSubmit = async (event) => {
+          event.preventDefault();
+          if (!editRegistrationSubmitBtn) return;
+          setButtonLoading(editRegistrationSubmitBtn, true);
+          clearFeedbackMessage();
           try {
-            await syncSheets({ statusPrefix: "Auto sync after edit" });
-          } catch (syncError) {
-            console.warn("Auto sync after edit failed:", syncError);
-          }
-        } catch (error) {
-          setFeedbackMessage("danger", `Unable to update registration: ${error.message}`);
-        } finally {
-          setButtonLoading(editRegistrationSubmitBtn, false);
-        }
-      };
+            const normalizeField = (value) => {
+              if (typeof value !== "string") return value;
+              const trimmed = value.trim();
+              return trimmed.length === 0 ? null : trimmed;
+            };
 
-      const handleDeleteConfirm = async (event) => {
-        event.preventDefault();
-        if (!confirmDeleteBtn) return;
-        setButtonLoading(confirmDeleteBtn, true);
-        clearFeedbackMessage();
-        try {
-          await makeApiCall("/.netlify/functions/delete-registration", {
-            method: "DELETE",
-            body: JSON.stringify({
-              registrationId: deleteRegistrationId.value
-            }),
-          });
-          deleteModalInstance.hide();
-          setFeedbackMessage("success", "Registration deleted successfully.");
-          if (state.currentRecords.length <= 1 && state.currentPage > 1) {
-            state.currentPage -= 1;
+            const payload = {
+              registrationId: editRegistrationId.value,
+              name: normalizeField(editNameInput.value),
+              phone: normalizeField(editPhoneInput.value),
+              email: normalizeField(editEmailInput.value),
+              city: normalizeField(editCityInput.value),
+              state: normalizeField(editStateInput.value),
+            };
+
+            await makeApiCall("/.netlify/functions/update-registration", {
+              method: "PUT",
+              body: JSON.stringify(payload),
+            });
+            editModalInstance.hide();
+            setFeedbackMessage("success", "Registration updated successfully.");
+            await loadRegistrations(state.currentPage);
+            try {
+              await syncSheets({ statusPrefix: "Auto sync after edit" });
+            } catch (syncError) {
+              console.warn("Auto sync after edit failed:", syncError);
+            }
+          } catch (error) {
+            setFeedbackMessage(
+              "danger",
+              `Unable to update registration: ${error.message}`,
+            );
+          } finally {
+            setButtonLoading(editRegistrationSubmitBtn, false);
           }
-          await loadRegistrations(state.currentPage);
+        };
+
+        const handleDeleteConfirm = async (event) => {
+          event.preventDefault();
+          if (!confirmDeleteBtn) return;
+          setButtonLoading(confirmDeleteBtn, true);
+          clearFeedbackMessage();
           try {
-            await syncSheets({ statusPrefix: "Auto sync after delete" });
-          } catch (syncError) {
-            console.warn("Auto sync after delete failed:", syncError);
+            await makeApiCall("/.netlify/functions/delete-registration", {
+              method: "DELETE",
+              body: JSON.stringify({
+                registrationId: deleteRegistrationId.value,
+              }),
+            });
+            deleteModalInstance.hide();
+            setFeedbackMessage("success", "Registration deleted successfully.");
+            if (state.currentRecords.length <= 1 && state.currentPage > 1) {
+              state.currentPage -= 1;
+            }
+            await loadRegistrations(state.currentPage);
+            try {
+              await syncSheets({ statusPrefix: "Auto sync after delete" });
+            } catch (syncError) {
+              console.warn("Auto sync after delete failed:", syncError);
+            }
+          } catch (error) {
+            setFeedbackMessage(
+              "danger",
+              `Unable to delete registration: ${error.message}`,
+            );
+          } finally {
+            setButtonLoading(confirmDeleteBtn, false);
           }
-        } catch (error) {
-          setFeedbackMessage("danger", `Unable to delete registration: ${error.message}`);
-        } finally {
-          setButtonLoading(confirmDeleteBtn, false);
-        }
-      };
+        };
 
-      const handleTableClick = (event) => {
-        const actionBtn = event.target.closest("[data-action]");
-        if (!actionBtn) return;
-        const {
-          action,
-          registration: registrationId
-        } = actionBtn.dataset;
-        if (!registrationId) return;
-        const record = getRecordByRegistrationId(registrationId);
-        if (!record) return;
-        if (action === "edit-registration") {
-          openEditModal(record);
-        } else if (action === "delete-registration") {
-          openDeleteModal(record);
-        }
-      };
+        const handleTableClick = (event) => {
+          const actionBtn = event.target.closest("[data-action]");
+          if (!actionBtn) return;
+          const { action, registration: registrationId } = actionBtn.dataset;
+          if (!registrationId) return;
+          const record = getRecordByRegistrationId(registrationId);
+          if (!record) return;
+          if (action === "edit-registration") {
+            openEditModal(record);
+          } else if (action === "delete-registration") {
+            openDeleteModal(record);
+          }
+        };
 
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        setButtonLoading(loginBtn, true);
-        loginError.classList.add("d-none");
-        try {
-          const response = await fetch("/.netlify/functions/admin-login", {
-            method: "POST",
-            body: JSON.stringify({
-              password: passwordInput.value
-            }),
-          });
-          const result = await response.json();
-          if (!response.ok) throw new Error(result.error);
+        loginForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          setButtonLoading(loginBtn, true);
+          loginError.classList.add("d-none");
+          try {
+            const response = await fetch("/.netlify/functions/admin-login", {
+              method: "POST",
+              body: JSON.stringify({
+                password: passwordInput.value,
+              }),
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error);
 
-          ADMIN_SECRET_KEY = result.secretKey;
-          loginContainer.classList.add("d-none");
-          dashboardContainer.classList.remove("d-none");
-          await initializeDashboard();
-          setButtonLoading(loginBtn, false);
-        } catch (err) {
-          loginError.textContent = err.message;
-          loginError.classList.remove("d-none");
-          setButtonLoading(loginBtn, false);
+            ADMIN_SECRET_KEY = result.secretKey;
+            loginContainer.classList.add("d-none");
+            dashboardContainer.classList.remove("d-none");
+            await initializeDashboard();
+            setButtonLoading(loginBtn, false);
+          } catch (err) {
+            loginError.textContent = err.message;
+            loginError.classList.remove("d-none");
+            setButtonLoading(loginBtn, false);
+          }
+        });
+
+        async function initializeDashboard() {
+          stopAutoRefresh();
+          totalRegCountEl = document.getElementById("totalRegCount");
+          registrationsLast24HoursEl = document.getElementById(
+            "registrationsLast24Hours",
+          );
+          lastRegTimeEl = document.getElementById("lastRegTime");
+          checkedInCountEl = document.getElementById("checkedInCount");
+          exportBtn = document.getElementById("exportBtn");
+          exportStatus = document.getElementById("exportStatus");
+          syncSheetsBtn = document.getElementById("syncSheetsBtn");
+          syncStatus = document.getElementById("syncStatus");
+          checkStatusBtn = document.getElementById("checkStatusBtn");
+          refreshSystemStatusBtn = document.getElementById(
+            "refreshSystemStatusBtn",
+          );
+          lastExportTimeEl = document.getElementById("lastExportTime");
+          pageSizeSelect = document.getElementById("pageSizeSelect");
+          registrationsLoadingOverlay = document.getElementById(
+            "registrationsLoading",
+          );
+          registrationsTableBody = document.getElementById(
+            "registrationsTableBody",
+          );
+          registrationsErrorEl = document.getElementById("registrationsError");
+          registrationsFeedbackEl = document.getElementById(
+            "registrationsFeedback",
+          );
+          paginationStatusEl = document.getElementById("paginationStatus");
+          paginationIndicatorEl = document.getElementById(
+            "paginationIndicator",
+          );
+          paginationPrevBtn = document.getElementById("paginationPrev");
+          paginationNextBtn = document.getElementById("paginationNext");
+          refreshTableBtn = document.getElementById("refreshTableBtn");
+          registrationsSearchForm = document.getElementById(
+            "registrationsSearchForm",
+          );
+          registrationsSearchInput = document.getElementById(
+            "registrationsSearchInput",
+          );
+          clearSearchBtn = document.getElementById("clearSearchBtn");
+          editRegistrationForm = document.getElementById(
+            "editRegistrationForm",
+          );
+          editRegistrationId = document.getElementById("editRegistrationId");
+          editNameInput = document.getElementById("editNameInput");
+          editPhoneInput = document.getElementById("editPhoneInput");
+          editEmailInput = document.getElementById("editEmailInput");
+          editCityInput = document.getElementById("editCityInput");
+          editStateInput = document.getElementById("editStateInput");
+          editRegistrationSubmitBtn = document.getElementById(
+            "editRegistrationSubmitBtn",
+          );
+          deleteRegistrationForm = document.getElementById(
+            "deleteRegistrationForm",
+          );
+          deleteRegistrationId = document.getElementById(
+            "deleteRegistrationId",
+          );
+          deleteRegistrationSummary = document.getElementById(
+            "deleteRegistrationSummary",
+          );
+          confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+          if (window.bootstrap) {
+            const editModalEl = document.getElementById(
+              "editRegistrationModal",
+            );
+            const deleteModalEl = document.getElementById(
+              "deleteRegistrationModal",
+            );
+            const systemStatusModalEl =
+              document.getElementById("systemStatusModal");
+            if (editModalEl) {
+              editModalInstance = new bootstrap.Modal(editModalEl);
+              editModalEl.addEventListener("hidden.bs.modal", () => {
+                editRegistrationForm?.reset();
+              });
+            }
+            if (deleteModalEl) {
+              deleteModalInstance = new bootstrap.Modal(deleteModalEl);
+              deleteModalEl.addEventListener("hidden.bs.modal", () => {
+                deleteRegistrationForm?.reset();
+              });
+            }
+            if (systemStatusModalEl) {
+              systemStatusModalInstance = new bootstrap.Modal(
+                systemStatusModalEl,
+              );
+            }
+          }
+
+          state.pageSize = Number(pageSizeSelect?.value) || DEFAULT_PAGE_SIZE;
+          syncSearchUI();
+
+          if (checkStatusBtn) {
+            checkStatusBtn.addEventListener("click", () => {
+              if (systemStatusModalInstance) {
+                systemStatusModalInstance.show();
+              }
+              checkSystemStatus({
+                showButtonLoading: true,
+              });
+            });
+          }
+          if (refreshSystemStatusBtn) {
+            refreshSystemStatusBtn.addEventListener("click", () =>
+              checkSystemStatus({
+                showButtonLoading: true,
+              }),
+            );
+          }
+          if (exportBtn) {
+            exportBtn.addEventListener("click", handleExport);
+          }
+          if (syncSheetsBtn) {
+            syncSheetsBtn.addEventListener("click", handleSyncSheets);
+          }
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", handleLogout);
+          }
+
+          if (pageSizeSelect) {
+            pageSizeSelect.addEventListener("change", () => {
+              state.pageSize =
+                Number(pageSizeSelect.value) || DEFAULT_PAGE_SIZE;
+              state.currentPage = 1;
+              loadRegistrations(1);
+            });
+          }
+
+          if (paginationPrevBtn) {
+            paginationPrevBtn.addEventListener("click", () => {
+              if (state.currentPage > 1) {
+                loadRegistrations(state.currentPage - 1);
+              }
+            });
+          }
+
+          if (paginationNextBtn) {
+            paginationNextBtn.addEventListener("click", () => {
+              if (state.currentPage < state.totalPages) {
+                loadRegistrations(state.currentPage + 1);
+              }
+            });
+          }
+
+          if (refreshTableBtn) {
+            refreshTableBtn.addEventListener("click", () => {
+              loadRegistrations(state.currentPage, {
+                showButtonLoading: true,
+              });
+            });
+          }
+
+          if (registrationsSearchForm) {
+            registrationsSearchForm.addEventListener(
+              "submit",
+              handleSearchSubmit,
+            );
+          }
+          if (clearSearchBtn) {
+            clearSearchBtn.addEventListener("click", handleClearSearch);
+          }
+
+          if (registrationsTableBody) {
+            registrationsTableBody.addEventListener("click", handleTableClick);
+          }
+
+          if (editRegistrationForm) {
+            editRegistrationForm.addEventListener("submit", handleEditSubmit);
+          }
+
+          if (deleteRegistrationForm) {
+            deleteRegistrationForm.addEventListener(
+              "submit",
+              handleDeleteConfirm,
+            );
+          }
+
+          if (refreshDashboardBtn) {
+            refreshDashboardBtn.addEventListener("click", () => {
+              performFullRefresh({
+                includeStatus: true,
+                loadingButton: refreshDashboardBtn,
+              });
+            });
+          }
+
+          await performFullRefresh({ includeStatus: true });
+          startAutoRefresh();
         }
       });
-
-      async function initializeDashboard() {
-        stopAutoRefresh();
-        totalRegCountEl = document.getElementById("totalRegCount");
-        registrationsLast24HoursEl = document.getElementById("registrationsLast24Hours");
-        lastRegTimeEl = document.getElementById("lastRegTime");
-        checkedInCountEl = document.getElementById("checkedInCount");
-        exportBtn = document.getElementById("exportBtn");
-        exportStatus = document.getElementById("exportStatus");
-        syncSheetsBtn = document.getElementById("syncSheetsBtn");
-        syncStatus = document.getElementById("syncStatus");
-        checkStatusBtn = document.getElementById("checkStatusBtn");
-        refreshSystemStatusBtn = document.getElementById("refreshSystemStatusBtn");
-        lastExportTimeEl = document.getElementById("lastExportTime");
-        pageSizeSelect = document.getElementById("pageSizeSelect");
-        registrationsLoadingOverlay = document.getElementById("registrationsLoading");
-        registrationsTableBody = document.getElementById("registrationsTableBody");
-        registrationsErrorEl = document.getElementById("registrationsError");
-        registrationsFeedbackEl = document.getElementById("registrationsFeedback");
-        paginationStatusEl = document.getElementById("paginationStatus");
-        paginationIndicatorEl = document.getElementById("paginationIndicator");
-        paginationPrevBtn = document.getElementById("paginationPrev");
-        paginationNextBtn = document.getElementById("paginationNext");
-        refreshTableBtn = document.getElementById("refreshTableBtn");
-        registrationsSearchForm = document.getElementById("registrationsSearchForm");
-        registrationsSearchInput = document.getElementById("registrationsSearchInput");
-        clearSearchBtn = document.getElementById("clearSearchBtn");
-        editRegistrationForm = document.getElementById("editRegistrationForm");
-        editRegistrationId = document.getElementById("editRegistrationId");
-        editNameInput = document.getElementById("editNameInput");
-        editPhoneInput = document.getElementById("editPhoneInput");
-        editEmailInput = document.getElementById("editEmailInput");
-        editCityInput = document.getElementById("editCityInput");
-        editStateInput = document.getElementById("editStateInput");
-        editRegistrationSubmitBtn = document.getElementById("editRegistrationSubmitBtn");
-        deleteRegistrationForm = document.getElementById("deleteRegistrationForm");
-        deleteRegistrationId = document.getElementById("deleteRegistrationId");
-        deleteRegistrationSummary = document.getElementById("deleteRegistrationSummary");
-        confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-
-        if (window.bootstrap) {
-          const editModalEl = document.getElementById("editRegistrationModal");
-          const deleteModalEl = document.getElementById("deleteRegistrationModal");
-          const systemStatusModalEl = document.getElementById("systemStatusModal");
-          if (editModalEl) {
-            editModalInstance = new bootstrap.Modal(editModalEl);
-            editModalEl.addEventListener("hidden.bs.modal", () => {
-              editRegistrationForm?.reset();
-            });
-          }
-          if (deleteModalEl) {
-            deleteModalInstance = new bootstrap.Modal(deleteModalEl);
-            deleteModalEl.addEventListener("hidden.bs.modal", () => {
-              deleteRegistrationForm?.reset();
-            });
-          }
-          if (systemStatusModalEl) {
-            systemStatusModalInstance = new bootstrap.Modal(systemStatusModalEl);
-          }
-        }
-
-        state.pageSize = Number(pageSizeSelect?.value) || DEFAULT_PAGE_SIZE;
-        syncSearchUI();
-
-        if (checkStatusBtn) {
-          checkStatusBtn.addEventListener("click", () => {
-            if (systemStatusModalInstance) {
-              systemStatusModalInstance.show();
-            }
-            checkSystemStatus({
-              showButtonLoading: true
-            });
-          });
-        }
-        if (refreshSystemStatusBtn) {
-          refreshSystemStatusBtn.addEventListener("click", () =>
-            checkSystemStatus({
-              showButtonLoading: true
-            }),
-          );
-        }
-        if (exportBtn) {
-          exportBtn.addEventListener("click", handleExport);
-        }
-        if (syncSheetsBtn) {
-          syncSheetsBtn.addEventListener("click", handleSyncSheets);
-        }
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", handleLogout);
-        }
-
-        if (pageSizeSelect) {
-          pageSizeSelect.addEventListener("change", () => {
-            state.pageSize = Number(pageSizeSelect.value) || DEFAULT_PAGE_SIZE;
-            state.currentPage = 1;
-            loadRegistrations(1);
-          });
-        }
-
-        if (paginationPrevBtn) {
-          paginationPrevBtn.addEventListener("click", () => {
-            if (state.currentPage > 1) {
-              loadRegistrations(state.currentPage - 1);
-            }
-          });
-        }
-
-        if (paginationNextBtn) {
-          paginationNextBtn.addEventListener("click", () => {
-            if (state.currentPage < state.totalPages) {
-              loadRegistrations(state.currentPage + 1);
-            }
-          });
-        }
-
-        if (refreshTableBtn) {
-          refreshTableBtn.addEventListener("click", () => {
-            loadRegistrations(state.currentPage, {
-              showButtonLoading: true
-            });
-          });
-        }
-
-        if (registrationsSearchForm) {
-          registrationsSearchForm.addEventListener("submit", handleSearchSubmit);
-        }
-        if (clearSearchBtn) {
-          clearSearchBtn.addEventListener("click", handleClearSearch);
-        }
-
-        if (registrationsTableBody) {
-          registrationsTableBody.addEventListener("click", handleTableClick);
-        }
-
-        if (editRegistrationForm) {
-          editRegistrationForm.addEventListener("submit", handleEditSubmit);
-        }
-
-        if (deleteRegistrationForm) {
-          deleteRegistrationForm.addEventListener("submit", handleDeleteConfirm);
-        }
-
-        if (refreshDashboardBtn) {
-          refreshDashboardBtn.addEventListener("click", () => {
-            performFullRefresh({
-              includeStatus: true,
-              loadingButton: refreshDashboardBtn,
-            });
-          });
-        }
-
-        await performFullRefresh({ includeStatus: true });
-        startAutoRefresh();
-      }
-    });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

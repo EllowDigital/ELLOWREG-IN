@@ -43,8 +43,9 @@ exports.handler = async (event) => {
       // -----------------------------------------
 
       const dbStream = dbClient.query(query);
-      const fileName = `emrs-registrations-${new Date().toISOString().split("T")[0]
-        }.xlsx`;
+      const fileName = `emrs-registrations-${
+        new Date().toISOString().split("T")[0]
+      }.xlsx`;
 
       const cloudinaryStream = cloudinary.uploader.upload_stream(
         {

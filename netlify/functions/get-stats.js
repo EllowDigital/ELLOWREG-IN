@@ -24,7 +24,10 @@ exports.handler = async (event) => {
     const stats = {
       totalRegistrations: parseInt(rows[0].total_registrations, 10),
       lastRegistrationTime: rows[0].last_registration_time,
-      registrationsLast24Hours: parseInt(rows[0].registrations_last_24_hours, 10),
+      registrationsLast24Hours: parseInt(
+        rows[0].registrations_last_24_hours,
+        10,
+      ),
       totalCheckedIn: parseInt(rows[0].total_checked_in, 10),
     };
 

@@ -50,7 +50,9 @@ exports.handler = async (event) => {
       WHERE registration_id = $1
       RETURNING registration_id, name, checked_in_at;
     `;
-    const { rows } = await dbClient.query(updateQuery, [normalizedRegistrationId]);
+    const { rows } = await dbClient.query(updateQuery, [
+      normalizedRegistrationId,
+    ]);
 
     if (rows.length === 0) {
       return {

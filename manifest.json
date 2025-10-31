@@ -39,9 +39,6 @@
       "url": "/admin.html"
     }
   ],
-  "categories": [
-    "productivity",
-    "business"
-  ],
+  "categories": ["productivity", "business"],
   "lang": "en-IN"
 }

@@ -19,8 +19,8 @@ cloudinary.config({
 // Flag: Ensure required Cloudinary credentials are present at runtime.
 const CLOUDINARY_ENABLED = Boolean(
   process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET,
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET,
 );
 
 // Helper function to parse multipart form data
