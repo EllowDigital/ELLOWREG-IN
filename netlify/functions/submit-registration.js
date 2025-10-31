@@ -180,6 +180,8 @@ exports.handler = async (event) => {
         existingRecord.state = trimmedState;
       }
 
+      updateAssignments.push("updated_at = NOW()");
+
       const wherePlaceholderIndex = updateValues.length + 1;
       updateValues.push(trimmedPhone);
       await dbClient.query(

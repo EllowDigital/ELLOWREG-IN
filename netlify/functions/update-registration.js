@@ -73,6 +73,7 @@ exports.handler = async (event) => {
     values.push(updates[field]);
     index += 1;
   }
+  setClauses.push("updated_at = NOW()");
   setClauses.push("needs_sync = true");
 
   const normalizedRegistrationId = registrationId.trim().toUpperCase();

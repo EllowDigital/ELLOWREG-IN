@@ -794,6 +794,14 @@
         currentRecords: [],
       };
 
+      const AUTO_REFRESH_INTERVAL_MS = 45000;
+      let lastChangeToken = null;
+      let autoRefreshTimeoutId = null;
+      let autoRefreshController = null;
+  let autoRefreshEnabled = false;
+      let isPollingForChanges = false;
+      let isPerformingFullRefresh = false;
+
       const loginContainer = document.getElementById("login-container");
       const dashboardContainer = document.getElementById("dashboard-container");
       const loginForm = document.getElementById("loginForm");
@@ -927,6 +935,146 @@
         } else {
           lastExportTimeEl.textContent = "Never";
         }
+      };
+
+      const fetchChangeToken = async ({ signal } = {}) => {
+        if (!ADMIN_SECRET_KEY) {
+          throw new Error("Not authenticated.");
+        }
+        const response = await fetch("/.netlify/functions/get-change-token", {
+          headers: { "x-admin-key": ADMIN_SECRET_KEY },
+          signal,
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(message || `Change token request failed (${response.status})`);
+        }
+        return response.json();
+      };
+
+      const refreshChangeToken = async () => {
+        try {
+          const data = await fetchChangeToken();
+          if (data?.token) {
+            lastChangeToken = data.token;
+          }
+          return data;
+        } catch (error) {
+          console.warn("Change token refresh failed:", error);
+          return null;
+        }
+      };
+
+      const performFullRefresh = async ({
+        includeStatus = false,
+        loadingButton = null,
+        tokenHint = null,
+      } = {}) => {
+        if (isPerformingFullRefresh) {
+          return;
+        }
+        isPerformingFullRefresh = true;
+        if (loadingButton) {
+          setButtonLoading(loadingButton, true);
+        }
+        try {
+          const tasks = [
+            fetchDashboardStats(),
+            loadRegistrations(state.currentPage),
+          ];
+          if (includeStatus) {
+            tasks.push(checkSystemStatus());
+          }
+          await Promise.all(tasks);
+          displayLastExportTime();
+          if (tokenHint) {
+            lastChangeToken = tokenHint;
+          } else {
+            await refreshChangeToken();
+          }
+        } catch (error) {
+          console.error("Full refresh error:", error);
+        } finally {
+          if (loadingButton) {
+            setButtonLoading(loadingButton, false);
+          }
+          isPerformingFullRefresh = false;
+        }
+      };
+
+      const stopAutoRefresh = (resetToken = false) => {
+        autoRefreshEnabled = false;
+        if (autoRefreshTimeoutId) {
+          clearTimeout(autoRefreshTimeoutId);
+          autoRefreshTimeoutId = null;
+        }
+        if (autoRefreshController) {
+          autoRefreshController.abort();
+          autoRefreshController = null;
+        }
+        if (resetToken) {
+          lastChangeToken = null;
+        }
+      };
+
+      const scheduleAutoRefresh = () => {
+        if (!autoRefreshEnabled) {
+          return;
+        }
+        if (autoRefreshTimeoutId) {
+          clearTimeout(autoRefreshTimeoutId);
+        }
+        autoRefreshTimeoutId = window.setTimeout(
+          runAutoRefreshCycle,
+          AUTO_REFRESH_INTERVAL_MS,
+        );
+      };
+
+      const runAutoRefreshCycle = async () => {
+        if (!autoRefreshEnabled) {
+          return;
+        }
+        if (!ADMIN_SECRET_KEY) {
+          scheduleAutoRefresh();
+          return;
+        }
+        if (isPollingForChanges || isPerformingFullRefresh) {
+          scheduleAutoRefresh();
+          return;
+        }
+
+        isPollingForChanges = true;
+        const controller = new AbortController();
+        autoRefreshController = controller;
+
+        try {
+          const data = await fetchChangeToken({ signal: controller.signal });
+          if (!data?.token) {
+            return;
+          }
+          if (!lastChangeToken) {
+            lastChangeToken = data.token;
+          } else if (data.token !== lastChangeToken) {
+            await performFullRefresh({ tokenHint: data.token });
+          }
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            console.warn("Auto refresh poll failed:", error);
+          }
+        } finally {
+          autoRefreshController = null;
+          isPollingForChanges = false;
+          scheduleAutoRefresh();
+        }
+      };
+
+      const startAutoRefresh = () => {
+        if (autoRefreshEnabled) {
+          return;
+        }
+        autoRefreshEnabled = true;
+        runAutoRefreshCycle();
       };
 
       const setStatusIndicator = (elementId, status) => {
@@ -1213,31 +1361,48 @@
         }
       };
 
-      const handleSyncSheets = async () => {
-        setButtonLoading(syncSheetsBtn, true);
-        setStatusMessage(syncStatus, "sync", "Syncing with Google Sheets...", "muted", false);
+      const syncSheets = async ({
+        showButtonLoading = false,
+        statusPrefix = "Sync",
+      } = {}) => {
+        if (!syncSheetsBtn || !syncStatus) return null;
+        if (showButtonLoading) {
+          setButtonLoading(syncSheetsBtn, true);
+        }
+  setStatusMessage(syncStatus, "sync", `${statusPrefix} in progress...`, "muted", false);
         try {
           const result = await makeApiCall("/.netlify/functions/sync-with-google-sheets", {
             method: "POST"
           });
-          const updatedCount = Number(result?.updated || 0);
-          const appendedCount = Number(result?.appended || 0);
+          const rowCount = Number(result?.rowsSynced ?? 0);
           setStatusMessage(
             syncStatus,
             "sync",
-            `Sync complete: ${updatedCount} updated, ${appendedCount} added.`,
+            `Google Sheet updated (${rowCount.toLocaleString("en-IN")} rows).`,
             "success",
             true,
           );
+          return result;
         } catch (err) {
           setStatusMessage(syncStatus, "sync", `Sync failed: ${err.message}`, "danger", true);
+          throw err;
         } finally {
-          setButtonLoading(syncSheetsBtn, false);
+          if (showButtonLoading) {
+            setButtonLoading(syncSheetsBtn, false);
+          }
         }
+      };
+
+      const handleSyncSheets = () => {
+        syncSheets({
+          showButtonLoading: true,
+          statusPrefix: "Manual sync",
+        }).catch((error) => console.warn("Manual sync failed:", error));
       };
 
       const handleLogout = () => {
         ADMIN_SECRET_KEY = null;
+  stopAutoRefresh(true);
         state.currentPage = 1;
         state.totalPages = 1;
         state.totalRecords = 0;
@@ -1340,6 +1505,11 @@
           editModalInstance.hide();
           setFeedbackMessage("success", "Registration updated successfully.");
           await loadRegistrations(state.currentPage);
+          try {
+            await syncSheets({ statusPrefix: "Auto sync after edit" });
+          } catch (syncError) {
+            console.warn("Auto sync after edit failed:", syncError);
+          }
         } catch (error) {
           setFeedbackMessage("danger", `Unable to update registration: ${error.message}`);
         } finally {
@@ -1365,6 +1535,11 @@
             state.currentPage -= 1;
           }
           await loadRegistrations(state.currentPage);
+          try {
+            await syncSheets({ statusPrefix: "Auto sync after delete" });
+          } catch (syncError) {
+            console.warn("Auto sync after delete failed:", syncError);
+          }
         } catch (error) {
           setFeedbackMessage("danger", `Unable to delete registration: ${error.message}`);
         } finally {
@@ -1406,7 +1581,8 @@
           ADMIN_SECRET_KEY = result.secretKey;
           loginContainer.classList.add("d-none");
           dashboardContainer.classList.remove("d-none");
-          initializeDashboard();
+          await initializeDashboard();
+          setButtonLoading(loginBtn, false);
         } catch (err) {
           loginError.textContent = err.message;
           loginError.classList.remove("d-none");
@@ -1414,7 +1590,8 @@
         }
       });
 
-      function initializeDashboard() {
+      async function initializeDashboard() {
+        stopAutoRefresh();
         totalRegCountEl = document.getElementById("totalRegCount");
         registrationsLast24HoursEl = document.getElementById("registrationsLast24Hours");
         lastRegTimeEl = document.getElementById("lastRegTime");
@@ -1555,25 +1732,16 @@
         }
 
         if (refreshDashboardBtn) {
-          refreshDashboardBtn.addEventListener("click", async () => {
-            setButtonLoading(refreshDashboardBtn, true);
-            try {
-              await Promise.all([
-                fetchDashboardStats(),
-                loadRegistrations(state.currentPage),
-                checkSystemStatus(),
-              ]);
-            } finally {
-              setButtonLoading(refreshDashboardBtn, false);
-            }
+          refreshDashboardBtn.addEventListener("click", () => {
+            performFullRefresh({
+              includeStatus: true,
+              loadingButton: refreshDashboardBtn,
+            });
           });
         }
 
-        fetchDashboardStats();
-        checkSystemStatus();
-        displayLastExportTime();
-        loadRegistrations(state.currentPage);
-        setButtonLoading(loginBtn, false);
+        await performFullRefresh({ includeStatus: true });
+        startAutoRefresh();
       }
     });
   </script>

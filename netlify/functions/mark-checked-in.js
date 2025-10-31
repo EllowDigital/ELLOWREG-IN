@@ -45,6 +45,7 @@ exports.handler = async (event) => {
       UPDATE registrations
       SET
         checked_in_at = NOW(),
+        updated_at = NOW(),
         needs_sync = true
       WHERE registration_id = $1
       RETURNING registration_id, name, checked_in_at;
