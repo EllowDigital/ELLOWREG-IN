@@ -1069,15 +1069,33 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"></script>
     <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
+      window.addEventListener("load", () => {
+        const purgeCaches = () => {
+          if ("caches" in window) {
+            caches
+              .keys()
+              .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+              .catch(() => undefined);
+          }
+        };
+
+        if ("serviceWorker" in navigator) {
           navigator.serviceWorker
-            .register("/service-worker.js")
-            .catch((error) =>
-              console.error("Service worker registration failed:", error),
-            );
-        });
-      }
+            .getRegistrations()
+            .then((registrations) =>
+              Promise.all(
+                registrations.map((registration) => registration.unregister()),
+              ),
+            )
+            .then(purgeCaches)
+            .catch((error) => {
+              console.error("Service worker cleanup failed:", error);
+              purgeCaches();
+            });
+        } else {
+          purgeCaches();
+        }
+      });
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -1539,10 +1557,14 @@
             ...options.headers,
           };
           try {
-            const response = await fetch(endpoint, {
+            const requestOptions = {
               ...options,
               headers,
-            });
+            };
+            if (!requestOptions.cache) {
+              requestOptions.cache = "no-store";
+            }
+            const response = await fetch(endpoint, requestOptions);
             const isJson = response.headers
               .get("content-type")
               ?.includes("application/json");
@@ -1959,6 +1981,7 @@
               body: JSON.stringify({
                 password: passwordInput.value,
               }),
+              cache: "no-store",
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.error);

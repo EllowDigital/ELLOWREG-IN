@@ -1098,10 +1098,14 @@
             ...(options.headers || {}),
             "x-admin-key": state.adminKey,
           };
-          const response = await fetch(url, {
+          const requestOptions = {
             ...options,
             headers: mergedHeaders,
-          });
+          };
+          if (!requestOptions.cache) {
+            requestOptions.cache = "no-store";
+          }
+          const response = await fetch(url, requestOptions);
           if (response.status === 401) {
             clearAdminKey();
             await showLogin("Session expired. Please sign in again.");
@@ -1476,6 +1480,7 @@
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ password }),
+              cache: "no-store",
             });
             if (!response.ok) {
               throw new Error("Incorrect password. Please try again.");
@@ -1544,15 +1549,33 @@
       })();
     </script>
     <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
+      window.addEventListener("load", () => {
+        const purgeCaches = () => {
+          if ("caches" in window) {
+            caches
+              .keys()
+              .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+              .catch(() => undefined);
+          }
+        };
+
+        if ("serviceWorker" in navigator) {
           navigator.serviceWorker
-            .register("/service-worker.js")
-            .catch((error) =>
-              console.error("Service worker registration failed:", error),
-            );
-        });
-      }
+            .getRegistrations()
+            .then((registrations) =>
+              Promise.all(
+                registrations.map((registration) => registration.unregister()),
+              ),
+            )
+            .then(purgeCaches)
+            .catch((error) => {
+              console.error("Service worker cleanup failed:", error);
+              purgeCaches();
+            });
+        } else {
+          purgeCaches();
+        }
+      });
     </script>
   </body>
 </html>
