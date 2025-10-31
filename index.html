@@ -1,2141 +1,986 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>EMRS by EllowDigital | Launch-Ready Event Registration OS</title>
-    <meta
-      name="description"
-      content="Reimagine guest journeys with EMRS by EllowDigital. Launch digital registrations, admin workflows, badge verification, and analytics in days."
-    />
-    <meta name="author" content="EllowDigital" />
-    <link rel="canonical" href="https://ellowdigital.netlify.app/" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TENT DECOR EXPO UP 2025 - Registration</title>
 
-    <meta property="og:title" content="EMRS by EllowDigital" />
-    <meta
-      property="og:description"
-      content="A complete event registration OS with cross-channel intake, digital pass automation, and real-time verification."
-    />
-    <meta
-      property="og:image"
-      content="https://get-epass.netlify.app/assets/unnamed.jpg"
-    />
-    <meta property="og:url" content="https://ellowdigital.netlify.app/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="EMRS by EllowDigital" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="EMRS by EllowDigital" />
-    <meta
-      name="twitter:description"
-      content="Activate registrations, verifications, and analytics with EMRS by EllowDigital."
-    />
-    <meta
-      name="twitter:image"
-      content="https://get-epass.netlify.app/assets/unnamed.jpg"
-    />
+    <meta name="description"
+        content="Register now for TENT DECOR EXPO UP 2025, India's premier B2B trade show for the tent, decor, and event industry. Secure your free visitor pass today.">
+    <meta name="keywords"
+        content="Tent Expo, Decor Expo, Lucknow Event, B2B Trade Show, Event Registration, 2025 Expo, Visitor Pass, Tent Decor Expo UP">
+    <meta name="author" content="TENT DECOR EXPO Team">
 
-    <meta
-      name="theme-color"
-      content="#ffffff"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#081423"
-      media="(prefers-color-scheme: dark)"
-    />
-    <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="assets/favicon/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="assets/favicon/favicon-16x16.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="assets/favicon/apple-touch-icon.png"
-    />
-    <link rel="manifest" href="/manifest.json" />
+    <meta property="og:title" content="TENT DECOR EXPO UP 2025 - Registration">
+    <meta property="og:description"
+        content="Join thousands of industry professionals in Lucknow. Register now to get your official visitor pass for India's leading tent and decor expo.">
+    <meta property="og:image" content="https://td-expoup25.netlify.app/assets/og-image.jpg">
+    <meta property="og:url" content="https://td-expoup25.netlify.app/">
+    <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="icon" type="image/x-icon" href="https://td-expoup25.netlify.app/assets/favicon.ico"
+        onerror="this.onerror=null;this.href='https://placehold.co/32x32/0A2540/FFF?text=TD';">
 
-    <link
-      rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
-      />
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap">
     </noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-    />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"
+        defer></script>
+
     <style>
-      :root {
-        --brand-midnight: #081423;
-        --brand-indigo: #0a2540;
-        --brand-blue: #1f7aec;
-        --brand-mint: #15c39a;
-        --surface-100: #ffffff;
-        --surface-muted: #f5f7fb;
-        --surface-dark: #020817;
-        --border-soft: rgba(8, 20, 35, 0.08);
-        --border-strong: rgba(8, 20, 35, 0.16);
-        --text-strong: #081423;
-        --text-muted: #5c6f84;
-        --shadow-sm: 0 12px 30px rgba(8, 20, 35, 0.08);
-        --shadow-md: 0 20px 45px rgba(8, 20, 35, 0.1);
-        --shadow-lg: 0 32px 70px rgba(8, 20, 35, 0.16);
-        --gradient-primary: linear-gradient(135deg, #1f7aec, #3d9bff);
-        color-scheme: light;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        background: var(--surface-muted);
-        color: var(--text-strong);
-        letter-spacing: -0.01em;
-      }
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: "Poppins", sans-serif;
-        color: var(--brand-midnight);
-        letter-spacing: -0.015em;
-      }
-
-      p {
-        color: var(--text-muted);
-      }
-
-      .navbar {
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(18px);
-        border-bottom: 1px solid rgba(8, 20, 35, 0.05);
-        transition:
-          background 0.25s ease,
-          box-shadow 0.25s ease,
-          border-color 0.25s ease;
-      }
-
-      .navbar.scrolled {
-        box-shadow: 0 18px 40px rgba(8, 20, 35, 0.1);
-        border-color: rgba(8, 20, 35, 0.08);
-      }
-
-      .navbar-brand {
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--brand-indigo);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .navbar-brand span {
-        color: var(--brand-blue);
-        margin-left: 0.35rem;
-        letter-spacing: 0.15em;
-      }
-
-      .navbar-nav .nav-link {
-        font-weight: 500;
-        color: var(--text-muted);
-        padding: 0.6rem 0;
-      }
-
-      .navbar-nav .nav-link:hover,
-      .navbar-nav .nav-link:focus,
-      .navbar-nav .nav-link.active {
-        color: var(--brand-indigo);
-      }
-
-      .navbar-toggler {
-        border: 1px solid rgba(8, 20, 35, 0.14);
-        border-radius: 0.75rem;
-        padding: 0.35rem 0.55rem;
-        transition:
-          background 0.2s ease,
-          border-color 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      .navbar-toggler:focus {
-        box-shadow: 0 0 0 0.15rem rgba(31, 122, 236, 0.28);
-        outline: none;
-      }
-
-      .navbar-toggler:hover {
-        border-color: rgba(31, 122, 236, 0.45);
-        background: rgba(31, 122, 236, 0.08);
-      }
-
-      .navbar-toggler-icon {
-        width: 1.4rem;
-        height: 1.1rem;
-        background-size: 1.4rem 1.1rem;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 18'%3E%3Cpath stroke='rgba(8,20,35,0.85)' stroke-linecap='round' stroke-width='2.4' d='M3 2h24M3 9h24M3 16h24'/%3E%3C/svg%3E");
-      }
-
-      .btn-primary {
-        background: var(--gradient-primary);
-        border: none;
-        border-radius: 999px;
-        box-shadow: 0 18px 40px rgba(31, 122, 236, 0.35);
-      }
-
-      .btn-primary:hover,
-      .btn-primary:focus {
-        background: linear-gradient(135deg, #2a6ed9, #4aa2ff);
-        box-shadow: 0 22px 48px rgba(31, 122, 236, 0.4);
-      }
-
-      .btn-outline-base {
-        border-radius: 999px;
-        border: 1px solid rgba(8, 20, 35, 0.18);
-        color: var(--brand-indigo);
-        font-weight: 600;
-        padding: 0.6rem 1.6rem;
-      }
-
-      .btn-outline-base:hover,
-      .btn-outline-base:focus {
-        background: rgba(31, 122, 236, 0.08);
-        border-color: rgba(31, 122, 236, 0.5);
-        color: var(--brand-indigo);
-      }
-
-      .hero {
-        padding-top: 8.5rem;
-        padding-bottom: 6rem;
-        background:
-          radial-gradient(
-            circle at 5% 15%,
-            rgba(31, 122, 236, 0.12),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 85% 10%,
-            rgba(21, 195, 154, 0.1),
-            transparent 45%
-          );
-      }
-
-      .py-lg-6 {
-        padding-top: 6rem !important;
-        padding-bottom: 6rem !important;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-weight: 600;
-        letter-spacing: 0.24em;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: rgba(10, 37, 64, 0.7);
-      }
-
-      .text-gradient {
-        color: var(--brand-indigo);
-      }
-
-      body[data-bs-theme="dark"] .text-gradient {
-        color: #e2e8f0;
-      }
-
-      @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-        .text-gradient {
-          background-image: linear-gradient(120deg, #081423, #1f7aec);
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
+        :root {
+            --primary-color: #0d2c4f;
+            --primary-dark: #0A2540;
+            --accent-color: #FDB813;
+            --accent-hover: #e4a60b;
+            --text-color: #333;
+            --text-light: #6c757d;
+            --card-bg: #ffffff;
+            --body-bg: #f4f7fa;
+            --border-color: #dee2e6;
+            --success-color: #198754;
+            --danger-color: #dc3545;
         }
 
-        body[data-bs-theme="dark"] .text-gradient {
-          background-image: linear-gradient(120deg, #e2e8f0, #60a5fa);
-          color: transparent;
-        }
-      }
-
-      @supports (-webkit-background-clip: text) {
-        .text-gradient {
-          -webkit-text-fill-color: transparent;
+        html {
+            scroll-behavior: smooth;
         }
 
-        body[data-bs-theme="dark"] .text-gradient {
-          -webkit-text-fill-color: transparent;
-        }
-      }
-
-      .hero-list li {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 0.65rem;
-        color: var(--text-muted);
-      }
-
-      .hero-list i {
-        font-size: 1rem;
-        color: var(--brand-mint);
-      }
-
-      .hero-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 2.25rem;
-      }
-
-      .meta-tile {
-        background: var(--surface-100);
-        border: 1px solid var(--border-soft);
-        border-radius: 18px;
-        padding: 1rem 1.4rem;
-        box-shadow: var(--shadow-sm);
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .meta-tile strong {
-        font-size: 1.35rem;
-        color: var(--brand-indigo);
-      }
-
-      .hero-card {
-        background: var(--surface-100);
-        border-radius: 26px;
-        border: 1px solid var(--border-soft);
-        padding: 2.5rem;
-        box-shadow: var(--shadow-lg);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .hero-card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          circle at top right,
-          rgba(31, 122, 236, 0.18),
-          transparent 60%
-        );
-        pointer-events: none;
-      }
-
-      .hero-card img {
-        border-radius: 18px;
-        border: 1px solid rgba(8, 20, 35, 0.06);
-      }
-
-      .badge-soft {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.5rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(31, 122, 236, 0.12);
-        color: var(--brand-indigo);
-        font-weight: 600;
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .metric-card {
-        background: var(--surface-100);
-        border-radius: 24px;
-        border: 1px solid var(--border-soft);
-        padding: 2.25rem;
-        box-shadow: var(--shadow-sm);
-        height: 100%;
-      }
-
-      .metric-card h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-
-      .section-heading {
-        font-size: clamp(2rem, 1.6rem + 1.2vw, 2.8rem);
-      }
-
-      .section-intro {
-        max-width: 640px;
-        font-size: 1.05rem;
-      }
-
-      .workflow-card {
-        background: var(--surface-100);
-        border-radius: 22px;
-        border: 1px solid var(--border-soft);
-        padding: 2rem;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .suite-grid {
-        display: grid;
-        gap: 1.75rem;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        margin-top: 2.5rem;
-      }
-
-      .suite-card {
-        background: var(--surface-100);
-        border-radius: 22px;
-        border: 1px solid var(--border-soft);
-        padding: 2rem;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .suite-card i {
-        font-size: 1.6rem;
-        color: var(--brand-blue);
-        margin-bottom: 1.2rem;
-      }
-
-      .suite-card ul {
-        list-style: none;
-        padding: 0;
-        margin: 1.2rem 0 0;
-        display: grid;
-        gap: 0.6rem;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-      }
-
-      .timeline-grid {
-        display: grid;
-        gap: 1.5rem;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        margin-top: 2.5rem;
-      }
-
-      .timeline-card {
-        background: var(--surface-100);
-        border-radius: 24px;
-        border: 1px solid var(--border-soft);
-        padding: 2rem;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .timeline-card span {
-        font-weight: 700;
-        color: var(--brand-blue);
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        font-size: 0.75rem;
-      }
-
-      .pricing-card {
-        background: var(--surface-100);
-        border: 1px solid var(--border-soft);
-        border-radius: 28px;
-        padding: 2.4rem;
-        box-shadow: var(--shadow-md);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 1.6rem;
-      }
-
-      .pricing-card.highlight {
-        border-color: rgba(31, 122, 236, 0.5);
-        box-shadow: 0 36px 70px rgba(31, 122, 236, 0.25);
-      }
-
-      .pricing-card .price {
-        font-size: 2.4rem;
-        font-weight: 700;
-        color: var(--brand-indigo);
-      }
-
-      .pricing-card ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 0.8rem;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-      }
-
-      .pricing-card ul li {
-        display: flex;
-        gap: 0.6rem;
-        align-items: flex-start;
-      }
-
-      .pricing-card ul li i {
-        color: var(--brand-mint);
-        font-size: 1rem;
-        margin-top: 0.2rem;
-      }
-
-      .pricing-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.4rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(21, 195, 154, 0.16);
-        color: var(--brand-mint);
-        font-weight: 600;
-        font-size: 0.78rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
-
-      .contact-section {
-        background:
-          radial-gradient(
-            circle at top right,
-            rgba(31, 122, 236, 0.18),
-            transparent 60%
-          ),
-          var(--surface-100);
-        border-radius: 34px;
-        border: 1px solid var(--border-soft);
-        padding: 3rem;
-        box-shadow: var(--shadow-lg);
-      }
-
-      .contact-section .form-label {
-        font-weight: 600;
-        color: var(--brand-indigo);
-      }
-
-      .contact-section .form-control {
-        background: rgba(255, 255, 255, 0.82);
-        border: 1px solid rgba(8, 20, 35, 0.12);
-        border-radius: 16px;
-        padding: 0.85rem 1rem;
-      }
-
-      .modal-content .form-control,
-      .modal-content .form-select {
-        border-radius: 14px;
-        border: 1px solid rgba(8, 20, 35, 0.12);
-        padding: 0.8rem 1rem;
-      }
-
-      .gallery-callout {
-        background: var(--surface-100);
-        border-radius: 26px;
-        border: 1px solid var(--border-soft);
-        padding: 2.4rem;
-        box-shadow: var(--shadow-md);
-      }
-
-      .gallery-teaser-image {
-        border-radius: 14px;
-        border: 1px solid rgba(8, 20, 35, 0.08);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .cta-band {
-        background: linear-gradient(
-          140deg,
-          rgba(31, 122, 236, 0.95),
-          rgba(10, 37, 64, 0.95)
-        );
-        border-radius: 32px;
-        padding: 3rem;
-        color: #fff;
-        box-shadow: 0 36px 70px rgba(10, 37, 64, 0.4);
-      }
-
-      .cta-band h2,
-      .cta-band h3 {
-        color: #fff;
-      }
-
-      .cta-band p {
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      .cta-band .btn-light {
-        background: #fff;
-        color: var(--brand-indigo);
-        border: none;
-        box-shadow: 0 15px 30px rgba(255, 255, 255, 0.25);
-      }
-
-      .footer {
-        background: var(--surface-100);
-        border-top: 1px solid var(--border-soft);
-      }
-
-      .footer h5,
-      .footer h6 {
-        color: var(--brand-indigo);
-      }
-
-      .heart-beat {
-        display: inline-block;
-        color: #ef4444;
-        animation: heartBeat 1.6s infinite;
-      }
-
-      @keyframes heartBeat {
-        0%,
-        100% {
-          transform: scale(1);
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--body-bg);
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
         }
 
-        40% {
-          transform: scale(1.2);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
-        60% {
-          transform: scale(0.95);
-        }
-      }
-
-      body[data-bs-theme="dark"] {
-        background: var(--surface-dark);
-        color: rgba(226, 232, 240, 0.9);
-        color-scheme: dark;
-      }
-
-      body[data-bs-theme="dark"] h1,
-      body[data-bs-theme="dark"] h2,
-      body[data-bs-theme="dark"] h3,
-      body[data-bs-theme="dark"] h4,
-      body[data-bs-theme="dark"] h5,
-      body[data-bs-theme="dark"] h6 {
-        color: #f1f5f9;
-      }
-
-      body[data-bs-theme="dark"] p,
-      body[data-bs-theme="dark"] .navbar-nav .nav-link {
-        color: rgba(203, 213, 225, 0.88);
-      }
-
-      body[data-bs-theme="dark"] .navbar {
-        background: rgba(4, 13, 25, 0.94);
-        border-color: rgba(14, 23, 42, 0.75);
-        box-shadow: 0 1px 0 rgba(15, 23, 42, 0.8);
-      }
-
-      body[data-bs-theme="dark"] .navbar.scrolled {
-        box-shadow: 0 18px 40px rgba(2, 6, 23, 0.7);
-      }
-
-      body[data-bs-theme="dark"] .btn-outline-base {
-        border-color: rgba(148, 163, 184, 0.4);
-        color: rgba(226, 232, 240, 0.88);
-      }
-
-      body[data-bs-theme="dark"] .btn-outline-base:hover,
-      body[data-bs-theme="dark"] .btn-outline-base:focus {
-        background: rgba(31, 122, 236, 0.18);
-        border-color: rgba(96, 165, 250, 0.6);
-      }
-
-      body[data-bs-theme="dark"] .hero {
-        background:
-          radial-gradient(
-            circle at 5% 15%,
-            rgba(59, 130, 246, 0.14),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 85% 10%,
-            rgba(21, 195, 154, 0.14),
-            transparent 45%
-          );
-      }
-
-      body[data-bs-theme="dark"] .metric-card,
-      body[data-bs-theme="dark"] .workflow-card,
-      body[data-bs-theme="dark"] .suite-card,
-      body[data-bs-theme="dark"] .timeline-card,
-      body[data-bs-theme="dark"] .pricing-card,
-      body[data-bs-theme="dark"] .contact-section,
-      body[data-bs-theme="dark"] .gallery-callout,
-      body[data-bs-theme="dark"] .hero-card,
-      body[data-bs-theme="dark"] .meta-tile {
-        background: rgba(4, 13, 25, 0.92);
-        border-color: rgba(148, 163, 184, 0.18);
-        box-shadow: 0 22px 50px rgba(2, 6, 23, 0.6);
-      }
-
-      body[data-bs-theme="dark"] .modal-content {
-        background: rgba(4, 13, 25, 0.95);
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        color: rgba(226, 232, 240, 0.92);
-        box-shadow: 0 24px 70px rgba(2, 6, 23, 0.7);
-      }
-
-      body[data-bs-theme="dark"] .modal-content .form-control,
-      body[data-bs-theme="dark"] .modal-content .form-select {
-        background: rgba(15, 23, 42, 0.7);
-        border-color: rgba(148, 163, 184, 0.3);
-        color: rgba(226, 232, 240, 0.9);
-      }
-
-      body[data-bs-theme="dark"] .modal-content .form-control::placeholder,
-      body[data-bs-theme="dark"] .modal-content .form-select option {
-        color: rgba(148, 163, 184, 0.8);
-      }
-
-      body[data-bs-theme="dark"] .pricing-card .price {
-        color: #f8fafc;
-      }
-
-      body[data-bs-theme="dark"] .gallery-teaser-image {
-        background: rgba(8, 20, 35, 0.85);
-        border-color: rgba(148, 163, 184, 0.24);
-      }
-
-      body[data-bs-theme="dark"] .cta-band {
-        background: linear-gradient(
-          140deg,
-          rgba(59, 130, 246, 0.88),
-          rgba(15, 23, 42, 0.94)
-        );
-        box-shadow: 0 36px 70px rgba(2, 6, 23, 0.7);
-      }
-
-      body[data-bs-theme="dark"] .footer {
-        background: rgba(4, 13, 25, 0.9);
-        border-color: rgba(14, 23, 42, 0.7);
-      }
-
-      body[data-bs-theme="dark"] .badge-soft {
-        background: rgba(96, 165, 250, 0.18);
-        color: rgba(226, 232, 240, 0.9);
-      }
-
-      body[data-bs-theme="dark"] .pricing-pill {
-        background: rgba(21, 195, 154, 0.22);
-      }
-
-      body[data-bs-theme="dark"] .contact-section .form-control {
-        background: rgba(15, 23, 42, 0.65);
-        border-color: rgba(148, 163, 184, 0.28);
-        color: rgba(226, 232, 240, 0.92);
-      }
-
-      body[data-bs-theme="dark"] .contact-section .form-label {
-        color: rgba(226, 232, 240, 0.9);
-      }
-
-      body[data-bs-theme="dark"] .navbar-brand {
-        color: #e2e8f0;
-      }
-
-      body[data-bs-theme="dark"] .navbar-brand span {
-        color: #93c5fd;
-      }
-
-      body[data-bs-theme="dark"] .navbar-nav .nav-link {
-        color: rgba(203, 213, 225, 0.82);
-      }
-
-      body[data-bs-theme="dark"] .navbar-nav .nav-link:hover,
-      body[data-bs-theme="dark"] .navbar-nav .nav-link:focus,
-      body[data-bs-theme="dark"] .navbar-nav .nav-link.active {
-        color: #60a5fa;
-      }
-
-      body[data-bs-theme="dark"] .navbar-toggler {
-        background: rgba(15, 23, 42, 0.7);
-        border-color: rgba(148, 163, 184, 0.4);
-      }
-
-      body[data-bs-theme="dark"] .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 18'%3E%3Cpath stroke='rgba(226,232,240,0.95)' stroke-linecap='round' stroke-width='2.4' d='M3 2h24M3 9h24M3 16h24'/%3E%3C/svg%3E");
-      }
-
-      body[data-bs-theme="dark"] .text-muted,
-      body[data-bs-theme="dark"] .text-muted a {
-        color: rgba(148, 163, 184, 0.85) !important;
-      }
-
-      body[data-bs-theme="dark"] .text-muted a:hover {
-        color: #bfdbfe !important;
-      }
-
-      body[data-bs-theme="dark"] .hero-list li,
-      body[data-bs-theme="dark"] .meta-tile span {
-        color: rgba(148, 163, 184, 0.85);
-      }
-
-      body[data-bs-theme="dark"] .meta-tile strong {
-        color: #f8fafc;
-      }
-
-      body[data-bs-theme="dark"] .cta-band .btn-light {
-        background: rgba(15, 23, 42, 0.4);
-        color: #f8fafc;
-        border: 1px solid rgba(148, 163, 184, 0.4);
-        box-shadow: none;
-      }
-
-      body[data-bs-theme="dark"] .cta-band .btn-light:hover,
-      body[data-bs-theme="dark"] .cta-band .btn-light:focus {
-        background: rgba(96, 165, 250, 0.25);
-        border-color: rgba(96, 165, 250, 0.45);
-      }
-
-      body[data-bs-theme="dark"] .footer a {
-        color: rgba(203, 213, 225, 0.85);
-      }
-
-      body[data-bs-theme="dark"] .footer a:hover {
-        color: #93c5fd;
-      }
-
-      @media (max-width: 1199.98px) {
-        .hero {
-          padding-bottom: 4.5rem;
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
 
-        .hero-meta {
-          flex-wrap: wrap;
-        }
-      }
-
-      @media (max-width: 991.98px) {
-        .navbar {
-          padding: 0.25rem 0;
-        }
-
-        .py-lg-6 {
-          padding-top: 3rem !important;
-          padding-bottom: 3rem !important;
+        .registration-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .hero {
-          padding-top: 7.5rem;
-          text-align: center;
+        .info-panel {
+            background-color: var(--primary-dark);
+            color: #fff;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .hero-card {
-          margin-top: 2.5rem;
+        .info-panel .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            line-height: 1.2;
+            margin-bottom: 1rem;
         }
 
-        .hero-list li {
-          justify-content: center;
+        .info-panel .lead {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
         }
 
-        .hero-meta {
-          justify-content: center;
+        .event-detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
         }
 
-        .section-intro {
-          margin-bottom: 1.5rem;
-        }
-      }
-
-      @media (max-width: 767.98px) {
-        .hero-card,
-        .metric-card,
-        .workflow-card,
-        .suite-card,
-        .timeline-card,
-        .pricing-card,
-        .contact-section,
-        .gallery-callout {
-          padding: 2rem;
+        .event-detail-item .icon {
+            font-size: 1.5rem;
+            width: 40px;
+            color: var(--accent-color);
         }
 
-        .cta-band {
-          padding: 2.4rem;
-          text-align: center;
+        .form-panel {
+            padding: 3rem 4rem;
         }
 
-        .cta-band .btn {
-          width: 100%;
+        @media (max-width: 991.98px) {
+            .form-panel {
+                padding: 2rem;
+            }
         }
 
-        .hero {
-          padding-top: 6.5rem;
+        .form-panel .form-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-dark);
+            font-size: clamp(2rem, 5vw, 2.5rem);
         }
 
-        .hero-meta {
-          gap: 0.75rem;
-        }
-      }
-
-      @media (max-width: 575.98px) {
-        .hero {
-          padding-bottom: 3.5rem;
+        .form-control,
+        .form-check-input {
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
         }
 
-        .meta-tile {
-          width: 100%;
+        .form-control:focus,
+        .form-check-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(253, 184, 19, 0.3);
+            transform: scale(1.02);
         }
 
-        .gallery-teaser-image {
-          width: 120px;
+        .form-control:invalid {
+            border-color: var(--danger-color);
         }
-      }
+
+        .image-upload-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        #imagePreview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--border-color);
+            background-color: #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        #profileImage {
+            display: none;
+        }
+
+        #uploadLabel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-dark);
+            color: white;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        #uploadLabel:hover {
+            transform: scale(1.1);
+        }
+
+        .day-selector .form-check {
+            padding-left: 0;
+        }
+
+        .day-selector .form-check-input {
+            display: none;
+        }
+
+        .day-selector .form-check-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .day-selector .form-check-input:checked+.form-check-label {
+            background-color: var(--primary-dark);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 5px 15px rgba(10, 37, 64, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: var(--accent-color);
+            border: none;
+            color: var(--primary-dark);
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            color: var(--primary-dark);
+            box-shadow: 0 7px 20px rgba(228, 166, 11, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .success-view {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        #download-id-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        #id-card-template {
+            display: none;
+        }
+
+        .id-card {
+            width: 380px;
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7FA;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid #E0E0E0;
+        }
+
+        .id-card-header {
+            background: var(--primary-dark);
+            padding: 1.5rem 1rem;
+            padding-bottom: 75px;
+        }
+
+        .id-card-header .expo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1.1;
+        }
+
+        .id-card-header .pass-subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .id-card-body {
+            position: relative;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            background-color: transparent;
+        }
+
+        .id-card-photo-wrapper {
+            margin-top: -65px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .id-card-photo {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid #F4F7FA;
+            background: var(--card-bg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .id-card-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .id-card-firm {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .id-card-attendance-date {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--primary-dark);
+            background-color: var(--accent-color);
+            padding: 0.6rem 1.75rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            text-transform: capitalize;
+        }
+
+        .id-card-reg-wrapper {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed #CDD3D9;
+        }
+
+        .id-card-footer-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .id-card-reg-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            letter-spacing: 1px;
+        }
+
+        .id-card-footer {
+            background-color: transparent;
+            padding: 1rem;
+            padding-top: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .lost-pass-link {
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .lost-pass-link:hover {
+            color: #0d6efd;
+            transform: scale(1.05);
+            text-decoration: underline;
+        }
+
+        .footer-custom {
+            background-color: var(--primary-dark);
+            /* #000000 background */
+            color: white;
+        }
+
+        .blinking-heart {
+            color: red;
+            animation: blink 1s infinite;
+            font-size: 1.2em;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
     </style>
-  </head>
+</head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-      <div class="container py-2">
-        <a class="navbar-brand" href="#top"> EllowDigital <span>EMRS</span> </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
-            <li class="nav-item">
-              <a class="nav-link" href="#suite">Solutions</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#playbook">Playbook</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#timeline">Timeline</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#pricing">Pricing</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="gallery.html">Gallery</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="case-study-tent-decor-expo.html"
-                >Case study</a
-              >
-            </li>
-            <li class="nav-item">
-              <button
-                class="btn btn-primary rounded-pill px-4 ms-lg-2"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#discoveryModal"
-              >
-                Book a discovery session
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+<body>
+    <div class="main-container">
+        <div class="registration-wrapper">
+            <div class="row g-0">
+                <div class="col-lg-5 info-panel">
+                    <div>
+                        <img src="assets/unnamed.jpg" alt="Tent Decor Expo UP 2025 Banner"
+                            class="img-fluid rounded-3 mb-4" loading="lazy" decoding="async">
+                        <h1 class="expo-title">TENT DECOR EXPO UP 2025</h1>
+                        <p class="lead">
+                            Join industry leaders and innovators at the premier expo for tents, decorators, caterers,
+                            and event management
+                        </p>
 
-    <main>
-      <header class="hero" id="hero">
-        <div class="container">
-          <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-              <span class="eyebrow">Event operating system</span>
-              <h1 class="display-4 fw-semibold text-gradient">
-                Launch EMRS for experiences that convert.
-              </h1>
-              <p class="lead text-muted">
-                From lead capture to badge verification, EMRS centralises your
-                entire registration journey. Plug into marketing forms,
-                enterprise signage, and real-time dashboards without writing a
-                single line of code.
-              </p>
-              <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
-                <button
-                  class="btn btn-primary btn-lg rounded-pill px-4"
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#discoveryModal"
-                >
-                  Book a discovery session
-                </button>
-                <a class="btn btn-outline-base btn-lg" href="#pricing"
-                  >Explore pricing</a
-                >
-              </div>
-              <ul class="hero-list list-unstyled mt-4 mb-0">
-                <li>
-                  <i class="fa-solid fa-bolt text-warning"></i
-                  ><span>48-hour launch sprints for marketing teams.</span>
-                </li>
-                <li>
-                  <i class="fa-solid fa-shield-check text-success"></i
-                  ><span
-                    >Secure verification across QR, RFID, and guest codes.</span
-                  >
-                </li>
-                <li>
-                  <i class="fa-solid fa-signal text-info"></i
-                  ><span
-                    >Real-time dashboards for sponsors, partners, and
-                    CXOs.</span
-                  >
-                </li>
-              </ul>
-              <div class="hero-meta">
-                <div class="meta-tile">
-                  <strong>30k+</strong>
-                  <span>passes issued</span>
-                </div>
-                <div class="meta-tile">
-                  <strong>99.8%</strong>
-                  <span>scan success</span>
-                </div>
-                <div class="meta-tile">
-                  <strong>12+</strong>
-                  <span>event formats</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="hero-card">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                  <img
-                    id="emrsLogoHero"
-                    src="assets/images/emrs-logo.png"
-                    alt="EMRS logo"
-                    width="72"
-                    height="72"
-                  />
-                  <div>
-                    <h2 class="h5 mb-1">Admin cockpit</h2>
-                    <p class="text-muted mb-0 small">
-                      Live approvals • Attendance insights • Sponsor visibility
-                    </p>
-                  </div>
-                </div>
-                <img
-                  src="assets/images/emrs-screen-08.png"
-                  class="img-fluid"
-                  alt="EMRS admin dashboard preview"
-                />
-                <div class="row g-3 mt-3">
-                  <div class="col-sm-6">
-                    <div class="meta-tile h-100">
-                      <strong>Unified</strong>
-                      <span>Guest, crew, partners handled in one flow.</span>
+                        <hr class="my-4" style="opacity: 0.3;">
+                        <div class="event-details-list">
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-calendar-days icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Dates</h5>
+                                    <p class="mb-0">September 12, 13 & 14, 2025</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-location-dot icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Venue</h5>
+                                    <p class="mb-0">Indira Gandhi Pratishthan, Gomti Nagar, Lucknow</p>
+                                </div>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="fa-solid fa-phone-volume icon"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-0">Enquiries</h5>
+                                    <a href="tel:+917905881922"
+                                        class="text-white text-decoration-none d-block">7905881922</a>
+                                    <a href="tel:+919953903330"
+                                        class="text-white text-decoration-none d-block">9953903330</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="meta-tile h-100">
-                      <strong>Automations</strong>
-                      <span
-                        >Trigger mails, WhatsApp, and print rules
-                        instantly.</span
-                      >
+                </div>
+
+                <div class="col-lg-7 form-panel">
+                    <div id="success-view" class="d-none success-view" aria-live="polite">
+                        <h2 class="form-heading mb-3">Registration Confirmed!</h2>
+                        <p class="lead mb-4 text-secondary">Your visitor pass is ready. Please download and save it for
+                            entry.</p>
+                        <div id="id-card-wrapper" class="d-flex justify-content-center mb-4"></div>
+                        <div class="d-grid">
+                            <button id="download-id-btn" class="btn btn-submit">
+                                <i class="fas fa-download me-2"></i>Download Visitor Pass
+                            </button>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      <section class="py-5 py-lg-6" id="metrics">
-        <div class="container">
-          <div class="row g-4">
-            <div class="col-md-4">
-              <div class="metric-card">
-                <div class="badge-soft mb-3">
-                  <i class="fa-solid fa-satellite"></i> Omni-channel flows
-                </div>
-                <h3>90% less switchover</h3>
-                <p>
-                  Replace spreadsheets and ad-hoc tools with a single space for
-                  guests, crew, and VIP handling.
-                </p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="metric-card">
-                <div class="badge-soft mb-3">
-                  <i class="fa-solid fa-clock"></i> Real-time ops
-                </div>
-                <h3>5 min refresh</h3>
-                <p>
-                  Dashboards refresh every five minutes to sync check-ins,
-                  approvals, and no-show markers.
-                </p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="metric-card">
-                <div class="badge-soft mb-3">
-                  <i class="fa-solid fa-earth-asia"></i> Activation scale
-                </div>
-                <h3>14 cities deployed</h3>
-                <p>
-                  South Asia’s biggest creators, fintech, auto, and B2B
-                  communities rely on EMRS for launch days.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                    <div id="form-container">
+                        <!-- Lost Pass Notice -->
+                        <div class="alert alert-info rounded-3 text-start mb-4" role="alert">
+                            <strong>नोट:</strong> अगर आपका विज़िटर पास खो गया है, तो <strong>उसी मोबाइल नंबर</strong> और
+                            जानकारी के साथ यह फॉर्म फिर से भरें या नीचे दिए गए लिंक पर क्लिक करें। आपका पुराना पास स्वतः
+                            मिल जाएगा।
+                            <br>
+                            <strong>Note:</strong> If you’ve lost your visitor pass, simply fill out this form again
+                            using the <strong>same mobile number</strong> and details, or click the link below. Your
+                            original pass will be retrieved automatically.
+                        </div>
 
-      <section class="py-5 py-lg-6" id="playbook">
-        <div class="container">
-          <div class="row align-items-end justify-content-between g-3 mb-4">
-            <div class="col-lg-8">
-              <span class="eyebrow">Event playbook</span>
-              <h2 class="section-heading">
-                A four-move launch plan your team can follow.
-              </h2>
-              <p class="section-intro">
-                EMRS pairs marketing-grade forms with on-ground verification so
-                teams can focus on experience, not logistics. We plug into your
-                tech stack or operate standalone.
-              </p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-              <a class="btn btn-outline-base rounded-pill" href="gallery.html"
-                >See the gallery</a
-              >
-            </div>
-          </div>
-          <div class="row g-4">
-            <div class="col-lg-6">
-              <div class="workflow-card h-100">
-                <h4>Collect registrations wherever your audience lives.</h4>
-                <p>
-                  Embed native EMRS forms, no-code microsites, or Google Sheets
-                  sync. Auto-validate invite rules as submissions arrive.
-                </p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="workflow-card h-100">
-                <h4>Approve, assign, and brand the perfect digital pass.</h4>
-                <p>
-                  Generate QR/RFID passes with custom brand skins. Trigger
-                  mailers or WhatsApp pushes the moment you approve a guest.
-                </p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="workflow-card h-100">
-                <h4>Verify entries and control crew logistics in real time.</h4>
-                <p>
-                  Deploy scanning teams with iOS/Android devices. Route
-                  escalations, mark VIP escorts, and control inventories on the
-                  go.
-                </p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="workflow-card h-100">
-                <h4>Report outcomes to sponsors, partners, and leadership.</h4>
-                <p>
-                  Generate exports and dashboards that quantify footfall, dwell
-                  time, city splits, and returning cohorts within minutes.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                        <h2 class="form-heading mb-1">Get Your Visitor Pass</h2>
+                        <p class="mb-4 text-muted">Fill out the form below to secure your entry.</p>
+                        <form id="registrationForm" novalidate>
+                            <div class="image-upload-wrapper">
+                                <img id="imagePreview"
+                                    src="https://placehold.co/150x150/e9ecef/6c757d?text=Upload+Photo"
+                                    alt="Profile image preview">
+                                <input type="file" id="profileImage" name="profileImage"
+                                    accept="image/png, image/jpeg, image/jpg" required>
+                                <label for="profileImage" id="uploadLabel" title="Upload Photo"><i
+                                        class="fa-solid fa-camera"></i></label>
+                            </div>
 
-      <section class="py-5 py-lg-6" id="suite">
-        <div class="container">
-          <span class="eyebrow">Solution suite</span>
-          <h2 class="section-heading">
-            Everything you need to run registrations, badges, and beyond.
-          </h2>
-          <p class="section-intro">
-            Whether you’re orchestrating a 200-person launch or multi-day expo,
-            EMRS gives you modular control to compose the exact workflow you
-            need.
-          </p>
-          <div class="suite-grid mt-4">
-            <div class="suite-card">
-              <i class="fa-solid fa-envelope-open-text"></i>
-              <h3 class="h5">Registration OS</h3>
-              <p class="text-muted">
-                Capture entries with dynamic logic, branded confirmation flows,
-                and multi-lingual support.
-              </p>
-              <ul>
-                <li>Audience segmentation rules</li>
-                <li>Instant OTP & invite verification</li>
-                <li>Marketing campaign tracking</li>
-              </ul>
-            </div>
-            <div class="suite-card">
-              <i class="fa-solid fa-id-card-clip"></i>
-              <h3 class="h5">Digital Pass Factory</h3>
-              <p class="text-muted">
-                Design custom badges, control access tiers, and map formats to
-                device or print.
-              </p>
-              <ul>
-                <li>QR, RFID, NFC compatible</li>
-                <li>Auto-branded PDF passbooks</li>
-                <li>Offline-ready fallback modes</li>
-              </ul>
-            </div>
-            <div class="suite-card">
-              <i class="fa-solid fa-people-arrows"></i>
-              <h3 class="h5">On-ground Ops</h3>
-              <p class="text-muted">
-                Drive check-ins, crew command, and escalations with live
-                activity monitors.
-              </p>
-              <ul>
-                <li>Ops checklists & crew roles</li>
-                <li>Instant badge reissue tools</li>
-                <li>Smart alerts for VIP arrivals</li>
-              </ul>
-            </div>
-            <div class="suite-card">
-              <i class="fa-solid fa-chart-line"></i>
-              <h3 class="h5">Insights & Governance</h3>
-              <p class="text-muted">
-                Turn attendance data into business intelligence across teams and
-                partners.
-              </p>
-              <ul>
-                <li>Executive-ready dashboards</li>
-                <li>Granular exports & audit logs</li>
-                <li>Privacy controls and retention</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required
+                                        minlength="3">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label fw-semibold">10-Digit Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required
+                                        pattern="^[6-9]\d{9}$" placeholder="e.g., 9876543210">
+                                </div>
+                                <div class="col-12">
+                                    <label for="firmName" class="form-label fw-semibold">Firm Name</label>
+                                    <input type="text" class="form-control" id="firmName" name="firmName" required
+                                        minlength="3">
+                                </div>
+                                <div class="col-12">
+                                    <label for="address" class="form-label fw-semibold">Full Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="3" required
+                                        minlength="10"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="district" class="form-label fw-semibold">District</label>
+                                    <input type="text" class="form-control" id="district" name="district" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="state" class="form-label fw-semibold">State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Select Attending Days</label>
+                                    <div class="row g-2 day-selector">
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 1" id="day1">
+                                                <label class="form-check-label" for="day1">Day 1<br><small>Sep
+                                                        12</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 2" id="day2">
+                                                <label class="form-check-label" for="day2">Day 2<br><small>Sep
+                                                        13</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="attendance"
+                                                    value="Day 3" id="day3">
+                                                <label class="form-check-label" for="day3">Day 3<br><small>Sep
+                                                        14</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-4 d-grid">
+                                    <button class="btn btn-submit" type="submit" id="submitBtn">
+                                        <span class="button-text">Register & Get Pass</span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- NEW: Lost Pass Link -->
+                        <div class="text-center mt-3">
+                            <small class="text-muted d-block mb-1">Already registered but lost your pass?</small>
+                            <a href="#" id="lostPassLink" role="button" aria-label="Find lost visitor pass"
+                                class="btn btn-outline-primary mt-2">
+                                <i class="bi bi-search me-1"></i>Find your lost visitor pass
+                            </a>
 
-      <section class="py-5 py-lg-6" id="timeline">
-        <div class="container">
-          <span class="eyebrow">Go-live timeline</span>
-          <h2 class="section-heading">
-            From kickoff to event day in four milestone weeks.
-          </h2>
-          <p class="section-intro">
-            Our deployment pod aligns with your internal team to configure
-            forms, assets, automations, and crew playbooks. Most modules are
-            launch-ready within the first week.
-          </p>
-          <div class="timeline-grid mt-4">
-            <div class="timeline-card">
-              <span>Week 0</span>
-              <h4>Immersion & blueprint</h4>
-              <p>
-                Scope your guest journeys, entry policies, stakeholder
-                dashboards, and marketing integrations.
-              </p>
-            </div>
-            <div class="timeline-card">
-              <span>Week 1</span>
-              <h4>Build & brand assets</h4>
-              <p>
-                Spin up registration forms, badge skins, and automation logic.
-                Approve flows with your team in sandbox.
-              </p>
-            </div>
-            <div class="timeline-card">
-              <span>Week 2</span>
-              <h4>Ops rehearsal</h4>
-              <p>
-                Train crew, simulate check-ins, and rehearse VIP paths. Stress
-                test against high-concurrency events.
-              </p>
-            </div>
-            <div class="timeline-card">
-              <span>Event week</span>
-              <h4>Launch, measure, refine</h4>
-              <p>
-                Deploy live dashboards, escalate exceptions instantly, and ship
-                sponsor-ready reports within 24 hours.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+                        </div>
 
-      <section class="py-5 py-lg-6" id="pricing">
-        <div class="container">
-          <div class="row align-items-end justify-content-between g-3 mb-4">
-            <div class="col-lg-8">
-              <span class="eyebrow">Pricing architecture</span>
-              <h2 class="section-heading">
-                Flexible launches from single-day pop-ups to multi-city tours.
-              </h2>
-              <p class="section-intro">
-                Choose the experience level that fits your activation cadence.
-                Every plan includes onboarding, crew training, and analytics
-                dashboards.
-              </p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-              <button
-                class="btn btn-outline-base rounded-pill"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#discoveryModal"
-              >
-                Talk to deployment
-              </button>
-            </div>
-          </div>
-          <div class="row g-4">
-            <div class="col-md-6 col-xl-3">
-              <div class="pricing-card">
-                <div>
-                  <span class="pricing-pill"
-                    ><i class="fa-solid fa-rocket"></i> Starter</span
-                  >
-                  <h3 class="mt-3">Standard Launch</h3>
-                  <p class="text-muted mb-0">
-                    Perfect for brand previews, community meetups, and 1-day
-                    showcases.
-                  </p>
-                </div>
-                <div>
-                  <div class="price">₹49K</div>
-                  <small class="text-muted">+ managed on-ground optional</small>
-                </div>
-                <ul>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>2 registration forms with custom branding</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Single pass design with QR verification</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Live dashboard + sponsor-ready exports</span>
-                  </li>
-                </ul>
-                <button
-                  class="btn btn-outline-base rounded-pill"
-                  type="button"
-                  data-plan="Standard Launch"
-                  data-bs-toggle="modal"
-                  data-bs-target="#planModal"
-                >
-                  Request this plan
-                </button>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-              <div class="pricing-card highlight">
-                <div>
-                  <span class="pricing-pill"
-                    ><i class="fa-solid fa-fire"></i> Most popular</span
-                  >
-                  <h3 class="mt-3">Deluxe Series</h3>
-                  <p class="text-muted mb-0">
-                    For hybrid experiences with crew coordination and sponsor
-                    suites.
-                  </p>
-                </div>
-                <div>
-                  <div class="price">₹89K</div>
-                  <small class="text-muted">Includes ops command support</small>
-                </div>
-                <ul>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Multi-track registration & guest segmentation</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Advanced pass automation + WhatsApp workflows</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>On-ground check-in pods & crew scheduler</span>
-                  </li>
-                </ul>
-                <button
-                  class="btn btn-primary rounded-pill"
-                  type="button"
-                  data-plan="Deluxe Series"
-                  data-bs-toggle="modal"
-                  data-bs-target="#planModal"
-                >
-                  Request this plan
-                </button>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-              <div class="pricing-card">
-                <div>
-                  <span class="pricing-pill"
-                    ><i class="fa-solid fa-star"></i> Premium</span
-                  >
-                  <h3 class="mt-3">Grand Showcase</h3>
-                  <p class="text-muted mb-0">
-                    Built for multi-day festivals, IP launches, and high-stakes
-                    showcases.
-                  </p>
-                </div>
-                <div>
-                  <div class="price">₹139K</div>
-                  <small class="text-muted">Includes 2-day on-site crew</small>
-                </div>
-                <ul>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span
-                      >VIP, media, crew, and vendor pass orchestration</span
-                    >
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Hybrid QR + RFID integrations with signage</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Executive war-room dashboards</span>
-                  </li>
-                </ul>
-                <button
-                  class="btn btn-outline-base rounded-pill"
-                  type="button"
-                  data-plan="Grand Showcase"
-                  data-bs-toggle="modal"
-                  data-bs-target="#planModal"
-                >
-                  Request this plan
-                </button>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-              <div class="pricing-card">
-                <div>
-                  <span class="pricing-pill"
-                    ><i class="fa-solid fa-infinity"></i> Enterprise</span
-                  >
-                  <h3 class="mt-3">Scalable Authority</h3>
-                  <p class="text-muted mb-0">
-                    Retain EMRS as your owned registration infrastructure across
-                    markets.
-                  </p>
-                </div>
-                <div>
-                  <div class="price">Custom</div>
-                  <small class="text-muted">Annual agreements available</small>
-                </div>
-                <ul>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Dedicated pod + 24-hour command centre</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Single sign-on & enterprise integrations</span>
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-check"></i
-                    ><span>Data residency & privacy controls</span>
-                  </li>
-                </ul>
-                <button
-                  class="btn btn-outline-base rounded-pill"
-                  type="button"
-                  data-plan="Scalable Authority"
-                  data-bs-toggle="modal"
-                  data-bs-target="#planModal"
-                >
-                  Request this plan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section class="py-5 py-lg-6">
-        <div class="container">
-          <div class="row g-5 align-items-center">
-            <div class="col-lg-6">
-              <div class="contact-section">
-                <div class="badge-soft mb-3">
-                  <i class="fa-solid fa-calendar-check"></i> Discovery session
-                </div>
-                <h3 class="h2 fw-semibold mb-3">
-                  Let’s blueprint your next activation.
-                </h3>
-                <p class="text-muted">
-                  Share your launch details and we’ll line up a 30-minute
-                  discovery session with our deployment pod. Expect a response
-                  within one business day.
-                </p>
-                <form
-                  class="mt-4"
-                  action="https://formsubmit.co/ellowdigitalindia@gmail.com"
-                  method="POST"
-                >
-                  <input
-                    type="hidden"
-                    name="_subject"
-                    value="Discovery Session Request - Web"
-                  />
-                  <input type="hidden" name="_captcha" value="false" />
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label" for="discoveryName"
-                        >Full name</label
-                      >
-                      <input
-                        class="form-control"
-                        id="discoveryName"
-                        name="name"
-                        type="text"
-                        placeholder="Your name"
-                        required
-                      />
                     </div>
-                    <div class="col-md-6">
-                      <label class="form-label" for="discoveryEmail"
-                        >Work email</label
-                      >
-                      <input
-                        class="form-control"
-                        id="discoveryEmail"
-                        name="email"
-                        type="email"
-                        placeholder="name@company.com"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" for="discoveryCompany"
-                        >Company / brand</label
-                      >
-                      <input
-                        class="form-control"
-                        id="discoveryCompany"
-                        name="company"
-                        type="text"
-                        placeholder="Brand name"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" for="discoveryDate"
-                        >Target event month</label
-                      >
-                      <input
-                        class="form-control"
-                        id="discoveryDate"
-                        name="event_month"
-                        type="month"
-                      />
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label" for="discoveryDetails"
-                        >What are you planning?</label
-                      >
-                      <textarea
-                        class="form-control"
-                        id="discoveryDetails"
-                        name="context"
-                        rows="4"
-                        placeholder="Launch details, audience size, locations, etc."
-                        required
-                      ></textarea>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-wrap gap-3 align-items-center mt-4">
-                    <button
-                      class="btn btn-primary rounded-pill px-4"
-                      type="submit"
-                    >
-                      Submit request
-                    </button>
-                    <span class="text-muted small"
-                      >We’ll send a calendar link after review.</span
-                    >
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="gallery-callout">
-                <div
-                  class="d-flex align-items-center justify-content-between flex-wrap gap-3"
-                >
-                  <div>
-                    <span class="badge-soft mb-2"
-                      ><i class="fa-solid fa-images"></i> Product gallery</span
-                    >
-                    <h3 class="h4 fw-semibold mb-2">
-                      See the live product experience
-                    </h3>
-                    <p class="text-muted mb-0">
-                      Preview the registration forms, admin dashboards, and
-                      verification suite in action. Every screen can be
-                      customised to your brand system.
-                    </p>
-                  </div>
-                  <div class="d-flex flex-column gap-3">
-                    <img
-                      class="gallery-teaser-image"
-                      src="assets/images/emrs-screen-02.png"
-                      alt="EMRS registration screen"
-                      width="140"
-                      height="90"
-                    />
-                    <img
-                      class="gallery-teaser-image"
-                      src="assets/images/emrs-screen-04.png"
-                      alt="EMRS verification screen"
-                      width="140"
-                      height="90"
-                    />
-                  </div>
                 </div>
-                <div class="mt-4">
-                  <a
-                    class="btn btn-outline-base rounded-pill"
-                    href="gallery.html"
-                    >Browse gallery</a
-                  >
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </section>
-
-      <section class="py-5 py-lg-6">
-        <div class="container">
-          <div class="cta-band">
-            <div class="row align-items-center g-4">
-              <div class="col-lg-8">
-                <h2 class="display-6 fw-semibold mb-3">
-                  Ready to deploy EMRS for your next activation?
-                </h2>
-                <p class="mb-0">
-                  We partner with agencies, brands, and creators to deliver
-                  unforgettable registration and on-ground experiences. Share
-                  your event details and we’ll set up a blueprint call.
-                </p>
-              </div>
-              <div class="col-lg-4 text-lg-end">
-                <button
-                  class="btn btn-light btn-lg rounded-pill px-4"
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#discoveryModal"
-                >
-                  Book a discovery session
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <div
-      class="modal fade"
-      id="discoveryModal"
-      tabindex="-1"
-      aria-labelledby="discoveryModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-semibold" id="discoveryModalLabel">
-              Book a discovery session
-            </h5>
-            <button
-              class="btn-close"
-              type="button"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p class="text-muted mb-4">
-              Tell us about the experience you are planning and we’ll schedule a
-              30-minute walkthrough with the deployment pod.
-            </p>
-            <form
-              class="row g-3"
-              action="https://formsubmit.co/ellowdigitalindia@gmail.com"
-              method="POST"
-            >
-              <input
-                type="hidden"
-                name="_subject"
-                value="Discovery Session Request - Modal"
-              />
-              <input type="hidden" name="_captcha" value="false" />
-              <div class="col-md-6">
-                <label class="form-label" for="modalDiscoveryName"
-                  >Full name</label
-                >
-                <input
-                  class="form-control"
-                  id="modalDiscoveryName"
-                  name="name"
-                  type="text"
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="modalDiscoveryEmail"
-                  >Work email</label
-                >
-                <input
-                  class="form-control"
-                  id="modalDiscoveryEmail"
-                  name="email"
-                  type="email"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="modalDiscoveryCompany"
-                  >Company / brand</label
-                >
-                <input
-                  class="form-control"
-                  id="modalDiscoveryCompany"
-                  name="company"
-                  type="text"
-                  placeholder="Brand name"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="modalDiscoveryPhone"
-                  >Contact number</label
-                >
-                <input
-                  class="form-control"
-                  id="modalDiscoveryPhone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Preferred phone"
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="modalDiscoveryMonth"
-                  >Target event month</label
-                >
-                <input
-                  class="form-control"
-                  id="modalDiscoveryMonth"
-                  name="event_month"
-                  type="month"
-                />
-              </div>
-              <div class="col-12">
-                <label class="form-label" for="modalDiscoveryDetails"
-                  >What are you planning?</label
-                >
-                <textarea
-                  class="form-control"
-                  id="modalDiscoveryDetails"
-                  name="context"
-                  rows="4"
-                  placeholder="Format, audience size, locations, partners"
-                  required
-                ></textarea>
-              </div>
-              <div
-                class="col-12 d-flex flex-wrap align-items-center gap-3 pt-2"
-              >
-                <button class="btn btn-primary rounded-pill px-4" type="submit">
-                  Submit request
-                </button>
-                <span class="text-muted small"
-                  >We reply within one business day.</span
-                >
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div
-      class="modal fade"
-      id="planModal"
-      tabindex="-1"
-      aria-labelledby="planModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-          <div class="modal-header border-0 pb-0">
-            <div>
-              <span class="badge-soft text-uppercase mb-2"
-                ><i class="fa-solid fa-clipboard-check"></i> Plan inquiry</span
-              >
-              <h5 class="modal-title fw-semibold" id="planModalLabel">
-                Request <span data-selected-plan>EMRS Plan</span>
-              </h5>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header text-white" id="infoModalHeader">
+                    <h5 class="modal-title fw-bold" id="infoModalTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" id="infoModalBody" aria-live="polite">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-            <button
-              class="btn-close"
-              type="button"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p class="text-muted mb-4">
-              Share a few launch details and we will send the scope, inclusions,
-              and kickoff checklist for this plan.
-            </p>
-            <form
-              class="row g-3"
-              action="https://formsubmit.co/ellowdigitalindia@gmail.com"
-              method="POST"
-            >
-              <input type="hidden" name="_subject" value="EMRS Plan Inquiry" />
-              <input type="hidden" name="_captcha" value="false" />
-              <input
-                type="hidden"
-                id="selectedPlan"
-                name="plan"
-                value="EMRS Plan"
-              />
-              <div class="col-md-6">
-                <label class="form-label" for="planName">Full name</label>
-                <input
-                  class="form-control"
-                  id="planName"
-                  name="name"
-                  type="text"
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="planEmail">Work email</label>
-                <input
-                  class="form-control"
-                  id="planEmail"
-                  name="email"
-                  type="email"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="planCompany"
-                  >Company / brand</label
-                >
-                <input
-                  class="form-control"
-                  id="planCompany"
-                  name="company"
-                  type="text"
-                  placeholder="Brand name"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="planPhone">Contact number</label>
-                <input
-                  class="form-control"
-                  id="planPhone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Preferred phone"
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="planAudience"
-                  >Expected audience size</label
-                >
-                <select
-                  class="form-select"
-                  id="planAudience"
-                  name="audience_size"
-                >
-                  <option value="Under 200">Under 200</option>
-                  <option value="200 - 500">200 - 500</option>
-                  <option value="500 - 1000">500 - 1000</option>
-                  <option value="1000+">1000+</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="planTimeline"
-                  >Go-live timeline</label
-                >
-                <input
-                  class="form-control"
-                  id="planTimeline"
-                  name="timeline"
-                  type="month"
-                />
-              </div>
-              <div class="col-12">
-                <label class="form-label" for="planNotes"
-                  >Anything we should prepare?</label
-                >
-                <textarea
-                  class="form-control"
-                  id="planNotes"
-                  name="context"
-                  rows="4"
-                  placeholder="Integrations, cities, crew requirements"
-                  required
-                ></textarea>
-              </div>
-              <div
-                class="col-12 d-flex flex-wrap align-items-center gap-3 pt-2"
-              >
-                <button class="btn btn-primary rounded-pill px-4" type="submit">
-                  Request plan details
-                </button>
-                <span class="text-muted small"
-                  >Includes scope sheet and onboarding guide.</span
-                >
-              </div>
-            </form>
-          </div>
         </div>
-      </div>
     </div>
 
-    <footer class="footer py-5">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-md-6 col-lg-4">
-            <h5 class="fw-semibold">EllowDigital</h5>
-            <p class="text-muted">
-              Digital experiences that move people. EMRS is part of our
-              event-tech stack designed for hybrid teams.
-            </p>
-          </div>
-          <div class="col-md-6 col-lg-4">
-            <h6 class="fw-semibold">Useful Links</h6>
-            <ul class="list-unstyled text-muted">
-              <li>
-                <a class="text-decoration-none text-muted" href="form.html"
-                  >Registration Demo</a
-                >
-              </li>
-              <li>
-                <a class="text-decoration-none text-muted" href="admin.html"
-                  >Admin Dashboard</a
-                >
-              </li>
-              <li>
-                <a class="text-decoration-none text-muted" href="verify.html"
-                  >Verification Console</a
-                >
-              </li>
-              <li>
-                <a class="text-decoration-none text-muted" href="gallery.html"
-                  >Product Gallery</a
-                >
-              </li>
-              <li>
-                <a
-                  class="text-decoration-none text-muted"
-                  href="case-study-tent-decor-expo.html"
-                  >Case Study</a
-                >
-              </li>
-              <li>
-                <a
-                  class="text-decoration-none text-muted"
-                  href="netlify/functions/get-stats.js"
-                  >API Reference</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-12 col-lg-4">
-            <h6 class="fw-semibold">Contact</h6>
-            <p class="text-muted mb-1">
-              <i class="fa-solid fa-envelope me-2"></i
-              ><a class="text-muted" href="mailto:ellowdigitalindia@gmail.com"
-                >ellowdigitalindia@gmail.com</a
-              >
-            </p>
-            <p class="text-muted mb-1">
-              <i class="fa-solid fa-phone me-2"></i>+91 98765 43210
-            </p>
-            <p class="text-muted mb-3">
-              <i class="fa-solid fa-earth-asia me-2"></i
-              ><a
-                class="text-muted"
-                href="https://ellowdigital.netlify.app"
-                target="_blank"
-                rel="noopener"
-                >ellowdigital.netlify.app</a
-              >
-            </p>
-            <!-- <div class="d-flex gap-3">
-            <a class="text-muted" href="https://www.linkedin.com/company/ellowdigital" target="_blank" rel="noopener"
-              aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-            <a class="text-muted" href="https://www.instagram.com/ellowdigital" target="_blank" rel="noopener"
-              aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a class="text-muted" href="https://www.youtube.com/@ellowdigital" target="_blank" rel="noopener"
-              aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          </div> -->
-          </div>
+    <div class="modal fade" id="alreadyRegisteredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-body text-center p-4">
+                    <i class="fa-solid fa-user-check fa-4x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="modal-title mb-2 fw-bold" id="modalLabel">You're Already Registered!</h5>
+                    <p class="text-muted">Welcome back, <strong id="registeredUserName"></strong>! We found a visitor
+                        pass linked to this phone number.</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="button" class="btn btn-submit" id="modalDownloadBtn">
+                            <i class="fas fa-download me-2"></i>Download Your Visitor Pass
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <hr class="my-4" />
-        <div
-          class="d-flex flex-column flex-md-row justify-content-between align-items-center text-muted"
-        >
-          <span>© 2025 EllowDigital. All rights reserved.</span>
-          <span
-            >Built with <span class="heart-beat" aria-hidden="true">♥</span
-            ><span class="visually-hidden">love</span> by EllowDigital · Crafted
-            for EMRS.</span
-          >
+    </div>
+
+    <!-- NEW: Lost Pass Modal -->
+    <div class="modal fade" id="lostPassModal" tabindex="-1" aria-labelledby="lostPassModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="lostPassModalLabel">Find Your Visitor Pass</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted">Enter the 10-digit phone number you used to register.</p>
+                    <form id="lostPassForm">
+                        <div class="mb-3">
+                            <label for="lostPhoneInput" class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel" class="form-control" id="lostPhoneInput" required pattern="^[6-9]\d{9}$">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="findPassBtn">
+                                <span class="button-text">Find My Pass</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="lostPassError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
+
+    <div id="id-card-template">
+        <div class="id-card">
+            <div class="id-card-header">
+                <div class="expo-title">TENT DECOR EXPO UP 2025</div>
+                <div class="pass-subtitle">VISITOR PASS</div>
+            </div>
+            <div class="id-card-body">
+                <div class="id-card-photo-wrapper">
+                    <img class="id-card-photo" src="" alt="Attendee Photo" crossorigin="anonymous">
+                </div>
+                <h3 class="id-card-name"></h3>
+                <p class="id-card-firm"></p>
+                <div class="id-card-attendance-date"></div>
+                <div class="id-card-reg-wrapper">
+                    <div class="id-card-footer-label">REGISTRATION NO.</div>
+                    <div class="id-card-reg-number"></div>
+                </div>
+            </div>
+            <div class="id-card-footer">
+                <i class="fa-solid fa-location-dot me-1"></i> Indira Gandhi Pratishthan, Lucknow
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-custom text-center py-4">
+        <div class="container">
+            <p class="mb-0">© 2025 TENT DECOR EXPO UP. All rights reserved.</p>
+            <p class="mb-0">
+                Made with
+                <span class="blinking-heart" role="img" aria-label="love">❤️</span> by
+                <a href="https://ellowdigital.netlify.app" target="_blank" rel="noopener noreferrer"
+                    class="text-white text-decoration-underline">
+                    EllowDigital
+                </a>
+            </p>
+        </div>
     </footer>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"
-      defer
-    ></script>
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js" defer></script>
     <script>
-      (function () {
-        const applyTheme = (isDark) => {
-          document.body.setAttribute(
-            "data-bs-theme",
-            isDark ? "dark" : "light",
-          );
-        };
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Configuration & Constants ---
+            const API_ENDPOINT = '/.netlify/functions/submit-registration';
+            const FIND_PASS_ENDPOINT = '/.netlify/functions/find-pass'; // New endpoint
 
-        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        applyTheme(mediaQuery.matches);
+            // --- DOM Elements ---
+            const form = document.getElementById('registrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const formContainer = document.getElementById('form-container');
+            const successView = document.getElementById('success-view');
+            const idCardWrapper = document.getElementById('id-card-wrapper');
+            const downloadBtn = document.getElementById('download-id-btn');
+            const profileImageInput = document.getElementById('profileImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const lostPassLink = document.getElementById('lostPassLink');
+            const lostPassModalEl = document.getElementById('lostPassModal');
+            const lostPassModal = new bootstrap.Modal(lostPassModalEl);
+            const lostPassForm = document.getElementById('lostPassForm');
+            const findPassBtn = document.getElementById('findPassBtn');
+            const lostPhoneInput = document.getElementById('lostPhoneInput');
+            const lostPassError = document.getElementById('lostPassError');
 
-        const handleThemeChange = (event) => applyTheme(event.matches);
-        if (typeof mediaQuery.addEventListener === "function") {
-          mediaQuery.addEventListener("change", handleThemeChange);
-        } else if (typeof mediaQuery.addListener === "function") {
-          mediaQuery.addListener(handleThemeChange);
-        }
+            // Modal elements
+            const infoModalEl = document.getElementById('infoModal');
+            const infoModal = new bootstrap.Modal(infoModalEl);
+            const registeredModalEl = document.getElementById('alreadyRegisteredModal');
+            const registeredModal = new bootstrap.Modal(registeredModalEl);
+            const modalUserName = document.getElementById('registeredUserName');
+            const modalDownloadBtn = document.getElementById('modalDownloadBtn');
 
-        document.addEventListener("scroll", () => {
-          const nav = document.getElementById("mainNav");
-          if (!nav) {
-            return;
-          }
-          nav.classList.toggle("scrolled", window.scrollY > 30);
+            // --- State ---
+            let compressedImageFile = null;
+            let existingUserData = null;
+
+            // --- UI & UX Functions ---
+            function setButtonLoading(button, isLoading) {
+                const buttonText = button.querySelector('.button-text');
+                const spinner = button.querySelector('.spinner-border');
+                if (!buttonText || !spinner) return;
+
+                button.disabled = isLoading;
+                buttonText.classList.toggle('d-none', isLoading);
+                spinner.classList.toggle('d-none', !isLoading);
+            }
+
+            function showInfoModal(title, content, type = 'error') {
+                const modalHeader = infoModalEl.querySelector('#infoModalHeader');
+                const modalTitle = infoModalEl.querySelector('#infoModalTitle');
+                const modalBody = infoModalEl.querySelector('#infoModalBody');
+
+                const typeConfig = {
+                    error: { bg: 'bg-danger', icon: 'fa-solid fa-circle-xmark' },
+                    success: { bg: 'bg-success', icon: 'fa-solid fa-circle-check' },
+                    info: { bg: 'bg-primary', icon: 'fa-solid fa-circle-info' }
+                };
+                const config = typeConfig[type] || typeConfig.error;
+
+                modalHeader.className = `modal-header text-white ${config.bg}`;
+                modalTitle.innerHTML = `<i class="${config.icon} me-2"></i> ${title}`;
+
+                modalBody.innerHTML = '';
+                if (typeof content === 'string') {
+                    modalBody.innerHTML = content;
+                } else {
+                    modalBody.appendChild(content);
+                }
+                infoModal.show();
+            }
+
+            async function generateAndDownloadPass(userData) {
+                const passElement = createPassElement(userData);
+                document.body.appendChild(passElement);
+
+                try {
+                    const canvas = await html2canvas(passElement, { scale: 3, useCORS: true, backgroundColor: null });
+                    const link = document.createElement('a');
+                    const name = userData.name.trim().replace(/\s+/g, '_');
+                    link.download = `Visitor-Pass_${name}_${userData.registrationId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    console.error('Download Error:', err);
+                    showInfoModal('Download Failed', 'Could not generate the pass image. Please try taking a screenshot instead.', 'error');
+                } finally {
+                    document.body.removeChild(passElement);
+                }
+            }
+
+            // --- Visitor Pass Generation ---
+            function createPassElement(data) {
+                const template = document.getElementById('id-card-template').cloneNode(true);
+                const card = template.firstElementChild;
+                card.style.display = 'block';
+
+                const dateMap = { 'Day 1': 'Sep 12', 'Day 2': 'Sep 13', 'Day 3': 'Sep 14' };
+                const attendingDays = (data.attendance || '').split(',').map(d => d.trim()).filter(Boolean);
+                let attendanceText;
+
+                if (attendingDays.length === 0 || attendingDays.length >= 3) {
+                    attendanceText = 'Attending: All Days';
+                } else if (attendingDays.length === 1) {
+                    attendanceText = `Attending: ${dateMap[attendingDays[0]]}, 2025`;
+                } else {
+                    attendanceText = `Attending: ${attendingDays.map(d => dateMap[d] || d).join(' & ')}`;
+                }
+
+                card.querySelector('.id-card-photo').src = data.profileImageUrl;
+                card.querySelector('.id-card-name').textContent = data.name;
+                card.querySelector('.id-card-firm').textContent = data.firmName;
+                card.querySelector('.id-card-reg-number').textContent = data.registrationId;
+                card.querySelector('.id-card-attendance-date').textContent = attendanceText;
+
+                return card;
+            }
+
+            // --- Form & Input Handling ---
+            profileImageInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const originalSizeMB = file.size / 1024 / 1024;
+                if (originalSizeMB > 15) {
+                    showInfoModal('File Too Large', `Image is too large (${originalSizeMB.toFixed(2)}MB). Please select a file smaller than 15MB.`, 'error');
+                    profileImageInput.value = '';
+                    return;
+                }
+
+                imagePreview.src = URL.createObjectURL(file);
+
+                const options = {
+                    maxWidthOrHeight: 800,
+                    useWebWorker: true,
+                    initialQuality: 0.8,
+                    maxSizeMB: 0.3
+                };
+
+                try {
+                    compressedImageFile = await imageCompression(file, options);
+                } catch (error) {
+                    console.error('Image compression error:', error);
+                    compressedImageFile = file;
+                    showInfoModal('Compression Failed', 'Could not process the image. The original file will be used.', 'info');
+                }
+            });
+
+            function validateForm() {
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                const errors = [];
+                const addError = (field, message) => {
+                    errors.push({ field, message });
+                    field.classList.add('is-invalid');
+                };
+
+                if (profileImageInput.files.length === 0) errors.push({ field: null, message: 'A profile photo is required.' });
+                if (!form.elements.name.checkValidity()) addError(form.elements.name, 'Please enter a valid full name (min. 3 characters).');
+                if (!form.elements.phone.checkValidity()) addError(form.elements.phone, 'Please enter a valid 10-digit Indian phone number.');
+                if (!form.elements.firmName.checkValidity()) addError(form.elements.firmName, 'Please enter your firm name (min. 3 characters).');
+                if (!form.elements.address.checkValidity()) addError(form.elements.address, 'Please enter your full address (min. 10 characters).');
+                if (!form.elements.district.checkValidity()) addError(form.elements.district, 'Please enter your district.');
+                if (!form.elements.state.checkValidity()) addError(form.elements.state, 'Please enter your state.');
+                if (document.querySelectorAll('input[name="attendance"]:checked').length === 0) errors.push({ field: null, message: 'Please select at least one attending day.' });
+
+                if (errors.length > 0) {
+                    const errorList = document.createElement('ul');
+                    errorList.className = 'list-unstyled text-start mb-0 ps-2';
+                    errors.forEach(err => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fa-solid fa-times-circle text-danger me-2"></i>${err.message}`;
+                        errorList.appendChild(li);
+                    });
+                    showInfoModal('Please Complete the Form', errorList, 'error');
+                    infoModalEl.addEventListener('hidden.bs.modal', () => {
+                        const firstInvalidField = errors.find(e => e.field);
+                        if (firstInvalidField) firstInvalidField.field.focus();
+                    }, { once: true });
+                    return false;
+                }
+                return true;
+            }
+
+            // --- Main Form Submission Logic with Improved Error Handling ---
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!validateForm()) return;
+
+                setButtonLoading(submitBtn, true);
+                const formData = new FormData(form);
+                if (compressedImageFile) {
+                    formData.set('profileImage', compressedImageFile, profileImageInput.files[0].name);
+                }
+
+                try {
+                    // Check for network connection first
+                    if (!navigator.onLine) {
+                        throw new Error("You appear to be offline. Please check your internet connection.");
+                    }
+                    const response = await fetch(API_ENDPOINT, { method: 'POST', body: formData });
+
+                    // Always try to parse JSON, as even errors should have a JSON body
+                    const result = await response.json();
+
+                    if (response.status === 409 && result.status === 'exists') {
+                        existingUserData = result.registrationData;
+                        modalUserName.textContent = result.registrationData.name;
+                        registeredModal.show();
+                    } else if (response.ok && result.status === 'success') {
+                        const newPassElement = createPassElement(result.registrationData);
+                        idCardWrapper.innerHTML = '';
+                        idCardWrapper.appendChild(newPassElement);
+                        formContainer.classList.add('d-none');
+                        successView.classList.remove('d-none');
+                        document.querySelector('.registration-wrapper').scrollIntoView();
+                        downloadBtn.onclick = () => generateAndDownloadPass(result.registrationData);
+                    } else {
+                        // Throw an error with the server-provided message, or a generic one
+                        const error = new Error(result.error || `A server error occurred (Status: ${response.status}).`);
+                        error.response = response; // Attach response for more context
+                        throw error;
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+
+                    let title = 'Registration Failed';
+                    let message = '';
+
+                    if (error.message.includes("offline")) {
+                        title = 'Connection Error';
+                        message = '<p>You seem to be offline. Please check your internet connection and try again.</p>';
+                    } else if (error.response?.status >= 500) {
+                        title = 'Server Error';
+                        message = '<p>We are currently experiencing issues on our end. Our team has been notified.</p><p>Please try again in a few minutes.</p>';
+                    } else {
+                        // Default message using the specific error from the server or catch block
+                        message = `<p>We couldn't complete your registration: <strong>${error.message}</strong></p><p>Please review the form or contact support if the problem persists.</p>`;
+                    }
+
+                    showInfoModal(title, message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            modalDownloadBtn.addEventListener('click', () => {
+                if (existingUserData) {
+                    generateAndDownloadPass(existingUserData);
+                }
+            });
+
+            // --- NEW: Lost Pass Logic ---
+            lostPassLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                lostPassModal.show();
+            });
+
+            lostPassForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setButtonLoading(findPassBtn, true);
+                lostPassError.classList.add('d-none');
+
+                const phone = lostPhoneInput.value.trim();
+                if (!/^[6-9]\d{9}$/.test(phone)) {
+                    lostPassError.textContent = 'Please enter a valid 10-digit phone number.';
+                    lostPassError.classList.remove('d-none');
+                    setButtonLoading(findPassBtn, false);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${FIND_PASS_ENDPOINT}?phone=${phone}`);
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Could not find registration.');
+                    }
+
+                    // Success! Show the 'already registered' modal with the found data
+                    existingUserData = result;
+                    modalUserName.textContent = result.name;
+                    lostPassModal.hide();
+                    registeredModal.show();
+
+                } catch (err) {
+                    lostPassError.textContent = err.message;
+                    lostPassError.classList.remove('d-none');
+                } finally {
+                    setButtonLoading(findPassBtn, false);
+                }
+            });
+            // Hide the info alert after a few seconds
+            setTimeout(() => {
+                const alertEl = document.querySelector('.alert.alert-info');
+                if (alertEl) alertEl.style.display = 'none';
+            }, 8000);
         });
-
-        // Collapse navbar on nav-link click (mobile)
-        const navBar = document.getElementById("navbarNav");
-        if (navBar) {
-          navBar.addEventListener("click", (e) => {
-            const target = e.target;
-            if (target && target.classList.contains("nav-link")) {
-              const collapse =
-                bootstrap.Collapse.getInstance(navBar) ||
-                new bootstrap.Collapse(navBar, { toggle: false });
-              collapse.hide();
-            }
-          });
-        }
-
-        // Prefer PNG EMRS logo if available (handles filenames with or without comma)
-        const heroLogo = document.getElementById("emrsLogoHero");
-        if (heroLogo) {
-          const tryPaths = ["assets/images/emrs-logo.png"];
-          let idx = 0;
-          const test = new Image();
-          const tryNext = () => {
-            if (idx >= tryPaths.length) return;
-            const path = tryPaths[idx++];
-            test.onload = () => {
-              heroLogo.src = path;
-            };
-            test.onerror = () => {
-              tryNext();
-            };
-            test.src = path;
-          };
-          tryNext();
-        }
-
-        const planModalEl = document.getElementById("planModal");
-        if (planModalEl) {
-          planModalEl.addEventListener("show.bs.modal", (event) => {
-            const trigger = event.relatedTarget;
-            const planName = trigger
-              ? trigger.getAttribute("data-plan") || "EMRS Plan"
-              : "EMRS Plan";
-            const planField = planModalEl.querySelector("#selectedPlan");
-            const planLabel = planModalEl.querySelector("[data-selected-plan]");
-            if (planField) {
-              planField.value = planName;
-            }
-            if (planLabel) {
-              planLabel.textContent = planName;
-            }
-          });
-
-          planModalEl.addEventListener("hidden.bs.modal", () => {
-            const form = planModalEl.querySelector("form");
-            if (form) {
-              form.reset();
-            }
-            const planLabel = planModalEl.querySelector("[data-selected-plan]");
-            if (planLabel) {
-              planLabel.textContent = "EMRS Plan";
-            }
-          });
-        }
-
-        const discoveryModalEl = document.getElementById("discoveryModal");
-        if (discoveryModalEl) {
-          discoveryModalEl.addEventListener("hidden.bs.modal", () => {
-            const form = discoveryModalEl.querySelector("form");
-            if (form) {
-              form.reset();
-            }
-          });
-        }
-      })();
     </script>
-  </body>
+
+</body>
+
 </html>

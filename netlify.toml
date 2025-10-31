@@ -1,43 +1,4 @@
-# Netlify configuration for EMRS by EllowDigital
-
-[build]
-  publish = "."
-  functions = "netlify/functions"
-
-[[redirects]]
-  from = "/admin"
-  to = "/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/verify"
-  to = "/verify.html"
-  status = 200
-
-[[redirects]]
-  from = "/service-worker.js"
-  to = "/service-worker.js"
-  status = 200
-  force = true
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "DENY"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-
-[[headers]]
-  for = "/service-worker.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/favicon/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# Runs "sync-with-google-sheets" daily at 5:30 AM IST (00:00 UTC). Netlify cron is evaluated in UTC.
+# netlify.toml
+# Runs "sync-with-google-sheets" daily at 08:00 PM IST (14:30 UTC). Netlify cron is evaluated in UTC.
 [functions."sync-with-google-sheets"]
-  schedule = "0 0 * * *"
+  schedule = "30 14 * * *"

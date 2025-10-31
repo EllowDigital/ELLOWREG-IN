@@ -1,6 +1,0 @@
-Copyright (c) 2025 EllowDigital  
-All rights reserved.
-
-This repository and its contents are provided for demonstration and portfolio purposes only.  
-No part of this software, including code, design, or documentation, may be used, copied, modified, merged, published, distributed, sublicensed, or sold in any form without the express written permission of EllowDigital.  
-Unauthorized use or reproduction of this material is strictly prohibited.

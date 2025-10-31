@@ -5,165 +5,129 @@ const { pool, getGoogleSheetsClient, retryWithBackoff } = require("./utils");
 // --- Configuration ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SHEET_NAME = "Registrations";
+const API_CHUNK_SIZE = 500; // Process 500 records per API call to stay within limits.
 
-const formatTimestamp = (value) =>
-  value
-    ? new Date(value).toLocaleString("en-IN", {
-        timeZone: "Asia/Kolkata",
-      })
-    : "N/A";
-
-exports.handler = async (event = {}) => {
-  const method = event.httpMethod;
-  if (method && !["GET", "POST"].includes(method)) {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: "Method Not Allowed" }),
-    };
-  }
-
-  const headers = event.headers || {};
-  const providedKey =
-    headers["x-admin-key"] || headers["X-Admin-Key"] || headers["x-Admin-Key"];
-  const secretKey = process.env.EXPORT_SECRET_KEY;
-  const isScheduledRun = Boolean(event.cron);
-
-  if (!isScheduledRun) {
-    if (!providedKey || providedKey !== secretKey) {
-      return {
-        statusCode: 401,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "Unauthorized" }),
-      };
+/**
+ * A highly scalable serverless function to synchronize up to 10,000+ records
+ * from a Postgres database to a Google Sheet using an "Upsert" strategy.
+ *
+ * Key features for scalability:
+ * - Efficiently fetches only registration IDs from the sheet to build a lookup map.
+ * - Chunks API requests (updates and appends) to avoid hitting Google's payload size limits.
+ * - Uses a reliable, serverless-friendly database connection pool.
+ */
+exports.handler = async () => {
+    console.log(`[SYNC START] Starting Upsert Sync Process @ ${new Date().toISOString()}`);
+    if (!SPREADSHEET_ID) {
+        console.error("[SYNC FAIL] Missing GOOGLE_SHEET_ID environment variable.");
+        return { statusCode: 500, body: JSON.stringify({ error: "Server configuration error." }) };
     }
-  }
 
-  console.log(
-    `[SYNC START] Full sheet refresh triggered via ${method || "schedule"} @ ${new Date().toISOString()}`,
-  );
+    let dbClient;
+    try {
+        dbClient = await pool.connect();
 
-  if (!SPREADSHEET_ID) {
-    console.error("[SYNC FAIL] Missing GOOGLE_SHEET_ID environment variable.");
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Server configuration error." }),
-    };
-  }
-
-  let dbClient;
-  try {
-    dbClient = await pool.connect();
-    const { rows: registrations } = await dbClient.query(
-      `SELECT registration_id, name, phone, email, city, state, payment_id, timestamp, image_url, checked_in_at
-         FROM registrations
-        ORDER BY timestamp ASC`,
-    );
-    console.log(`[DB] Loaded ${registrations.length} registrations to sync.`);
-
-    const sheets = await getGoogleSheetsClient();
-
-    const safeSheetName = SHEET_NAME.includes(" ")
-      ? `'${SHEET_NAME.replace(/'/g, "''")}'`
-      : SHEET_NAME;
-    const dataRangeBase = `${safeSheetName}!A2:J`;
-
-    await retryWithBackoff(
-      () =>
-        sheets.spreadsheets.values.clear({
-          spreadsheetId: SPREADSHEET_ID,
-          range: dataRangeBase,
-        }),
-      "Google Sheets Clear Data",
-    );
-    console.log("[GSheet] Cleared data rows (headers preserved).");
-
-    if (registrations.length > 0) {
-      const sheetRows = registrations.map((record) => [
-        record.registration_id,
-        record.name,
-        record.phone,
-        record.email,
-        record.city,
-        record.state,
-        record.payment_id || "N/A",
-        formatTimestamp(record.timestamp),
-        record.image_url,
-        formatTimestamp(record.checked_in_at),
-      ]);
-
-      const CHUNK_SIZE = 400;
-      const BATCH_LIMIT = 100;
-      const dataRequests = [];
-
-      for (let i = 0; i < sheetRows.length; i += CHUNK_SIZE) {
-        const chunk = sheetRows.slice(i, i + CHUNK_SIZE);
-        const startRow = 2 + i;
-        const endRow = startRow + chunk.length - 1;
-        dataRequests.push({
-          range: `${safeSheetName}!A${startRow}:J${endRow}`,
-          values: chunk,
-        });
-      }
-
-      for (let i = 0; i < dataRequests.length; i += BATCH_LIMIT) {
-        const batch = dataRequests.slice(i, i + BATCH_LIMIT);
-        await retryWithBackoff(
-          () =>
-            sheets.spreadsheets.values.batchUpdate({
-              spreadsheetId: SPREADSHEET_ID,
-              requestBody: {
-                valueInputOption: "USER_ENTERED",
-                data: batch,
-              },
-            }),
-          `Google Sheets Batch Update ${i / BATCH_LIMIT + 1}`,
+        // 1. Fetch records from the database that need syncing.
+        const { rows: dbRecordsToSync } = await dbClient.query(
+            "SELECT * FROM registrations WHERE needs_sync = true ORDER BY timestamp ASC"
         );
-        const batchStart = batch[0].range;
-        const batchEnd = batch[batch.length - 1].range;
-        console.log(`[GSheet] Wrote ranges ${batchStart} ... ${batchEnd}.`);
-      }
 
-      console.log(`[GSheet] Wrote ${sheetRows.length} rows to the sheet.`);
-    } else {
-      console.log(
-        "[GSheet] No registrations to publish; sheet left blank below headers.",
-      );
+        if (dbRecordsToSync.length === 0) {
+            console.log("[SYNC INFO] No records to sync. Job finished.");
+            return { statusCode: 200, body: JSON.stringify({ message: "No records to sync." }) };
+        }
+        console.log(`[DB] Found ${dbRecordsToSync.length} records marked for sync.`);
+
+        // 2. Efficiently fetch ONLY the ID column from the Google Sheet to build a lookup map.
+        const sheets = await getGoogleSheetsClient();
+        const sheetResponse = await retryWithBackoff(() => sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${SHEET_NAME}!A:A`, // OPTIMIZED: Fetch only column A
+        }), 'Google Sheets Get IDs');
+
+        const sheetValues = sheetResponse.data.values || [];
+        const sheetMap = new Map(); // Map of registration_id -> { rowNumber }
+        sheetValues.forEach((row, index) => {
+            const regId = row[0];
+            if (regId) {
+                sheetMap.set(regId, { rowNumber: index + 1 });
+            }
+        });
+        console.log(`[GSheet] Mapped ${sheetMap.size} existing rows from the sheet.`);
+
+        // 3. Categorize records for append or update operations.
+        const recordsToAppend = [];
+        const updateRequests = [];
+        for (const dbRecord of dbRecordsToSync) {
+            const newRowData = [
+                dbRecord.registration_id, dbRecord.name, dbRecord.company, dbRecord.phone,
+                dbRecord.address, dbRecord.city, dbRecord.state, dbRecord.day,
+                dbRecord.payment_id || 'N/A',
+                new Date(dbRecord.timestamp).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+                dbRecord.image_url,
+                dbRecord.checked_in_at ? new Date(dbRecord.checked_in_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : 'N/A'
+            ];
+            if (sheetMap.has(dbRecord.registration_id)) {
+                const { rowNumber } = sheetMap.get(dbRecord.registration_id);
+                updateRequests.push({ range: `${SHEET_NAME}!A${rowNumber}`, values: [newRowData] });
+            } else {
+                recordsToAppend.push(newRowData);
+            }
+        }
+        console.log(`[SYNC PLAN] Records to update: ${updateRequests.length}. Records to append: ${recordsToAppend.length}.`);
+
+        // 4. Execute API calls in safe, manageable chunks.
+        if (updateRequests.length > 0) {
+            console.log(`[GSheet] Processing ${updateRequests.length} updates in chunks of ${API_CHUNK_SIZE}...`);
+            for (let i = 0; i < updateRequests.length; i += API_CHUNK_SIZE) {
+                const chunk = updateRequests.slice(i, i + API_CHUNK_SIZE);
+                await retryWithBackoff(() => sheets.spreadsheets.values.batchUpdate({
+                    spreadsheetId: SPREADSHEET_ID,
+                    resource: { valueInputOption: 'USER_ENTERED', data: chunk },
+                }), `Google Sheets Batch Update Chunk ${i / API_CHUNK_SIZE + 1}`);
+                console.log(` -> Updated chunk starting at index ${i}.`);
+            }
+            console.log("[GSheet] All update chunks processed successfully.");
+        }
+
+        if (recordsToAppend.length > 0) {
+            console.log(`[GSheet] Processing ${recordsToAppend.length} appends in chunks of ${API_CHUNK_SIZE}...`);
+            for (let i = 0; i < recordsToAppend.length; i += API_CHUNK_SIZE) {
+                const chunk = recordsToAppend.slice(i, i + API_CHUNK_SIZE);
+                await retryWithBackoff(() => sheets.spreadsheets.values.append({
+                    spreadsheetId: SPREADSHEET_ID, range: SHEET_NAME, valueInputOption: "USER_ENTERED",
+                    resource: { values: chunk },
+                }), `Google Sheets Append Chunk ${i / API_CHUNK_SIZE + 1}`);
+                console.log(` -> Appended chunk starting at index ${i}.`);
+            }
+            console.log("[GSheet] All append chunks processed successfully.");
+        }
+
+        // 5. Mark all processed records as synced in a single, efficient database transaction.
+        const allProcessedIds = dbRecordsToSync.map(record => record.registration_id);
+        await dbClient.query(
+            'UPDATE registrations SET needs_sync = false WHERE registration_id = ANY($1::text[])',
+            [allProcessedIds]
+        );
+        console.log(`[DB] Successfully marked ${allProcessedIds.length} records as synced.`);
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Sync successful.", updated: updateRequests.length, appended: recordsToAppend.length }),
+        };
+    } catch (error) {
+        console.error("[SYNC FAIL] The synchronization process failed critically.", {
+            errorMessage: error.message,
+            googleApiError: error.response?.data?.error,
+        });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Failed to synchronize data.", details: error.message }),
+        };
+    } finally {
+        if (dbClient) {
+            dbClient.release();
+            console.log("[SYNC END] Database client released. Sync process finished.");
+        }
     }
-
-    await dbClient.query(
-      "UPDATE registrations SET needs_sync = false, updated_at = NOW() WHERE needs_sync = true",
-    );
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: "Sync successful.",
-        rowsSynced: registrations.length,
-      }),
-    };
-  } catch (error) {
-    console.error("[SYNC FAIL] Synchronization failed:", {
-      errorMessage: error.message,
-      stack: error.stack,
-      googleApiError: error.response?.data?.error,
-    });
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        error: "Failed to synchronize data.",
-        details: error.message,
-        googleApiError: error.response?.data?.error,
-      }),
-    };
-  } finally {
-    if (dbClient) {
-      dbClient.release();
-      console.log(
-        "[SYNC END] Database client released. Sync process finished.",
-      );
-    }
-  }
 };
