@@ -14,6 +14,17 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0a2540" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="EMRS Verify" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+
   <link rel="preload"
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
     as="style" onload="this.onload=null;this.rel='stylesheet'" />
@@ -23,7 +34,8 @@
   </noscript>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" /> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 
   <style>
     :root {
@@ -177,14 +189,32 @@
 
     .text-gradient {
       color: var(--brand-indigo);
-      background: linear-gradient(120deg, #081423, #1f7aec);
-      background-clip: text;
+    }
+
+    body[data-bs-theme="dark"] .text-gradient {
+      color: #e2e8f0;
+    }
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+      .text-gradient {
+        background-image: linear-gradient(120deg, #081423, #1f7aec);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      body[data-bs-theme="dark"] .text-gradient {
+        background-image: linear-gradient(120deg, #e2e8f0, #60a5fa);
+        color: transparent;
+      }
     }
 
     @supports (-webkit-background-clip: text) {
       .text-gradient {
-        background-clip: text;
-        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      body[data-bs-theme="dark"] .text-gradient {
         -webkit-text-fill-color: transparent;
       }
     }
@@ -230,14 +260,14 @@
     }
 
     .gallery-card {
-      background: var(--surface-100);
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.98), rgba(243, 248, 255, 0.98));
       border: 1px solid var(--border-soft);
       border-radius: 24px;
       padding: 0;
       text-align: left;
       cursor: pointer;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.08);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -247,13 +277,13 @@
     .gallery-card:hover,
     .gallery-card:focus {
       transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 26px 55px rgba(15, 23, 42, 0.12);
       outline: none;
     }
 
     .gallery-card-media {
       position: relative;
-      background: linear-gradient(135deg, rgba(31, 122, 236, 0.08), rgba(21, 195, 154, 0.08));
+      background: linear-gradient(135deg, rgba(31, 122, 236, 0.15), rgba(21, 195, 154, 0.12));
       padding: 1.4rem;
       display: flex;
       justify-content: center;
@@ -266,9 +296,10 @@
       height: auto;
       max-height: 360px;
       object-fit: contain;
+      display: block;
       border-radius: 16px;
-      background: var(--surface-100);
-      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
     }
 
     .gallery-badge {
@@ -302,7 +333,7 @@
 
     .gallery-card-body p {
       margin: 0;
-      color: var(--text-muted);
+      color: rgba(15, 23, 42, 0.6);
       font-size: 0.95rem;
       line-height: 1.6;
     }
@@ -457,16 +488,24 @@
       border-color: rgba(96, 165, 250, 0.6);
     }
 
-    body[data-bs-theme="dark"] .text-gradient {
-      color: #e2e8f0;
-      background: linear-gradient(120deg, #e2e8f0, #60a5fa);
-    }
-
     body[data-bs-theme="dark"] .gallery-card,
     body[data-bs-theme="dark"] .modal-content {
       background: rgba(4, 13, 25, 0.92);
       border-color: rgba(148, 163, 184, 0.18);
       box-shadow: 0 22px 50px rgba(2, 6, 23, 0.6);
+    }
+
+    body[data-bs-theme="dark"] .gallery-card-body h3 {
+      color: #f8fafc;
+    }
+
+    body[data-bs-theme="dark"] .gallery-card-body p {
+      color: rgba(203, 213, 225, 0.85);
+    }
+
+    body[data-bs-theme="dark"] .gallery-badge {
+      background: rgba(96, 165, 250, 0.18);
+      color: #bfdbfe;
     }
 
     body[data-bs-theme="dark"] .gallery-card img {
@@ -607,6 +646,7 @@
           <li class="nav-item"><a class="nav-link" href="index.html#timeline">Timeline</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html#pricing">Pricing</a></li>
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="gallery.html">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="case-study-tent-decor-expo.html">Case study</a></li>
           <li class="nav-item">
             <button class="btn btn-primary rounded-pill px-4 ms-lg-2" type="button" data-bs-toggle="modal"
               data-bs-target="#discoveryModal">Book a discovery session</button>
@@ -908,6 +948,7 @@
             <li><a class="text-decoration-none text-muted" href="admin.html">Admin Dashboard</a></li>
             <li><a class="text-decoration-none text-muted" href="verify.html">Verification Console</a></li>
             <li><a class="text-decoration-none text-muted" href="gallery.html">Product Gallery</a></li>
+            <li><a class="text-decoration-none text-muted" href="case-study-tent-decor-expo.html">Case Study</a></li>
             <li><a class="text-decoration-none text-muted" href="netlify/functions/get-stats.js">API Reference</a></li>
           </ul>
         </div>

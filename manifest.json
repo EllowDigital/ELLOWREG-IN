@@ -1,7 +1,7 @@
 {
-  "name": "EMRS Verification",
-  "short_name": "EMRS - EllowDigital",
-  "description": "Verify EMRS passes, manage check-ins, and sync with EllowDigital systems on the go.",
+  "name": "EMRS Staff Console",
+  "short_name": "EMRS By EllowDigital",
+  "description": "Staff-only toolkit to verify EMRS passes, manage check-ins, and sync with EllowDigital systems on the go.",
   "start_url": "/verify.html",
   "scope": "/",
   "display": "standalone",

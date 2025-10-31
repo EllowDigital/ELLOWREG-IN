@@ -1,9 +1,8 @@
-const CACHE_VERSION = 'emrs-admin-cache-v2';
+const CACHE_VERSION = 'emrs-staff-cache-v3';
 const APP_SHELL = [
-    '/',
-    '/admin.html',
-    '/index.html',
     '/verify.html',
+    '/admin.html',
+    '/form.html',
     '/manifest.json',
     '/assets/favicon/favicon-16x16.png',
     '/assets/favicon/favicon-32x32.png',

@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tent Decor Expo UP 2025 Case Study | EllowDigital EMRS</title>
+    <meta name="description"
+        content="Discover how EllowDigital EMRS powered the Tent Decor Expo UP 2025 with streamlined registrations, onboarding, and entry management." />
+    <meta name="author" content="EllowDigital" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" />
+    </noscript>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        :root {
+            --brand-midnight: #081423;
+            --brand-indigo: #0a2540;
+            --brand-blue: #1f7aec;
+            --brand-mint: #15c39a;
+            --surface-100: #ffffff;
+            --surface-muted: #f5f7fb;
+            --surface-dark: #020817;
+            --border-soft: rgba(8, 20, 35, 0.08);
+            --border-strong: rgba(8, 20, 35, 0.16);
+            --text-strong: #081423;
+            --text-muted: #5c6f84;
+            --shadow-sm: 0 12px 30px rgba(8, 20, 35, 0.08);
+            --shadow-md: 0 20px 45px rgba(8, 20, 35, 0.1);
+            --shadow-lg: 0 32px 70px rgba(8, 20, 35, 0.16);
+            --gradient-primary: linear-gradient(135deg, #1f7aec, #3d9bff);
+            color-scheme: light;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--surface-muted);
+            color: var(--text-strong);
+            letter-spacing: -0.01em;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: "Poppins", sans-serif;
+            color: var(--brand-midnight);
+            letter-spacing: -0.015em;
+        }
+
+        p {
+            color: var(--text-muted);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(8, 20, 35, 0.05);
+            transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 18px 40px rgba(8, 20, 35, 0.1);
+            border-color: rgba(8, 20, 35, 0.08);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--brand-indigo);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .navbar-brand span {
+            color: var(--brand-blue);
+            margin-left: 0.35rem;
+            letter-spacing: 0.15em;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 0.6rem 0;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link:focus,
+        .navbar-nav .nav-link.active {
+            color: var(--brand-indigo);
+        }
+
+        .navbar-toggler {
+            border: 1px solid rgba(8, 20, 35, 0.14);
+            border-radius: 0.75rem;
+            padding: 0.35rem 0.55rem;
+            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .navbar-toggler:hover {
+            border-color: rgba(31, 122, 236, 0.45);
+            background: rgba(31, 122, 236, 0.08);
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.15rem rgba(31, 122, 236, 0.28);
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            width: 1.4rem;
+            height: 1.1rem;
+            background-size: 1.4rem 1.1rem;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 18'%3E%3Cpath stroke='rgba(8,20,35,0.85)' stroke-linecap='round' stroke-width='2.4' d='M3 2h24M3 9h24M3 16h24'/%3E%3C/svg%3E");
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 999px;
+            box-shadow: 0 18px 40px rgba(31, 122, 236, 0.35);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background: linear-gradient(135deg, #2a6ed9, #4aa2ff);
+            box-shadow: 0 22px 48px rgba(31, 122, 236, 0.4);
+        }
+
+        .btn-outline-base {
+            border-radius: 999px;
+            border: 1px solid rgba(8, 20, 35, 0.18);
+            color: var(--brand-indigo);
+            font-weight: 600;
+            padding: 0.6rem 1.6rem;
+        }
+
+        .btn-outline-base:hover,
+        .btn-outline-base:focus {
+            background: rgba(31, 122, 236, 0.08);
+            border-color: rgba(31, 122, 236, 0.5);
+            color: var(--brand-indigo);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(10, 37, 64, 0.7);
+        }
+
+        .text-gradient {
+            color: var(--brand-indigo);
+        }
+
+        body[data-bs-theme="dark"] .text-gradient {
+            color: #e2e8f0;
+        }
+
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+            .text-gradient {
+                background-image: linear-gradient(120deg, #081423, #1f7aec);
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+
+            body[data-bs-theme="dark"] .text-gradient {
+                background-image: linear-gradient(120deg, #e2e8f0, #60a5fa);
+                color: transparent;
+            }
+        }
+
+        @supports (-webkit-background-clip: text) {
+            .text-gradient {
+                -webkit-text-fill-color: transparent;
+            }
+
+            body[data-bs-theme="dark"] .text-gradient {
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        .case-hero {
+            padding-top: 8.5rem;
+            padding-bottom: 5.5rem;
+            background: radial-gradient(circle at 10% 10%, rgba(31, 122, 236, 0.18), transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(21, 195, 154, 0.1), transparent 45%);
+        }
+
+        .case-hero-card {
+            background: var(--surface-100);
+            border-radius: 26px;
+            border: 1px solid var(--border-soft);
+            padding: 2.25rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .case-hero-card img {
+            width: 140px;
+            border-radius: 18px;
+            border: 1px solid rgba(8, 20, 35, 0.08);
+            box-shadow: 0 18px 40px rgba(8, 20, 35, 0.16);
+        }
+
+        .stat-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface-100);
+            border-radius: 18px;
+            border: 1px solid var(--border-soft);
+            padding: 1.3rem 1.6rem;
+            box-shadow: var(--shadow-sm);
+            min-width: 180px;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 1.55rem;
+            color: var(--brand-indigo);
+        }
+
+        .stat-card span {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .section-heading {
+            font-size: clamp(2rem, 1.6rem + 1.1vw, 2.8rem);
+        }
+
+        .section-intro {
+            max-width: 680px;
+            font-size: 1.05rem;
+        }
+
+        .highlight-card {
+            background: var(--surface-100);
+            border-radius: 22px;
+            border: 1px solid var(--border-soft);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+
+        .detail-card {
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(241, 246, 255, 0.98));
+            border-radius: 24px;
+            border: 1px solid var(--border-soft);
+            padding: 2rem;
+            box-shadow: 0 22px 45px rgba(8, 20, 35, 0.1);
+            height: 100%;
+        }
+
+        .detail-card ul {
+            margin: 0;
+            padding-left: 1.1rem;
+            display: grid;
+            gap: 0.55rem;
+            color: var(--text-muted);
+        }
+
+        .timeline {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            background: var(--surface-100);
+            border-radius: 20px;
+            border: 1px solid var(--border-soft);
+            padding: 1.65rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 1.1rem;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(31, 122, 236, 0.12);
+            color: var(--brand-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .badge-soft {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(31, 122, 236, 0.12);
+            color: var(--brand-indigo);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .module-card {
+            background: var(--surface-100);
+            border-radius: 18px;
+            border: 1px solid var(--border-soft);
+            padding: 1.6rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(150deg, rgba(15, 23, 42, 0.94), rgba(31, 122, 236, 0.88));
+            border-radius: 28px;
+            padding: 2.6rem;
+            color: #fff;
+            box-shadow: 0 36px 70px rgba(15, 23, 42, 0.35);
+        }
+
+        .testimonial-card p {
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .cta-band {
+            background: linear-gradient(140deg, rgba(31, 122, 236, 0.95), rgba(10, 37, 64, 0.95));
+            border-radius: 32px;
+            padding: 3rem;
+            color: #fff;
+            box-shadow: 0 36px 70px rgba(10, 37, 64, 0.4);
+        }
+
+        .cta-band h2,
+        .cta-band h3 {
+            color: #fff;
+        }
+
+        .cta-band p {
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .cta-band .btn-light {
+            background: #fff;
+            color: var(--brand-indigo);
+            border: none;
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.25);
+        }
+
+        .footer {
+            background: var(--surface-100);
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .footer h5,
+        .footer h6 {
+            color: var(--brand-indigo);
+        }
+
+        body[data-bs-theme="dark"] {
+            background: var(--surface-dark);
+            color: rgba(226, 232, 240, 0.9);
+            color-scheme: dark;
+        }
+
+        body[data-bs-theme="dark"] h1,
+        body[data-bs-theme="dark"] h2,
+        body[data-bs-theme="dark"] h3,
+        body[data-bs-theme="dark"] h4,
+        body[data-bs-theme="dark"] h5,
+        body[data-bs-theme="dark"] h6 {
+            color: #f1f5f9;
+        }
+
+        body[data-bs-theme="dark"] p,
+        body[data-bs-theme="dark"] .navbar-nav .nav-link {
+            color: rgba(203, 213, 225, 0.88);
+        }
+
+        body[data-bs-theme="dark"] .navbar {
+            background: rgba(4, 13, 25, 0.94);
+            border-color: rgba(14, 23, 42, 0.75);
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.8);
+        }
+
+        body[data-bs-theme="dark"] .navbar.scrolled {
+            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.7);
+        }
+
+        body[data-bs-theme="dark"] .navbar-brand {
+            color: #e2e8f0;
+        }
+
+        body[data-bs-theme="dark"] .navbar-brand span {
+            color: #93c5fd;
+        }
+
+        body[data-bs-theme="dark"] .navbar-nav .nav-link:hover,
+        body[data-bs-theme="dark"] .navbar-nav .nav-link:focus,
+        body[data-bs-theme="dark"] .navbar-nav .nav-link.active {
+            color: #60a5fa;
+        }
+
+        body[data-bs-theme="dark"] .navbar-toggler {
+            background: rgba(15, 23, 42, 0.7);
+            border-color: rgba(148, 163, 184, 0.4);
+        }
+
+        body[data-bs-theme="dark"] .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 18'%3E%3Cpath stroke='rgba(226,232,240,0.95)' stroke-linecap='round' stroke-width='2.4' d='M3 2h24M3 9h24M3 16h24'/%3E%3C/svg%3E");
+        }
+
+        body[data-bs-theme="dark"] .stat-card,
+        body[data-bs-theme="dark"] .case-hero-card,
+        body[data-bs-theme="dark"] .highlight-card,
+        body[data-bs-theme="dark"] .detail-card,
+        body[data-bs-theme="dark"] .timeline-item,
+        body[data-bs-theme="dark"] .module-card {
+            background: rgba(4, 13, 25, 0.92);
+            border-color: rgba(148, 163, 184, 0.18);
+            box-shadow: 0 22px 50px rgba(2, 6, 23, 0.6);
+        }
+
+        body[data-bs-theme="dark"] .stat-card span,
+        body[data-bs-theme="dark"] .detail-card ul,
+        body[data-bs-theme="dark"] .timeline-item p,
+        body[data-bs-theme="dark"] .module-card p,
+        body[data-bs-theme="dark"] .section-intro {
+            color: rgba(203, 213, 225, 0.85);
+        }
+
+        body[data-bs-theme="dark"] .stat-card strong {
+            color: #f8fafc;
+        }
+
+        body[data-bs-theme="dark"] .badge-soft {
+            background: rgba(96, 165, 250, 0.18);
+            color: rgba(226, 232, 240, 0.9);
+        }
+
+        body[data-bs-theme="dark"] .cta-band {
+            background: linear-gradient(140deg, rgba(59, 130, 246, 0.88), rgba(15, 23, 42, 0.94));
+            box-shadow: 0 36px 70px rgba(2, 6, 23, 0.7);
+        }
+
+        body[data-bs-theme="dark"] .cta-band .btn-light {
+            background: rgba(15, 23, 42, 0.4);
+            color: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: none;
+        }
+
+        body[data-bs-theme="dark"] .footer {
+            background: rgba(4, 13, 25, 0.9);
+            border-color: rgba(14, 23, 42, 0.7);
+        }
+
+        .modal-content {
+            border-radius: 28px;
+            background: var(--surface-100);
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 40px 80px rgba(15, 23, 42, 0.28);
+        }
+
+        .modal-content .form-control,
+        .modal-content .form-select {
+            border-radius: 14px;
+            border: 1px solid rgba(8, 20, 35, 0.12);
+            padding: 0.8rem 1rem;
+        }
+
+        .modal-header {
+            padding: 1.5rem 1.75rem 0;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 0 1.75rem 1.75rem;
+        }
+
+        .btn-close {
+            filter: invert(0.25);
+        }
+
+        body[data-bs-theme="dark"] .modal-content {
+            background: rgba(4, 13, 25, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: rgba(226, 232, 240, 0.92);
+            box-shadow: 0 24px 70px rgba(2, 6, 23, 0.7);
+        }
+
+        body[data-bs-theme="dark"] .modal-content .form-control,
+        body[data-bs-theme="dark"] .modal-content .form-select {
+            background: rgba(15, 23, 42, 0.7);
+            border-color: rgba(148, 163, 184, 0.3);
+            color: rgba(226, 232, 240, 0.9);
+        }
+
+        body[data-bs-theme="dark"] .modal-content .form-control::placeholder,
+        body[data-bs-theme="dark"] .modal-content .form-select option {
+            color: rgba(148, 163, 184, 0.8);
+        }
+
+        @media (max-width: 991.98px) {
+            .case-hero {
+                padding-top: 7.5rem;
+                text-align: center;
+            }
+
+            .case-hero-card {
+                margin: 0 auto;
+            }
+
+            .stat-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+
+            .case-hero-card,
+            .stat-card,
+            .highlight-card,
+            .detail-card,
+            .timeline-item,
+            .module-card,
+            .cta-band {
+                border-radius: 20px;
+            }
+
+            .cta-band {
+                padding: 2.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+        <div class="container py-2">
+            <a class="navbar-brand" href="index.html#hero">
+                EllowDigital <span>EMRS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+                    <li class="nav-item"><a class="nav-link" href="index.html#suite">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#playbook">Playbook</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#timeline">Timeline</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                            href="case-study-tent-decor-expo.html">Case study</a></li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary rounded-pill px-4 ms-lg-2" type="button" data-bs-toggle="modal"
+                            data-bs-target="#discoveryModal">Book a discovery session</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <header class="case-hero" aria-labelledby="caseTitle">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <span class="eyebrow">Case study</span>
+                        <h1 id="caseTitle" class="display-4 fw-semibold text-gradient">Tent Decor Expo UP 2025</h1>
+                        <p class="lead text-muted">Special thanks to the Tent, Caterers & Decorators Welfare Association
+                            of UP. EMRS
+                            by EllowDigital orchestrated registrations, exhibitor onboarding, and entry management for
+                            their flagship
+                            expo.</p>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
+                            <button class="btn btn-primary btn-lg rounded-pill px-4" type="button"
+                                data-bs-toggle="modal" data-bs-target="#discoveryModal">Plan your event</button>
+                            <a class="btn btn-outline-base btn-lg" href="index.html#suite">Explore the platform</a>
+                        </div>
+                        <div class="stat-group mt-4">
+                            <div class="stat-card">
+                                <strong>2,500+</strong>
+                                <span>Registrations processed</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>50+</strong>
+                                <span>Exhibitors onboarded</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>Countless</strong>
+                                <span>Cups of water served</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="case-hero-card h-100">
+                            <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                                <img src="assets/images/project-TDEXPO.jpg" alt="Tent Decor Expo UP 2025 logo"
+                                    width="140" height="140" />
+                                <div>
+                                    <span class="badge-soft mb-2"><i class="fa-solid fa-location-dot"></i> Lucknow,
+                                        Uttar Pradesh</span>
+                                    <h2 class="h4 mb-1">A successful event delivered</h2>
+                                    <p class="text-muted mb-0">Powered by EllowDigital EMRS deployment pods.</p>
+                                </div>
+                            </div>
+                            <hr class="my-3" />
+                            <h3 class="h5">Event blueprint</h3>
+                            <ul class="ps-3 text-muted small mb-0" style="list-style-type: disc;">
+                                <li>Unified registration flow for visitors, exhibitors, and VIP stakeholders.</li>
+                                <li>Instant badge design, approval, and printing workflows across kiosks.</li>
+                                <li>Live dashboards for association leadership with attendance analytics.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="py-5 py-lg-6" id="highlights">
+            <div class="container">
+                <span class="eyebrow">Success highlights</span>
+                <h2 class="section-heading mt-3">Key achievements that made this expo unforgettable.</h2>
+                <p class="section-intro">From the first digital invite to the final closing bell, EMRS handled every
+                    guest and
+                    exhibitor interaction with precision. Highlights below capture the momentum on ground.</p>
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card h-100">
+                            <h3 class="h5">One-touch check-ins</h3>
+                            <p>Branded QR passes with offline fallback kept gates moving even during peak surges.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card h-100">
+                            <h3 class="h5">Exhibitor self-serve</h3>
+                            <p>Booth teams received dedicated onboarding, asset uploads, and staff allocation tools.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card h-100">
+                            <h3 class="h5">Sponsor analytics</h3>
+                            <p>Real-time dashboards surfaced footfall heatmaps and returning visitor cohorts for
+                                partners.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card h-100">
+                            <h3 class="h5">Crew coordination</h3>
+                            <p>Whatsapp alerts synced marshals, F&amp;B, and logistics teams to every program milestone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-6 bg-white" id="overview">
+            <div class="container">
+                <span class="eyebrow">Project overview</span>
+                <h2 class="section-heading mt-3">From challenge to measurable outcomes.</h2>
+                <div class="row g-4 mt-2">
+                    <div class="col-lg-4">
+                        <div class="detail-card h-100">
+                            <h3 class="h5 mb-3">The challenge</h3>
+                            <ul>
+                                <li>Manage thousands of visitor registrations without compromising compliance.</li>
+                                <li>Provide exhibitors with a frictionless onboarding and asset submission path.</li>
+                                <li>Guarantee VIP and crew access tiers with instant pass updates.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="detail-card h-100">
+                            <h3 class="h5 mb-3">Our approach</h3>
+                            <ul>
+                                <li>Configured EMRS forms with multilingual support, approval queues, and invite rules.
+                                </li>
+                                <li>Automated badge art with association branding, QR encoding, and print-ready exports.
+                                </li>
+                                <li>Deployed on-ground pods with tablet scanners and manual fallback stations.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="detail-card h-100">
+                            <h3 class="h5 mb-3">Impact delivered</h3>
+                            <ul>
+                                <li>Eliminated paper-based bottlenecks across entry gates and help desks.</li>
+                                <li>Provided leadership with live dashboards covering attendance, dwell time, and hall
+                                    heatmaps.</li>
+                                <li>Captured post-event insights to plan the next edition’s capacity with data.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-6" id="modules">
+            <div class="container">
+                <span class="eyebrow">Deployment stack</span>
+                <h2 class="section-heading mt-3">Modules activated for Tent Decor Expo UP 2025.</h2>
+                <p class="section-intro">Every workflow was mapped from enquiry to exit. EMRS plugged into association
+                    teams,
+                    exhibitors, and venue partners with purpose-built modules.</p>
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="module-card h-100">
+                            <h3 class="h5">Registration OS</h3>
+                            <p class="mb-0">Dynamic forms, OTP validation, and segmented confirmation mails across
+                                attendee types.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="module-card h-100">
+                            <h3 class="h5">Digital pass studio</h3>
+                            <p class="mb-0">Auto-branded PDF badges with access tiers for exhibitors, crew, and VIP
+                                delegates.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="module-card h-100">
+                            <h3 class="h5">Operations cockpit</h3>
+                            <p class="mb-0">Live scanning dashboards, manual lookup, and escalation notes for rapid
+                                resolutions.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="module-card h-100">
+                            <h3 class="h5">Insights &amp; exports</h3>
+                            <p class="mb-0">Google Sheets sync, CSV drops, and sponsor-ready recap decks within 24
+                                hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-6 bg-white" id="timeline">
+            <div class="container">
+                <span class="eyebrow">Go-live cadence</span>
+                <h2 class="section-heading mt-3">A four-phase sprint from kickoff to opening day.</h2>
+                <div class="timeline mt-4">
+                    <div class="timeline-item">
+                        <span class="timeline-marker">01</span>
+                        <div>
+                            <h3 class="h6">Discovery &amp; blueprint</h3>
+                            <p class="mb-0">Gathered association goals, hall layouts, partner expectations, and VIP
+                                protocols in a
+                                single workshop.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-marker">02</span>
+                        <div>
+                            <h3 class="h6">Build &amp; simulate</h3>
+                            <p class="mb-0">Configured registration, exhibitor, and crew journeys; conducted sandbox
+                                drills with
+                                security partners.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-marker">03</span>
+                        <div>
+                            <h3 class="h6">Launch &amp; monitor</h3>
+                            <p class="mb-0">Went live with realtime dashboards, onsite support pods, and escalation
+                                runbooks.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-marker">04</span>
+                        <div>
+                            <h3 class="h6">Recap &amp; iterate</h3>
+                            <p class="mb-0">Delivered post-event analytics, retention cohorts, and recommendations for
+                                the 2026
+                                edition.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-6" id="testimonial">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="testimonial-card h-100">
+                            <span class="badge-soft mb-3"><i class="fa-solid fa-quote-left"></i> Partner note</span>
+                            <p class="fs-5 mb-4">"Our members experienced seamless entry, exhibitors onboarded in hours,
+                                and sponsor
+                                lounges had live headcounts. EllowDigital's EMRS stitched every moving part together."
+                            </p>
+                            <div>
+                                <h3 class="h6 mb-0">Tent, Caterers &amp; Decorators Welfare Association of UP</h3>
+                                <small>Organisers of Tent Decor Expo UP 2025</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="detail-card h-100">
+                            <h3 class="h5">What we unlocked</h3>
+                            <ul>
+                                <li>Confidence to scale next year's expo with digital-first registration funnels.</li>
+                                <li>Reusable playbooks for exhibitor onboarding and hall-allocation logistics.</li>
+                                <li>Data evidence to pitch bigger sponsors and city partnerships.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-6">
+            <div class="container">
+                <div class="cta-band">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-8">
+                            <h2 class="mb-3">Ready to deliver your next flagship experience?</h2>
+                            <p class="mb-0">We partner with associations, brands, and creators to orchestrate
+                                unforgettable
+                                registrations and on-ground journeys. Share your event brief and we will map a blueprint
+                                in under 48
+                                hours.</p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <button class="btn btn-light btn-lg rounded-pill px-4" type="button" data-bs-toggle="modal"
+                                data-bs-target="#discoveryModal">Book a discovery session</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <h5 class="fw-semibold">EllowDigital</h5>
+                    <p class="text-muted">Digital experiences that move people. EMRS is part of our event-tech stack
+                        designed for
+                        hybrid teams.</p>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <h6 class="fw-semibold">Useful Links</h6>
+                    <ul class="list-unstyled text-muted">
+                        <li><a class="text-decoration-none text-muted" href="index.html#hero">Overview</a></li>
+                        <li><a class="text-decoration-none text-muted" href="form.html">Registration Demo</a></li>
+                        <li><a class="text-decoration-none text-muted" href="admin.html">Admin Dashboard</a></li>
+                        <li><a class="text-decoration-none text-muted" href="verify.html">Verification Console</a></li>
+                        <li><a class="text-decoration-none text-muted" href="gallery.html">Product Gallery</a></li>
+                        <li><a class="text-decoration-none text-muted" href="case-study-tent-decor-expo.html">Case
+                                Study</a></li>
+                        <li><a class="text-decoration-none text-muted" href="netlify/functions/get-stats.js">API
+                                Reference</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-12 col-lg-4">
+                    <h6 class="fw-semibold">Contact</h6>
+                    <p class="text-muted mb-1"><i class="fa-solid fa-envelope me-2"></i><a class="text-muted"
+                            href="mailto:ellowdigitalindia@gmail.com">ellowdigitalindia@gmail.com</a></p>
+                    <p class="text-muted mb-1"><i class="fa-solid fa-phone me-2"></i>+91 98765 43210</p>
+                    <p class="text-muted mb-3"><i class="fa-solid fa-earth-asia me-2"></i><a class="text-muted"
+                            href="https://ellowdigital.netlify.app" target="_blank"
+                            rel="noopener">ellowdigital.netlify.app</a>
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a class="text-muted" href="https://www.linkedin.com/company/ellowdigital" target="_blank"
+                            rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                        <a class="text-muted" href="https://www.instagram.com/ellowdigital" target="_blank"
+                            rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a class="text-muted" href="https://www.youtube.com/@ellowdigital" target="_blank"
+                            rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" />
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-muted">
+                <span>© 2025 EllowDigital. All rights reserved.</span>
+                <span>Built with love by EllowDigital · Crafted with care for EMRS.</span>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="discoveryModal" tabindex="-1" aria-labelledby="discoveryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-semibold" id="discoveryModalLabel">Book a discovery session</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">Tell us about the experience you are planning and we will schedule a
+                        30-minute
+                        walkthrough with the deployment pod.</p>
+                    <form class="row g-3" action="https://formsubmit.co/ellowdigitalindia@gmail.com" method="POST">
+                        <input type="hidden" name="_subject" value="Discovery Session Request - Case Study" />
+                        <div class="col-md-6">
+                            <label class="form-label" for="discoveryName">Full name</label>
+                            <input class="form-control" id="discoveryName" type="text" name="name"
+                                placeholder="Aarav Sharma" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="discoveryEmail">Work email</label>
+                            <input class="form-control" id="discoveryEmail" type="email" name="email"
+                                placeholder="team@company.com" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="discoveryPhone">Phone</label>
+                            <input class="form-control" id="discoveryPhone" type="tel" name="phone" placeholder="+91"
+                                required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="discoveryRole">Role</label>
+                            <input class="form-control" id="discoveryRole" type="text" name="role"
+                                placeholder="Event lead, marketing, ops" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="discoveryDetails">Event overview</label>
+                            <textarea class="form-control" id="discoveryDetails" rows="3" name="details"
+                                placeholder="Share event dates, audience size, and modules you want to explore."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary rounded-pill px-4" type="submit">Submit request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const nav = document.getElementById("mainNav");
+        const handleNav = () => {
+            if (window.scrollY > 12) {
+                nav.classList.add("scrolled");
+            } else {
+                nav.classList.remove("scrolled");
+            }
+        };
+        document.addEventListener("scroll", handleNav, { passive: true });
+        handleNav();
+
+        const discoveryModal = document.getElementById("discoveryModal");
+        if (discoveryModal) {
+            discoveryModal.addEventListener("hidden.bs.modal", () => {
+                discoveryModal.querySelector("form")?.reset();
+            });
+        }
+    </script>
+</body>
+
+</html>

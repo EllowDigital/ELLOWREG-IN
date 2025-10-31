@@ -47,8 +47,7 @@
   </noscript>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   <style>
     :root {
       --brand-midnight: #081423;
@@ -208,21 +207,34 @@
 
     .text-gradient {
       color: var(--brand-indigo);
-      background: linear-gradient(120deg, #081423, #1f7aec);
-      background-clip: text;
-    }
-
-    @supports (-webkit-background-clip: text) {
-      .text-gradient {
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
     }
 
     body[data-bs-theme="dark"] .text-gradient {
       color: #e2e8f0;
-      background: linear-gradient(120deg, #e2e8f0, #60a5fa);
+    }
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+      .text-gradient {
+        background-image: linear-gradient(120deg, #081423, #1f7aec);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      body[data-bs-theme="dark"] .text-gradient {
+        background-image: linear-gradient(120deg, #e2e8f0, #60a5fa);
+        color: transparent;
+      }
+    }
+
+    @supports (-webkit-background-clip: text) {
+      .text-gradient {
+        -webkit-text-fill-color: transparent;
+      }
+
+      body[data-bs-theme="dark"] .text-gradient {
+        -webkit-text-fill-color: transparent;
+      }
     }
 
     .hero-list li {
@@ -492,6 +504,15 @@
       box-shadow: 0 36px 70px rgba(10, 37, 64, 0.4);
     }
 
+    .cta-band h2,
+    .cta-band h3 {
+      color: #fff;
+    }
+
+    .cta-band p {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
     .cta-band .btn-light {
       background: #fff;
       color: var(--brand-indigo);
@@ -689,6 +710,10 @@
       color: rgba(148, 163, 184, 0.85);
     }
 
+    body[data-bs-theme="dark"] .meta-tile strong {
+      color: #f8fafc;
+    }
+
     body[data-bs-theme="dark"] .cta-band .btn-light {
       background: rgba(15, 23, 42, 0.4);
       color: #f8fafc;
@@ -816,6 +841,7 @@
           <li class="nav-item"><a class="nav-link" href="#timeline">Timeline</a></li>
           <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
           <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="case-study-tent-decor-expo.html">Case study</a></li>
           <li class="nav-item">
             <button class="btn btn-primary rounded-pill px-4 ms-lg-2" type="button" data-bs-toggle="modal"
               data-bs-target="#discoveryModal">Book a discovery session</button>
@@ -1372,6 +1398,7 @@
             <li><a class="text-decoration-none text-muted" href="admin.html">Admin Dashboard</a></li>
             <li><a class="text-decoration-none text-muted" href="verify.html">Verification Console</a></li>
             <li><a class="text-decoration-none text-muted" href="gallery.html">Product Gallery</a></li>
+            <li><a class="text-decoration-none text-muted" href="case-study-tent-decor-expo.html">Case Study</a></li>
             <li><a class="text-decoration-none text-muted" href="netlify/functions/get-stats.js">API Reference</a></li>
           </ul>
         </div>
