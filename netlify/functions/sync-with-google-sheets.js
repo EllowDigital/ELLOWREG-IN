@@ -63,13 +63,16 @@ exports.handler = async (event = {}) => {
 
     const sheets = await getGoogleSheetsClient();
 
+    const safeSheetName = SHEET_NAME.includes(" ")
+      ? `'${SHEET_NAME.replace(/'/g, "''")}'`
+      : SHEET_NAME;
+    const dataRangeBase = `${safeSheetName}!A2:J`;
+
     await retryWithBackoff(
       () =>
-        sheets.spreadsheets.values.batchClear({
+        sheets.spreadsheets.values.clear({
           spreadsheetId: SPREADSHEET_ID,
-          requestBody: {
-            ranges: [`${SHEET_NAME}!A2:J`],
-          },
+          range: dataRangeBase,
         }),
       "Google Sheets Clear Data",
     );
@@ -90,24 +93,37 @@ exports.handler = async (event = {}) => {
       ]);
 
       const CHUNK_SIZE = 400;
+      const BATCH_LIMIT = 100;
+      const dataRequests = [];
+
       for (let i = 0; i < sheetRows.length; i += CHUNK_SIZE) {
         const chunk = sheetRows.slice(i, i + CHUNK_SIZE);
         const startRow = 2 + i;
         const endRow = startRow + chunk.length - 1;
-        const range = `${SHEET_NAME}!A${startRow}:J${endRow}`;
+        dataRequests.push({
+          range: `${safeSheetName}!A${startRow}:J${endRow}`,
+          values: chunk,
+        });
+      }
 
+      for (let i = 0; i < dataRequests.length; i += BATCH_LIMIT) {
+        const batch = dataRequests.slice(i, i + BATCH_LIMIT);
         await retryWithBackoff(
           () =>
-            sheets.spreadsheets.values.update({
+            sheets.spreadsheets.values.batchUpdate({
               spreadsheetId: SPREADSHEET_ID,
-              range,
-              valueInputOption: "USER_ENTERED",
-              resource: { values: chunk },
+              requestBody: {
+                valueInputOption: "USER_ENTERED",
+                data: batch,
+              },
             }),
-          `Google Sheets Update Rows ${startRow}-${endRow}`,
+          `Google Sheets Batch Update ${i / BATCH_LIMIT + 1}`,
         );
-        console.log(`[GSheet] Wrote rows ${startRow}-${endRow}.`);
+        const batchStart = batch[0].range;
+        const batchEnd = batch[batch.length - 1].range;
+        console.log(`[GSheet] Wrote ranges ${batchStart} ... ${batchEnd}.`);
       }
+
       console.log(`[GSheet] Wrote ${sheetRows.length} rows to the sheet.`);
     } else {
       console.log(
@@ -139,6 +155,7 @@ exports.handler = async (event = {}) => {
       body: JSON.stringify({
         error: "Failed to synchronize data.",
         details: error.message,
+        googleApiError: error.response?.data?.error,
       }),
     };
   } finally {

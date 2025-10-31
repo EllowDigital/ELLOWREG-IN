@@ -12,10 +12,23 @@
       name="keywords"
       content="EMRS admin, EllowDigital, event registration dashboard, attendee management, google sheets sync"
     />
-    <meta name="author" content="EllowDigital" />
-    <link rel="canonical" href="https://get-epass.netlify.app/admin.html" />
-    <title>EMRS Admin Console – EllowDigital</title>
-    <meta property="og:title" content="EMRS Admin Console – EllowDigital" />
+              const detailParts = [];
+              if (responseData?.details) {
+                detailParts.push(responseData.details);
+              }
+              const apiError =
+                typeof responseData?.googleApiError === "string"
+                  ? responseData.googleApiError
+                  : responseData?.googleApiError?.message;
+              if (apiError) {
+                detailParts.push(apiError);
+              }
+              const detailSuffix =
+                detailParts.length > 0 ? ` (${detailParts.join(" | ")})` : "";
+              const errorMessage =
+                responseData?.error ||
+                responseData?.message ||
+                `Request failed: ${response.status}`;
     <meta
       property="og:description"
       content="Manage registrations, sync Google Sheets, and export attendee insights in the EMRS Admin Console."
@@ -59,6 +72,7 @@
       sizes="180x180"
       href="assets/favicon/apple-touch-icon.png"
     />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="EMRS Admin" />
@@ -1101,6 +1115,22 @@
       document.addEventListener("DOMContentLoaded", () => {
         let ADMIN_SECRET_KEY = null;
 
+        const POPUP_PROMPT_KEY = "emrs-allow-popups-ack";
+        try {
+          if (!localStorage.getItem(POPUP_PROMPT_KEY)) {
+            setTimeout(() => {
+              const acknowledged = window.confirm(
+                "Heads up! Please allow pop-ups for this site so Excel exports can open automatically.",
+              );
+              if (acknowledged) {
+                localStorage.setItem(POPUP_PROMPT_KEY, "true");
+              }
+            }, 600);
+          }
+        } catch (storageError) {
+          console.warn("Popup reminder storage unavailable", storageError);
+        }
+
         const DEFAULT_PAGE_SIZE = 10;
         const state = {
           currentPage: 1,
@@ -1571,11 +1601,24 @@
             const responseData = isJson ? await response.json() : null;
 
             if (!response.ok) {
+              const detailParts = [];
+              if (responseData?.details) {
+                detailParts.push(responseData.details);
+              }
+              const apiError =
+                typeof responseData?.googleApiError === "string"
+                  ? responseData.googleApiError
+                  : responseData?.googleApiError?.message;
+              if (apiError) {
+                detailParts.push(apiError);
+              }
+              const detailSuffix =
+                detailParts.length > 0 ? ` (${detailParts.join(" | ")})` : "";
               const errorMessage =
                 responseData?.error ||
                 responseData?.message ||
                 `Request failed: ${response.status}`;
-              throw new Error(errorMessage);
+              throw new Error(`${errorMessage}${detailSuffix}`);
             }
 
             return responseData;
@@ -1778,6 +1821,7 @@
             }
             return result;
           } catch (err) {
+            console.error("Manual sync failed", err);
             if (statusRef) {
               setStatusMessage(
                 statusRef,
