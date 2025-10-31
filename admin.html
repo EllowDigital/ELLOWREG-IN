@@ -1365,30 +1365,37 @@
         showButtonLoading = false,
         statusPrefix = "Sync",
       } = {}) => {
-        if (!syncSheetsBtn || !syncStatus) return null;
-        if (showButtonLoading) {
-          setButtonLoading(syncSheetsBtn, true);
+        const buttonRef = syncSheetsBtn;
+        const statusRef = syncStatus;
+        if (showButtonLoading && buttonRef) {
+          setButtonLoading(buttonRef, true);
         }
-  setStatusMessage(syncStatus, "sync", `${statusPrefix} in progress...`, "muted", false);
+        if (statusRef) {
+          setStatusMessage(statusRef, "sync", `${statusPrefix} in progress...`, "muted", false);
+        }
         try {
           const result = await makeApiCall("/.netlify/functions/sync-with-google-sheets", {
             method: "POST"
           });
           const rowCount = Number(result?.rowsSynced ?? 0);
-          setStatusMessage(
-            syncStatus,
-            "sync",
-            `Google Sheet updated (${rowCount.toLocaleString("en-IN")} rows).`,
-            "success",
-            true,
-          );
+          if (statusRef) {
+            setStatusMessage(
+              statusRef,
+              "sync",
+              `Google Sheet updated (${rowCount.toLocaleString("en-IN")} rows).`,
+              "success",
+              true,
+            );
+          }
           return result;
         } catch (err) {
-          setStatusMessage(syncStatus, "sync", `Sync failed: ${err.message}`, "danger", true);
+          if (statusRef) {
+            setStatusMessage(statusRef, "sync", `Sync failed: ${err.message}`, "danger", true);
+          }
           throw err;
         } finally {
-          if (showButtonLoading) {
-            setButtonLoading(syncSheetsBtn, false);
+          if (showButtonLoading && buttonRef) {
+            setButtonLoading(buttonRef, false);
           }
         }
       };

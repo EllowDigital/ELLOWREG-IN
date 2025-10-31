@@ -22,6 +22,22 @@ exports.handler = async (event = {}) => {
     };
   }
 
+  const headers = event.headers || {};
+  const providedKey =
+    headers["x-admin-key"] || headers["X-Admin-Key"] || headers["x-Admin-Key"];
+  const secretKey = process.env.EXPORT_SECRET_KEY;
+  const isScheduledRun = Boolean(event.cron);
+
+  if (!isScheduledRun) {
+    if (!providedKey || providedKey !== secretKey) {
+      return {
+        statusCode: 401,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Unauthorized" }),
+      };
+    }
+  }
+
   console.log(
     `[SYNC START] Full sheet refresh triggered via ${method || "schedule"} @ ${new Date().toISOString()}`,
   );
@@ -30,6 +46,7 @@ exports.handler = async (event = {}) => {
     console.error("[SYNC FAIL] Missing GOOGLE_SHEET_ID environment variable.");
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Server configuration error." }),
     };
   }
@@ -48,13 +65,15 @@ exports.handler = async (event = {}) => {
 
     await retryWithBackoff(
       () =>
-        sheets.spreadsheets.values.clear({
+        sheets.spreadsheets.values.batchClear({
           spreadsheetId: SPREADSHEET_ID,
-          range: `${SHEET_NAME}!A2:Z`,
+          requestBody: {
+            ranges: [`${SHEET_NAME}!A2:J`],
+          },
         }),
       "Google Sheets Clear Data",
     );
-    console.log("[GSheet] Cleared existing data range (preserved headers).");
+    console.log("[GSheet] Cleared data rows (headers preserved).");
 
     if (registrations.length > 0) {
       const sheetRows = registrations.map((record) => [
@@ -70,16 +89,25 @@ exports.handler = async (event = {}) => {
         formatTimestamp(record.checked_in_at),
       ]);
 
-      await retryWithBackoff(
-        () =>
-          sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
-            range: `${SHEET_NAME}!A2`,
-            valueInputOption: "USER_ENTERED",
-            resource: { values: sheetRows },
-          }),
-        "Google Sheets Bulk Update",
-      );
+      const CHUNK_SIZE = 400;
+      for (let i = 0; i < sheetRows.length; i += CHUNK_SIZE) {
+        const chunk = sheetRows.slice(i, i + CHUNK_SIZE);
+        const startRow = 2 + i;
+        const endRow = startRow + chunk.length - 1;
+        const range = `${SHEET_NAME}!A${startRow}:J${endRow}`;
+
+        await retryWithBackoff(
+          () =>
+            sheets.spreadsheets.values.update({
+              spreadsheetId: SPREADSHEET_ID,
+              range,
+              valueInputOption: "USER_ENTERED",
+              resource: { values: chunk },
+            }),
+          `Google Sheets Update Rows ${startRow}-${endRow}`,
+        );
+        console.log(`[GSheet] Wrote rows ${startRow}-${endRow}.`);
+      }
       console.log(`[GSheet] Wrote ${sheetRows.length} rows to the sheet.`);
     } else {
       console.log("[GSheet] No registrations to publish; sheet left blank below headers.");

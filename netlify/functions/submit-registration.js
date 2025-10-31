@@ -246,7 +246,7 @@ exports.handler = async (event) => {
     const registrationId = `EMRS-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
     const registrationTimestamp = new Date();
 
-    const insertQuery = `INSERT INTO registrations (registration_id, name, phone, email, city, state, image_url, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;`;
+    const insertQuery = `INSERT INTO registrations (registration_id, name, phone, email, city, state, image_url, timestamp, updated_at, needs_sync) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;`;
     const values = [
       registrationId,
       trimmedName,
@@ -256,6 +256,8 @@ exports.handler = async (event) => {
       trimmedState || null,
       uploadResult.secure_url,
       registrationTimestamp,
+      registrationTimestamp,
+      true,
     ];
     const result = await dbClient.query(insertQuery, values);
     const newRecord = result.rows[0];
